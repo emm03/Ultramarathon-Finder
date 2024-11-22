@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const racesPerPage = 20;
 
     function fetchRaces() {
-        fetch("frontend/duv_ultramarathons.csv")
+        fetch("duv_ultramarathons.csv")
             .then(response => response.text())
             .then(data => {
                 races = parseCSV(data);
@@ -21,14 +21,23 @@ document.addEventListener("DOMContentLoaded", () => {
     function parseCSV(data) {
         const rows = data.split("\n").slice(1);
         return rows.map(row => {
+            // Handle cases where columns are wrapped in quotes and contain commas
             const columns = row.match(/(".*?"|[^,]+)(?=\s*,|\s*$)/g);
             let [name, date, distance, location] = columns;
-            name = name ? name.trim() : "N/A";
-            date = date ? date.trim() : "N/A";
-            distance = distance ? distance.trim().toLowerCase() : "N/A";
-            location = location ? location.replace(/^"|"$/g, "").trim() : "N/A";
+
+            // Removing the surrounding quotes, if any
+            name = name ? name.trim().replace(/^"|"$/g, "") : "N/A";
+            date = date ? date.trim().replace(/^"|"$/g, "") : "N/A";
+            distance = distance ? distance.trim().replace(/^"|"$/g, "").toLowerCase() : "N/A";
+            location = location ? location.trim().replace(/^"|"$/g, "") : "N/A";
+
+            // Remove "N/A" entries
+            if (name === "N/A" || date === "N/A" || distance === "N/A" || location === "N/A") {
+                return null;
+            }
+
             return { name, date, distance, location };
-        });
+        }).filter(race => race !== null);
     }
 
     function displayRaces(filteredRaces) {
@@ -44,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         racesToShow.forEach(race => {
             const raceElement = document.createElement("div");
-            raceElement.classList.add("race");
+            raceElement.classList.add("race-card");
             raceElement.innerHTML = `
                 <h3>${race.name}</h3>
                 <p><strong>Date:</strong> ${race.date}</p>
