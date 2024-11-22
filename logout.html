@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logout - Ultramarathon Finder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Logout</h1>
+    </header>
+
+    <main class="container">
+        <h2>You have successfully logged out.</h2>
+        <p>Thank you for using Ultramarathon Finder!</p>
+        <a href="login.html" class="btn">Login Again</a>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Ultramarathon Finder. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Clear the token and perform logout
+        document.addEventListener("DOMContentLoaded", () => {
+            localStorage.removeItem('token'); // Remove the JWT token
+            console.log('User logged out: token cleared');
+        });
+    </script>
+</body>
+</html>

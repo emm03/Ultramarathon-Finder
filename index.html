@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultramarathon Finder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <img src="ultralogo.jpg" alt="Ultramarathon Finder Logo" class="logo">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="race_directory.html">Race Directory</a>
+            <a href="community.html">Community</a>
+            <a href="training_tips.html">Training Tips</a>
+            <a href="gear_forum.html">Gear Recommendations</a>
+            <a href="race_experiences.html">Race Experiences</a>
+            <a href="account.html">Account</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Carousel Section -->
+        <div class="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="images/ultramarathon_images/download1_ultramarathon.jpeg" alt="Trail Run">
+                </div>
+                <div class="carousel-item">
+                    <img src="images/ultramarathon_images/download (2).jpeg" alt="Mountain Trail">
+                </div>
+                <div class="carousel-item">
+                    <img src="images/ultramarathon_images/download3_ultramarathon.jpg" alt="Desert Landscape">
+                </div>
+                <div class="carousel-item">
+                    <img src="images/ultramarathon_images/download4_ultramarathon.jpeg" alt="Forest Path">
+                </div>
+                <div class="carousel-item">
+                    <img src="images/ultramarathon_images/download5_ultramarathon.jpeg" alt="Scenic Mountain View">
+                </div>
+                <div class="carousel-item">
+                    <img src="images/ultramarathon_images/ultra_trail.jpg" alt="Ultramarathon Trail">
+                </div>
+            </div>
+            <button class="carousel-control-prev" onclick="prevSlide()">&#10094;</button>
+            <button class="carousel-control-next" onclick="nextSlide()">&#10095;</button>
+        </div>
+
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <div class="welcome-content">
+                <h1>Welcome to Ultramarathon Finder</h1>
+                <p>Discover, prepare, and connect with ultramarathons worldwide!</p>
+                <button onclick="window.location.href='race_directory.html'">Find a Race</button>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features">
+            <!-- Find a Race -->
+            <div class="feature">
+                <h2>Find a Race</h2>
+                <p>Explore our comprehensive directory of ultramarathons by distance, location, and terrain.</p>
+                <button class="orange-btn" onclick="window.location.href='race_directory.html'">View Directory</button>
+            </div>
+
+            <!-- Join the Community -->
+            <div class="feature">
+                <h2>Join the Community</h2>
+                <p>Connect with fellow ultrarunners for training tips, race strategies, and more.</p>
+                <button class="orange-btn" onclick="window.location.href='community.html'">Explore the Community</button>
+            </div>
+
+            <!-- Training Tips -->
+            <div class="feature">
+                <h2>Training Tips</h2>
+                <p>Access expert advice on training, nutrition, and recovery for ultramarathons.</p>
+                <button class="orange-btn" onclick="window.location.href='training_tips.html'">Start Training</button>
+            </div>
+
+            <!-- Account Section -->
+            <div class="feature">
+                <h2>Account</h2>
+                <p>Manage your account, login, and registration. Stay connected and achieve your goals.</p>
+                <div class="account-buttons">
+                    <button class="orange-btn" onclick="window.location.href='login.html'">Login</button>
+                    <button class="orange-btn" onclick="window.location.href='register.html'">Register</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Ultramarathon Finder. All rights reserved.</p>
+        <p><a href="#">Contact Us</a> | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+    </footer>
+
+    <script src="index_script.js"></script>
+</body>
+</html>

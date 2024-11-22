@@ -1,0 +1,1229 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+    background-color: #f4f4f4;
+}
+
+/* Header Styles */
+header {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+}
+
+header .logo {
+    width: 50px;
+    margin-right: 10px;
+}
+
+header nav a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 15px;
+    font-weight: bold;
+}
+
+header nav a:hover {
+    text-decoration: underline;
+}
+
+/* Carousel styling */
+.carousel {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.carousel-inner {
+    display: flex;
+    transition: transform 0.5s ease;
+}
+
+.carousel-item {
+    min-width: 100%;
+    transition: opacity 0.5s ease;
+    position: relative;
+}
+
+.carousel-item img {
+    width: 100%;
+    height: auto;
+}
+
+.carousel-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    color: #fff;
+    max-width: 60%;
+}
+
+.carousel-control-prev, .carousel-control-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.carousel-control-prev {
+    left: 10px;
+}
+
+.carousel-control-next {
+    right: 10px;
+}
+.carousel-item {
+    display: none; /* Hide all slides by default */
+}
+
+.carousel-item.active {
+    display: block; /* Show only the active slide */
+}
+
+/* Welcome Section (Overlay Style) */
+.welcome-section {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 80%;
+}
+
+.welcome-section h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.welcome-section p {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.welcome-section button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #f7931e;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.welcome-section button:hover {
+    background-color: #e5801b;
+}
+
+/* Features Section */
+.features {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start; 
+    margin-top: 40px;
+    padding: 40px 0;
+}
+
+.feature {
+    text-align: center;
+    width: 30%; /* Adjust width for consistent layout */
+    display: flex;
+    flex-direction: column; /* Stack content vertically */
+    justify-content: space-between; /* Align content with other sections */
+    align-items: center; /* Center content horizontally */
+    min-height: 300px; /* Set a consistent minimum height for all sections */
+}
+
+.feature h2 {
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.feature p {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 10px 0; /* Add spacing below the paragraph */
+    min-height: 40px;
+}
+
+.feature a,
+.feature.account-buttons a {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #f7931e;
+    color: #fff;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 10px; /* Add uniform spacing for buttons */
+}
+
+.feature a:hover,
+.feature.account-buttons a:hover {
+    background-color: #e5801b;
+}
+
+/* Specific styles for Login and Register buttons */
+.account-buttons {
+    display: flex; /* Flexbox for Login/Register alignment */
+    justify-content: center; /* Center horizontally */
+    gap: 10px; /* Add spacing between Login and Register */
+    margin-top: 0; /* Align Login/Register buttons with others */
+}
+
+/* General orange button styling */
+.orange-btn {
+    display: inline-block;
+    margin: 10px auto; /* Adjusted for spacing */
+    padding: 10px 20px;
+    background-color: #f7931e; /* Orange button color */
+    color: #fff;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer; /* Pointer cursor for buttons */
+    text-align: center;
+}
+
+.orange-btn:hover {
+    background-color: #e5801b; /* Darker orange for hover */
+}
+
+/* Footer Styles */
+footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: 20px;
+}
+
+footer a {
+    color: #f7931e;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* Community Page Styles */
+.community-hero {
+    text-align: center;
+    padding: 60px 20px;
+    background-color: #333;
+    color: #fff;
+}
+
+.community-hero h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.community-hero p {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.community-hero button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #f7931e;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.community-hero button:hover {
+    background-color: #e5801b;
+}
+
+/* Forum Section */
+.forum {
+    padding: 40px 20px;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.forum h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+}
+
+/* Recent Posts Section */
+.recent-posts {
+    padding: 40px 20px;
+    background-color: #fff;
+    text-align: center;
+}
+
+.recent-posts h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+}
+
+.post {
+    background-color: #f9f9f9;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+}
+
+.post h3 {
+    font-size: 1.25rem;
+    color: #333;
+}
+
+.post p {
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.post button {
+    padding: 8px 16px;
+    background-color: #f7931e;
+    color: #fff;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.post button:hover {
+    background-color: #e5801b;
+}
+
+/* Community Forum and Recent Posts Styling */
+.forum-section, .recent-posts {
+    margin: 40px auto;
+    max-width: 800px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.forum-topic, .post {
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.forum-topic h3, .post h3 {
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.forum-topic p, .post p {
+    font-size: 1rem;
+    color: #666;
+    margin: 10px 0;
+}
+
+.forum-topic button, .post button {
+    background-color: #f7931e;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.forum-topic button:hover, .post button:hover {
+    background-color: #e5801b;
+}
+
+/* Nutrition Tips Page Styling */
+.nutrition-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nutrition-container h1 {
+    font-size: 2rem;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.nutrition-container p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.nutrition-container h2 {
+    font-size: 1.25rem;
+    color: #333;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.nutrition-container ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.nutrition-container li {
+    margin-bottom: 10px;
+}
+
+.nutrition-container a {
+    color: #f7931e;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.nutrition-container a:hover {
+    text-decoration: underline;
+}
+
+/* Further Reading Section */
+.further-reading {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+}
+
+.further-reading h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.further-reading ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.further-reading li {
+    margin-bottom: 10px;
+}
+
+.further-reading li a {
+    color: #0073e6;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.further-reading li a:hover {
+    text-decoration: underline;
+}
+
+/* Essential Gear Page Styling */
+.nutrition-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.nutrition-container h1 {
+    font-size: 2rem;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.nutrition-container p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.nutrition-container h2 {
+    font-size: 1.25rem;
+    color: #333;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.further-reading {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+}
+
+.further-reading h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.further-reading ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.further-reading li {
+    margin-bottom: 10px;
+}
+
+.further-reading li a {
+    color: #0073e6;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.further-reading li a:hover {
+    text-decoration: underline;
+}
+
+.community-section {
+    text-align: center;
+    padding: 40px 0;
+}
+
+.community-section h1 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+}
+
+
+.category {
+    width: 300px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.category h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.category p {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    color: #666;
+}
+
+.view-posts-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #f7931e;
+    color: #fff;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.view-posts-button:hover {
+    background-color: #e5801b;
+}
+/* Community Forum Layout */
+.community-section {
+    text-align: center;
+    padding: 40px 0;
+}
+
+.community-section h1 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+}
+
+.category {
+    width: 300px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.category h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.category p {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    color: #666;
+}
+
+.view-posts-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #f7931e;
+    color: #fff;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.view-posts-button:hover {
+    background-color: #e5801b;
+}
+
+/* Recent Posts Section */
+.recent-posts {
+    text-align: center;
+    margin-top: 40px;
+    padding: 40px 0;
+}
+
+.recent-posts h2 {
+    font-size: 1.75rem;
+    margin-bottom: 30px;
+}
+
+.post {
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    width: 300px;
+    display: inline-block;
+    text-align: center;
+    margin: 10px;
+}
+
+.post h3 {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+}
+
+.post p {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.read-more-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #f7931e;
+    color: #fff;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.read-more-button:hover {
+    background-color: #e5801b;
+}
+/* Forum Section Styles */
+.forum-section {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.forum-cards {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.forum-card {
+    width: 30%; /* Adjust to fit three in a row */
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border-radius: 8px;
+}
+
+.forum-card h3 {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+}
+
+.forum-card p {
+    font-size: 1rem;
+    color: #666;
+}
+
+.forum-card a {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #f7931e;
+    color: #fff;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.forum-card a:hover {
+    background-color: #e5801b;
+}
+
+/* Recent Posts Section Styles */
+.recent-posts {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.recent-post-card {
+    width: 80%;
+    max-width: 600px;
+    margin: 0 auto 15px;
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.recent-post-card h4 {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+}
+
+.recent-post-card p {
+    font-size: 1rem;
+    color: #666;
+}
+
+.recent-post-card a {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #f7931e;
+    color: #fff;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.recent-post-card a:hover {
+    background-color: #e5801b;
+}
+
+.forum-categories {
+    display: flex;
+    justify-content: space-between; /* Spread the boxes evenly */
+    gap: 20px;
+    max-width: 1200px; /* Increase max width */
+    margin: 0 auto;
+    flex-wrap: nowrap; /* Prevent wrapping */
+    padding: 0 20px; /* Add padding for responsiveness */
+}
+
+.forum-category {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    flex: 1; /* Make each box flexible and take equal space */
+    max-width: 30%; /* Limit width to about a third */
+    text-align: center;
+}
+
+.forum-category h3 {
+    font-size: 1.25rem;
+    color: #333;
+}
+
+.forum-category p {
+    font-size: 1rem;
+    color: #666;
+}
+
+.forum-category button {
+    padding: 10px 20px;
+    background-color: #f7931e;
+    color: #fff;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.forum-category button:hover {
+    background-color: #e5801b;
+}
+/* Forum Form */
+.forum-form {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.forum-form textarea {
+    width: 100%;
+    max-width: 600px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    resize: vertical;
+}
+
+.forum-form button {
+    padding: 10px 20px;
+    background-color: #f7931e;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.forum-form button:hover {
+    background-color: #e5801b;
+}
+
+/* Forum Posts */
+.forum-posts {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.post {
+    padding: 15px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.post h4 {
+    margin: 0 0 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.post p {
+    font-size: 0.95rem;
+    color: #666;
+    line-height: 1.5;
+}
+/* Race Directory Styling */
+.directory-section {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.filters {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filters input, .filters select, .filters button {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.filters input {
+    width: 200px;
+}
+
+.filters button {
+    background-color: #f7931e;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.filters button:hover {
+    background-color: #e5801b;
+}
+
+.race-card {
+    background-color: #fff;
+    padding: 20px;
+    margin: 10px auto;
+    max-width: 600px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+.race-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.race-card p {
+    font-size: 1rem;
+    color: #666;
+}
+/* Enhancing the Race Directory Style */
+.directory-section {
+    text-align: center;
+    margin: 20px;
+}
+
+.filters {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#search-bar, #distance-filter, #reset-filters {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+}
+
+#reset-filters {
+    background-color: #f7931e;
+    color: #fff;
+    cursor: pointer;
+}
+
+#reset-filters:hover {
+    background-color: #e5801b;
+}
+
+#race-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.race-card {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    margin: 10px;
+    width: 80%;
+    max-width: 600px;
+    text-align: left;
+}
+
+.race-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.race-card p {
+    margin: 5px 0;
+    color: #666;
+    font-size: 0.95rem;
+}
+/* Center the race directory content */
+.directory-section {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Race element styling */
+.race {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Pagination controls styling */
+.pagination-controls {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.pagination-controls .page-button {
+    background-color: #f7931e;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    margin: 0 3px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.pagination-controls .page-button.active {
+    background-color: #e5801b;
+    font-weight: bold;
+}
+
+.pagination-controls .page-button:hover {
+    background-color: #d96e15;
+}
+.pagination-controls .dots {
+    padding: 0 5px;
+    color: #666;
+    font-size: 14px;
+}
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    background: #333;
+    color: #fff;
+    padding: 1rem;
+    text-align: center;
+}
+
+header nav {
+    margin: 1rem 0;
+}
+
+header nav a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 1rem;
+    font-size: 1.2rem;
+}
+
+header nav a:hover {
+    text-decoration: underline;
+}
+
+.account-section {
+    background: #fff;
+    margin: 2rem auto;
+    padding: 2rem;
+    max-width: 500px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.account-section h2 {
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.account-section p {
+    font-size: 1rem;
+    color: #666;
+}
+
+button {
+    background: #5cb85c;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+button:hover {
+    background: #4cae4c;
+}
+
+/* Comment Form Styling */
+#comment-form {
+    display: flex;
+    flex-direction: column;
+    margin: 20px 0;
+    align-items: center;
+}
+
+#comment-input {
+    width: 90%;
+    max-width: 600px;
+    height: 100px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    resize: vertical;
+    font-size: 1rem;
+    background-color: #f9f9f9;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#comment-input:focus {
+    outline: none;
+    border-color: #f7931e;
+    box-shadow: 0 0 5px rgba(247, 147, 30, 0.5);
+}
+
+.post-btn {
+    padding: 10px 20px;
+    background-color: #f7931e;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.post-btn:hover {
+    background-color: #e5801b;
+}
+
+.post-btn:active {
+    background-color: #cc6f18;
+}
+
+/* Comments Section Styling */
+#comments-section {
+    margin: 20px 0;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+}
+
+/* Individual Comment Styling */
+.comment {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    transition: box-shadow 0.3s ease;
+}
+
+.comment:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.comment h4 {
+    margin: 0;
+    font-size: 1.2em;
+    color: #333;
+    font-weight: bold;
+}
+
+.comment small {
+    color: gray;
+    font-size: 0.8em;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.comment p {
+    margin: 10px 0;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+/* Button Styling */
+.like-btn, .reply-btn {
+    margin-top: 10px;
+    margin-right: 10px;
+    background-color: orange;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.like-btn:hover, .reply-btn:hover {
+    background-color: darkorange;
+}
+
+.like-btn:focus, .reply-btn:focus {
+    outline: none;
+}
+
+/* Replies Section */
+.replies {
+    margin-top: 15px;
+    padding-left: 20px;
+    border-left: 2px solid #ccc;
+    background-color: #fdfdfd;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.reply {
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #f7f7f7;
+}
+
+.reply h5 {
+    margin: 0;
+    font-size: 1em;
+    color: #555;
+    font-weight: bold;
+}
+
+.reply small {
+    color: gray;
+    font-size: 0.8em;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.reply p {
+    margin: 5px 0;
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #comment-input {
+        font-size: 0.9rem;
+    }
+
+    .post-btn {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
+
+    .comment {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    .like-btn, .reply-btn {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+
+    .reply {
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+}
+

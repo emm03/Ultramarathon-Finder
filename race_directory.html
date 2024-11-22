@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Race Directory - Ultramarathon Finder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <img src="ultralogo.jpg" alt="Ultramarathon Finder Logo" class="logo">
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="race_directory.html">Race Directory</a>
+            <a href="community.html">Community</a>
+            <a href="training_tips.html">Training Tips</a>
+            <a href="gear_forum.html">Gear Recommendations</a>
+            <a href="race_experiences.html">Race Experiences</a>
+            <a href="account.html">Account</a> <!-- New Account link -->
+        </nav>
+    </header>
+    <main>
+        <section class="directory-section">
+            <h2>Race Directory</h2>
+            <p>Explore our directory of ultramarathons around the world! Use filters to find races by distance, location, and other attributes.</p>
+            <div class="filters">
+                <input type="text" id="search-bar" placeholder="Search by name, location">
+                <select id="distance-filter">
+                    <option value="">All Distances</option>
+                    <option value="50k">50K</option>
+                    <option value="100k">100K</option>
+                    <option value="50 miles">50 miles</option>
+                    <option value="100 miles">100 miles</option>
+                    <option value="150 miles">150 miles</option>
+                    <option value="200 miles">200 miles</option>
+                </select>
+                <button id="reset-filters">Reset Filters</button>
+            </div>
+            <div id="race-list"></div>
+            <div id="pagination-controls" class="pagination-controls"></div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Ultramarathon Finder. All rights reserved.</p>
+        <p><a href="#">Contact Us</a> | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+    </footer>
+    <script src="race_directory_script.js"></script>
+</body>
+</html>
