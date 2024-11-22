@@ -1,148 +1,211 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Carousel Functionality
-    const slides = document.querySelectorAll(".carousel-item");
-    if (slides.length) {
-        let currentIndex = 0;
-        const autoSlideInterval = 5000;
+    const commentForm = document.getElementById("commentForm");
+    const commentsContainer = document.getElementById("commentsContainer");
+    const forumName = "race_experiences"; // Forum identifier
 
-        function showSlide(index) {
-            slides.forEach((slide) => slide.classList.remove("active"));
-            currentIndex = (index + slides.length) % slides.length;
-            slides[currentIndex].classList.add("active");
-        }
-
-        function nextSlide() {
-            showSlide(currentIndex + 1);
-        }
-
-        function prevSlide() {
-            showSlide(currentIndex - 1);
-        }
-
-        document.querySelector(".carousel-control-next")?.addEventListener("click", nextSlide);
-        document.querySelector(".carousel-control-prev")?.addEventListener("click", prevSlide);
-
-        let slideTimer = setInterval(nextSlide, autoSlideInterval);
-
-        document.querySelector(".carousel")?.addEventListener("mouseover", () => clearInterval(slideTimer));
-        document.querySelector(".carousel")?.addEventListener("mouseout", () => {
-            slideTimer = setInterval(nextSlide, autoSlideInterval);
-        });
-
-        showSlide(currentIndex);
-    }
-
-    // Race Directory Functionality
-    const raceList = document.getElementById("race-list");
-    const searchBar = document.getElementById("search-bar");
-    const distanceFilter = document.getElementById("distance-filter");
-    const resetButton = document.getElementById("reset-filters");
-    const paginationControls = document.getElementById("pagination-controls");
-    let races = [];
-    let currentPage = 1;
-    const racesPerPage = 20;
-
-    function fetchRaces() {
-        fetch("duv_ultramarathons.csv")
-            .then((response) => response.text())
-            .then((data) => {
-                races = parseCSV(data);
-                filterRaces();
-            })
-            .catch((error) => console.error("Error fetching races:", error));
-    }
-
-    function parseCSV(data) {
-        return data.split("\n").slice(1).map((row) => {
-            const columns = row.split(",");
-            const [name, date, distance, location] = columns.map((col) => col.trim());
-            return { name, date, distance, location };
-        });
-    }
-
-    function filterRaces() {
-        const searchText = searchBar?.value.toLowerCase() || "";
-        const selectedDistance = distanceFilter?.value.toLowerCase() || "";
-
-        const filteredRaces = races.filter((race) => {
-            const matchesSearch = race.name.toLowerCase().includes(searchText);
-            const matchesDistance = selectedDistance === "" || race.distance.toLowerCase().includes(selectedDistance);
-            return matchesSearch && matchesDistance;
-        });
-
-        displayRaces(filteredRaces);
-    }
-
-    function displayRaces(filteredRaces) {
-        raceList.innerHTML = filteredRaces.slice((currentPage - 1) * racesPerPage, currentPage * racesPerPage)
-            .map((race) => `
-                <div class="race">
-                    <h3>${race.name}</h3>
-                    <p>${race.date} - ${race.distance} - ${race.location}</p>
-                </div>
-            `).join("");
-    }
-
-    if (searchBar && distanceFilter && resetButton) {
-        searchBar.addEventListener("input", filterRaces);
-        distanceFilter.addEventListener("change", filterRaces);
-        resetButton.addEventListener("click", () => {
-            searchBar.value = "";
-            distanceFilter.value = "";
-            filterRaces();
-        });
-
-        fetchRaces();
-    }
-
-    // Forum Functionality
-    const commentForm = document.querySelector(".forum-form");
-    const commentsSection = document.querySelector(".forum-posts");
-    const forumName = document.querySelector("main")?.dataset?.forum;
-
+    // Fetch and display comments
     async function fetchComments() {
         try {
-            const response = await fetch(`/api/forum/comments/${forumName}`);
-            if (!response.ok) throw new Error("Failed to fetch comments");
+            console.log(`Fetching comments for forum: ${forumName}`);
+            const response = await fetch(`https://ultra-finder-backend-f3b8ba349529.herokuapp.com/api/forum/comments/${forumName}`);
+            if (!response.ok) {
+                console.error("Error fetching comments. Status:", response.status);
+                return;
+            }
 
             const comments = await response.json();
-            commentsSection.innerHTML = comments.map((comment) => `
-                <div class="post">
-                    <h4>${comment.username || "Anonymous"}</h4>
+            commentsContainer.innerHTML = ""; // Clear existing comments
+            comments.forEach((comment) => {
+                const commentDiv = document.createElement("div");
+                commentDiv.classList.add("comment");
+                commentDiv.innerHTML = `
+                    <h4>${comment.username} <small>${new Date(comment.timestamp).toLocaleString()}</small></h4>
                     <p>${comment.content}</p>
-                    <small>${new Date(comment.timestamp).toLocaleString()}</small>
-                </div>
-            `).join("");
+                    <div class="comment-actions">
+                        <button class="like-btn" data-id="${comment._id}">Like (${comment.likes || 0})</button>
+                        <button class="reply-btn" data-id="${comment._id}">Reply</button>
+                    </div>
+                    <div id="replies-${comment._id}" class="replies"></div>
+                `;
+                commentsContainer.appendChild(commentDiv);
+
+                // Load replies for the comment
+                fetchReplies(comment._id);
+            });
+
+            console.log("Comments loaded successfully.");
         } catch (error) {
             console.error("Error fetching comments:", error);
         }
     }
 
-    async function postComment(content) {
+    // Post a new comment
+    commentForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const content = document.getElementById("commentContent").value.trim();
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("User is not authenticated. Please login.");
+            return;
+        }
+
+        if (!content) {
+            alert("Comment content cannot be empty.");
+            return;
+        }
+
+        console.log("Submitting comment:", content);
+
         try {
-            const response = await fetch("/api/forum/comments", {
+            const response = await fetch("https://ultra-finder-backend-f3b8ba349529.herokuapp.com/api/forum/comments", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    "Authorization": `Bearer ${token}` // Ensure token is sent
                 },
                 body: JSON.stringify({ content, forum: forumName }),
             });
 
-            if (!response.ok) throw new Error("Failed to post comment");
-            fetchComments();
+            if (response.ok) {
+                console.log("Comment posted successfully.");
+                commentForm.reset();
+                fetchComments(); // Reload comments after posting
+            } else {
+                const errorData = await response.json();
+                console.error("Error posting comment:", errorData);
+                alert(`Failed to post comment: ${errorData.message}`);
+            }
         } catch (error) {
             console.error("Error posting comment:", error);
         }
+    });
+
+    // Fetch replies for a specific comment
+    async function fetchReplies(commentId) {
+        try {
+            console.log(`Fetching replies for comment ID: ${commentId}`);
+            const response = await fetch(`https://ultra-finder-backend-f3b8ba349529.herokuapp.com/api/forum/comments/${commentId}/replies`);
+            if (!response.ok) {
+                console.error("Error fetching replies. Status:", response.status);
+                return;
+            }
+
+            const replies = await response.json();
+            const repliesContainer = document.getElementById(`replies-${commentId}`);
+            repliesContainer.innerHTML = ""; // Clear existing replies
+
+            replies.forEach((reply) => {
+                const replyDiv = document.createElement("div");
+                replyDiv.classList.add("reply");
+                replyDiv.innerHTML = `
+                    <h4>${reply.username} <small>${new Date(reply.timestamp).toLocaleString()}</small></h4>
+                    <p>${reply.content}</p>
+                `;
+                repliesContainer.appendChild(replyDiv);
+            });
+
+            console.log("Replies loaded successfully.");
+        } catch (error) {
+            console.error("Error fetching replies:", error);
+        }
     }
 
-    if (commentForm && commentsSection) {
-        commentForm.addEventListener("submit", (event) => {
-            event.preventDefault();
-            const content = commentForm.querySelector("textarea").value.trim();
-            if (content) postComment(content);
-        });
+    // Show reply form for a specific comment
+    function showReplyForm(commentId) {
+        const repliesContainer = document.getElementById(`replies-${commentId}`);
+        // Prevent multiple forms from being added
+        if (repliesContainer.querySelector(".reply-form")) return;
 
-        fetchComments();
+        const replyForm = document.createElement("form");
+        replyForm.classList.add("reply-form");
+        replyForm.innerHTML = `
+            <textarea placeholder="Write your reply..." required></textarea>
+            <button type="submit">Post Reply</button>
+        `;
+        replyForm.onsubmit = (event) => postReply(event, commentId);
+        repliesContainer.appendChild(replyForm);
     }
+
+    // Post a reply to a specific comment
+    async function postReply(event, commentId) {
+        event.preventDefault();
+        const content = event.target.querySelector("textarea").value.trim();
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("User is not authenticated. Please login.");
+            return;
+        }
+
+        if (!content) {
+            alert("Reply content cannot be empty.");
+            return;
+        }
+
+        console.log(`Posting reply to comment ID: ${commentId}, content: ${content}`);
+
+        try {
+            const response = await fetch(`https://ultra-finder-backend-f3b8ba349529.herokuapp.com/api/forum/comments/${commentId}/reply`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}` // Ensure token is sent
+                },
+                body: JSON.stringify({ content }),
+            });
+
+            if (response.ok) {
+                console.log("Reply posted successfully.");
+                fetchReplies(commentId); // Reload replies after posting
+            } else {
+                const errorData = await response.json();
+                console.error("Error posting reply:", errorData);
+                alert(`Failed to post reply: ${errorData.message}`);
+            }
+        } catch (error) {
+            console.error("Error posting reply:", error);
+        }
+    }
+
+    // Like a comment
+    commentsContainer.addEventListener("click", async (event) => {
+        if (event.target.classList.contains("like-btn")) {
+            const commentId = event.target.dataset.id;
+
+            const token = localStorage.getItem("token");
+            if (!token) {
+                alert("User is not authenticated. Please login.");
+                return;
+            }
+
+            console.log(`Liking comment with ID: ${commentId}`);
+
+            try {
+                const response = await fetch(`https://ultra-finder-backend-f3b8ba349529.herokuapp.com/api/forum/comments/${commentId}/like`, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}` // Ensure token is sent
+                    }
+                });
+
+                if (response.ok) {
+                    console.log("Comment liked successfully.");
+                    fetchComments(); // Reload comments after liking
+                } else {
+                    const errorData = await response.json();
+                    console.error("Error liking comment:", errorData);
+                    alert(`Failed to like comment: ${errorData.message}`);
+                }
+            } catch (error) {
+                console.error("Error liking comment:", error);
+            }
+        } else if (event.target.classList.contains("reply-btn")) {
+            const commentId = event.target.dataset.id;
+            showReplyForm(commentId);
+        }
+    });
+
+    // Initial load
+    fetchComments();
 });

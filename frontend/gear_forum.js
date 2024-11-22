@@ -3,7 +3,7 @@ const forumName = "gear_forum"; // Forum identifier
 // Fetch comments from the backend
 async function fetchComments() {
     try {
-        const response = await fetch(`https://ultramarathon-finder-backend-fab5585812fb.herokuapp.com/api/forum/comments/${forumName}`);
+        const response = await fetch(`https://ultra-finder-backend-f3b8ba349529.herokuapp.com/api/forum/comments/${forumName}`);
         if (!response.ok) {
             console.error("Error fetching comments. Status:", response.status);
             alert(`Failed to fetch comments. Status code: ${response.status}`);
@@ -55,7 +55,7 @@ async function postComment(event) {
     console.log("Token being used for posting comment:", token);
 
     try {
-        const response = await fetch("https://ultramarathon-finder-backend-fab5585812fb.herokuapp.com/api/forum/comments", {
+        const response = await fetch("https://ultra-finder-backend-f3b8ba349529.herokuapp.com/api/forum/comments", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -83,7 +83,7 @@ async function postComment(event) {
 // Fetch replies for a specific comment
 async function fetchReplies(commentId) {
     try {
-        const response = await fetch(`https://ultramarathon-finder-backend-fab5585812fb.herokuapp.com/api/forum/comments/${commentId}/replies`);
+        const response = await fetch(`https://ultra-finder-backend-f3b8ba349529.herokuapp.com/api/forum/comments/${commentId}/replies`);
         if (!response.ok) {
             console.error("Error fetching replies. Status:", response.status);
             alert(`Failed to fetch replies. Status code: ${response.status}`);
@@ -143,7 +143,7 @@ async function postReply(event, commentId) {
     console.log("Token being used for posting reply:", token);
 
     try {
-        const response = await fetch(`https://ultramarathon-finder-backend-fab5585812fb.herokuapp.com/api/forum/comments/${commentId}/reply`, {
+        const response = await fetch(`https://ultra-finder-backend-f3b8ba349529.herokuapp.com/api/forum/comments/${commentId}/reply`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -177,7 +177,7 @@ async function likeComment(commentId) {
     console.log("Token being used for liking comment:", token);
 
     try {
-        const response = await fetch(`https://ultramarathon-finder-backend-fab5585812fb.herokuapp.com/api/forum/comments/${commentId}/like`, {
+        const response = await fetch(`https://ultra-finder-backend-f3b8ba349529.herokuapp.com/api/forum/comments/${commentId}/like`, {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${token}`

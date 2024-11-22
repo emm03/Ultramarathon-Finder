@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const racesPerPage = 20;
 
     function fetchRaces() {
-        fetch("duv_ultramarathons.csv")
+        fetch("frontend/duv_ultramarathons.csv")
             .then(response => response.text())
             .then(data => {
                 races = parseCSV(data);
