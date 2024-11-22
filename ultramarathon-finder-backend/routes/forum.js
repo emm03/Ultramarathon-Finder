@@ -39,8 +39,23 @@ router.get('/:forumId/comments', async (req, res) => {
     }
 });
 
+// Fetch replies for a specific comment
+router.get('/comment/:commentId/replies', async (req, res) => {
+    try {
+        const comment = await Comment.findById(req.params.commentId);
+        if (!comment) {
+            return res.status(404).json({ message: 'Comment not found' });
+        }
+
+        res.json(comment.replies);
+    } catch (error) {
+        console.error('Error fetching replies:', error.message);
+        res.status(500).json({ message: 'Internal server error while fetching replies' });
+    }
+});
+
 // Like a comment
-router.put('/comment/:commentId/like', authenticateToken, async (req, res) => {
+router.post('/comment/:commentId/like', authenticateToken, async (req, res) => {
     try {
         const comment = await Comment.findByIdAndUpdate(
             req.params.commentId,
