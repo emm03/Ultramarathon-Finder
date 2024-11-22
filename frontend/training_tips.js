@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function fetchComments() {
         try {
             console.log(`Fetching comments for forum: ${forumName}`);
-            const response = await fetch(`https://ultramarathon-finder-backend-fab5585812fb.herokuapp.com/api/forum/comments/${forumName}`);
+            const response = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/forum/comments/${forumName}`);
             if (!response.ok) {
                 console.error("Error fetching comments. Status:", response.status);
                 alert(`Failed to fetch comments. Status code: ${response.status}`);
@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Submitting comment:", content);
 
         try {
-            const response = await fetch("https://ultramarathon-finder-backend-fab5585812fb.herokuapp.com/api/forum/comments", {
+            const response = await fetch("https://ultramarathon-finder-backend.onrender.com/api/forum/comments", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function fetchReplies(commentId) {
         try {
             console.log(`Fetching replies for comment ID: ${commentId}`);
-            const response = await fetch(`https://ultramarathon-finder-backend-fab5585812fb.herokuapp.com/api/forum/comments/${commentId}/replies`);
+            const response = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/forum/comments/${commentId}/replies`);
             if (!response.ok) {
                 console.error("Error fetching replies. Status:", response.status);
                 alert(`Failed to fetch replies. Status code: ${response.status}`);
@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log(`Posting reply to comment ID: ${commentId}, content: ${content}`);
 
         try {
-            const response = await fetch(`https://ultramarathon-finder-backend-fab5585812fb.herokuapp.com/api/forum/comments/${commentId}/reply`, {
+            const response = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/forum/comments/${commentId}/reply`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -188,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log(`Liking comment with ID: ${commentId}`);
 
             try {
-                const response = await fetch(`https://ultramarathon-finder-backend-fab5585812fb.herokuapp.com/api/forum/comments/${commentId}/like`, {
+                const response = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/forum/comments/${commentId}/like`, {
                     method: "POST",
                     headers: {
                         "Authorization": `Bearer ${token}` // Ensure token is sent
