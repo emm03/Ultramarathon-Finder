@@ -11,7 +11,7 @@
         <h1>Ultramarathon Finder</h1>
         <nav>
             <a href="index.html">Home</a>
-            <a href="race_directory.html">Race Direcotry</a>
+            <a href="race_directory.html">Race Directory</a>
             <a href="community.html">Community</a>
             <a href="training_tips.html">Training Tips</a>
             <a href="gear_forum.html">Gear Recommendations</a> <!-- New tab -->
@@ -51,7 +51,7 @@
             }
 
             try {
-                const response = await fetch('http://localhost:5001/api/auth/account', {
+                const response = await fetch('https://ultra-finder-backend-f3b8ba349529.herokuapp.com/api/auth/account', {
                     method: 'GET',
                     headers: {
                         Authorization: `Bearer ${token}`,
