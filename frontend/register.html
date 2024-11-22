@@ -41,7 +41,7 @@
             const password = document.getElementById('password').value;
 
             try {
-                const response = await fetch('http://localhost:5001/api/auth/register', {
+                const response = await fetch('https://ultra-finder-backend-f3b8ba349529.herokuapp.com/api/auth/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
