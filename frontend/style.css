@@ -1,187 +1,272 @@
-/* General Styles */
-body {
-    font-family: Arial, sans-serif;
+/* General Reset */
+body, html {
     margin: 0;
     padding: 0;
-    color: #333;
-    background-color: #f4f4f4;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+/* Ensure No Unnecessary Margins or Gaps */
+main {
+    margin: 0;
+    padding: 0;
+    padding-top: 100px;
 }
 
 /* Header Styles */
 header {
-    display: flex;
-    align-items: center;
-    padding: 10px 20px;
+    display: flex; /* Use flexbox for layout */
+    align-items: center; /* Center items vertically */
+    justify-content: flex-start; /* Align all items to the left */
+    padding: 10px 20px; /* Balanced spacing */
     background-color: #333;
     color: #fff;
+    position: fixed; /* Keep the header fixed at the top */
+    top: 0;
+    width: 100%; /* Full width */
+    z-index: 1000;
+    height: 70px; /* Set header height */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    gap: 20px; /* Add spacing between the logo and navigation */
+}
+
+/* Logo Styling */
+header .logo-container {
+    display: flex;
+    align-items: center; /* Vertically align */
+    justify-content: flex-start; /* Keep the logo aligned to the left */
 }
 
 header .logo {
-    width: 50px;
-    margin-right: 10px;
+    width: 100px; /* Adjust the width to make it proportional */
+    height: auto; /* Maintain aspect ratio */
+}
+
+
+/* Navigation Styles */
+header nav {
+    display: flex; /* Align navigation items horizontally */
+    align-items: center; /* Center vertically */
+    flex-grow: 0; /* Prevent menu from stretching across the header */
+}
+
+header nav .menu {
+    list-style: none; /* Remove default list styles */
+    display: flex; /* Align navigation items horizontally */
+    gap: 15px; /* Add space between navigation items */
+    padding: 0;
+    margin: 0;
 }
 
 header nav a {
     color: #fff;
     text-decoration: none;
-    margin: 0 15px;
+    padding: 10px 15px; /* Padding for better clickability */
     font-weight: bold;
+    font-size: 1rem; /* Maintain readability */
+    white-space: nowrap; /* Prevent text wrapping */
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 header nav a:hover {
-    text-decoration: underline;
+    background-color: #555; /* Subtle hover effect */
+    border-radius: 5px;
 }
 
-/* Carousel styling */
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    header {
+        flex-wrap: wrap; /* Stack items on smaller screens */
+        height: auto;
+    }
+
+    header .logo {
+        width: 80px; /* Smaller logo for mobile */
+    }
+
+    header nav .menu {
+        justify-content: flex-start; /* Keep items aligned to the left */
+    }
+
+    header nav a {
+        font-size: 0.9rem;
+    }
+}
+
+/* Carousel Section */
 .carousel {
     position: relative;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
+    width: 100vw; /* Full width of the viewport */
+    height: 100vh; /* Full viewport height for better visuals */
     overflow: hidden;
+    background-color: #000; /* Fallback background */
+    margin: 0 auto;
 }
 
 .carousel-inner {
     display: flex;
-    transition: transform 0.5s ease;
+    flex-wrap: nowrap; /* Prevent wrapping */
+    transition: transform 0.5s ease-in-out; /* Smooth slide animation */
+    height: 100%; /* Match the carousel height */
+    width: 100%;
 }
 
 .carousel-item {
-    min-width: 100%;
-    transition: opacity 0.5s ease;
-    position: relative;
+    flex: 0 0 100%; /* Ensure each item takes up the full width */
+    height: 100%; /* Match the height of the carousel */
+    position: relative; /* For overlay positioning */
+    text-align: center; /* Center-align content inside */
 }
 
 .carousel-item img {
-    width: 100%;
-    height: auto;
+    width: 100vw; /* Stretch the image to fit the width */
+    height: 100vh; /* Stretch the image to fit the height */
+    object-fit: cover; /* Ensure the image maintains its aspect ratio while covering the area */
 }
 
-.carousel-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    color: #fff;
-    max-width: 60%;
-}
-
-.carousel-control-prev, .carousel-control-next {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 2rem;
-    background: none;
-    border: none;
-    color: #fff;
-    cursor: pointer;
-    z-index: 10;
-}
-
-.carousel-control-prev {
-    left: 10px;
-}
-
-.carousel-control-next {
-    right: 10px;
-}
-.carousel-item {
-    display: none; /* Hide all slides by default */
-}
-
-.carousel-item.active {
-    display: block; /* Show only the active slide */
-}
-
-/* Welcome Section (Overlay Style) */
-.welcome-section {
+/* Overlay Text for Carousel */
+.carousel-overlay {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
     color: #fff;
-    background: rgba(0, 0, 0, 0.5);
-    padding: 20px;
+    background: rgba(0, 0, 0, 0.6); /* Semi-transparent background for text readability */
+    padding: 20px 40px;
     border-radius: 10px;
-    max-width: 80%;
+    max-width: 90%; /* Adapt overlay width for smaller screens */
 }
 
-.welcome-section h1 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
+.carousel-overlay h1 {
+    font-size: 3rem; /* Large font for titles */
+    margin-bottom: 20px;
+    line-height: 1.2;
 }
 
-.welcome-section p {
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
+.carousel-overlay p {
+    font-size: 1.5rem; /* Slightly larger font for better visibility */
+    margin-bottom: 20px;
 }
 
-.welcome-section button {
-    padding: 10px 20px;
-    font-size: 1rem;
-    color: #fff;
+.carousel-overlay button {
+    padding: 12px 30px; /* Adjust button size */
+    font-size: 1.2rem;
     background-color: #f7931e;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.carousel-overlay button:hover {
+    background-color: #e5801b;
+    transform: scale(1.05); /* Add slight zoom on hover */
+}
+
+/* Responsive Design for Carousel */
+@media (max-width: 768px) {
+    .carousel {
+        height: 50vh; /* Reduce height for smaller screens */
+    }
+
+    .carousel-overlay h1 {
+        font-size: 2rem; /* Adjust heading size */
+    }
+
+    .carousel-overlay p {
+        font-size: 1rem; /* Adjust paragraph size */
+    }
+
+    .carousel-overlay button {
+        padding: 8px 20px; /* Adjust button size */
+        font-size: 1rem;
+    }
+}
+
+/* Welcome Section */
+.welcome-section {
+    margin: 60px auto; /* Add consistent spacing above and below */
+    padding: 40px 60px; /* Increase padding for breathing room */
+    text-align: center; /* Center align text */
+    color: #fff;
+    background: rgba(40, 40, 40, 1); /* Slightly darker background */
+    border-radius: 12px; /* Smoothly rounded edges */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
+    max-width: 1000px; /* Wider section for better layout on large screens */
+}
+
+.welcome-section h1 {
+    font-size: 2.8rem; /* Larger font for prominence */
+    margin-bottom: 25px; /* Add space below the heading */
+    font-weight: bold;
+}
+
+.welcome-section p {
+    font-size: 1.4rem; /* Larger font for readability */
+    margin-bottom: 25px;
+    line-height: 1.8; /* Increase line spacing for better readability */
+}
+
+.welcome-section button {
+    padding: 15px 30px; /* Larger button for better visibility */
+    font-size: 1.3rem;
+    background-color: #f7931e;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .welcome-section button:hover {
     background-color: #e5801b;
+    transform: scale(1.05); /* Slight zoom effect on hover */
 }
 
 /* Features Section */
 .features {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-around;
-    align-items: flex-start; 
-    margin-top: 40px;
-    padding: 40px 0;
+    gap: 30px; /* Add spacing between cards */
+    margin: 40px auto;
+    padding: 0 20px; /* Add padding for smaller screens */
+    max-width: 1200px; /* Limit width for better alignment */
 }
 
 .feature {
+    flex: 1;
+    min-width: 250px;
+    max-width: 350px; /* Ensure consistent size */
     text-align: center;
-    width: 30%; /* Adjust width for consistent layout */
-    display: flex;
-    flex-direction: column; /* Stack content vertically */
-    justify-content: space-between; /* Align content with other sections */
-    align-items: center; /* Center content horizontally */
-    min-height: 300px; /* Set a consistent minimum height for all sections */
+    background: #f7f7f7;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
 .feature h2 {
     font-size: 1.5rem;
+    margin-bottom: 15px;
     color: #333;
 }
 
 .feature p {
     font-size: 1rem;
-    color: #666;
-    margin-bottom: 10px 0; /* Add spacing below the paragraph */
-    min-height: 40px;
+    color: #555;
+    margin-bottom: 20px;
 }
 
-.feature a,
-.feature.account-buttons a {
-    display: inline-block;
+.feature button {
     padding: 10px 20px;
-    background-color: #f7931e;
-    color: #fff;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
     font-size: 1rem;
+    background-color: #f7931e;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
-    margin-top: 10px; /* Add uniform spacing for buttons */
+    transition: all 0.3s ease;
 }
 
-.feature a:hover,
-.feature.account-buttons a:hover {
+.feature button:hover {
     background-color: #e5801b;
 }
 
@@ -213,22 +298,111 @@ header nav a:hover {
     background-color: #e5801b; /* Darker orange for hover */
 }
 
-/* Footer Styles */
-footer {
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    padding: 10px 0;
-    margin-top: 20px;
+/* Footer Links */
+footer p a {
+    color: #f7931e;
+    text-decoration: none;
+    padding: 0 10px;
 }
 
-footer a {
+footer p a:hover {
+    text-decoration: underline;
+}
+
+/* Community Forum Styling */
+.community-section {
+    text-align: center;
+    padding: 40px 0;
+}
+
+.community-section h1 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+}
+
+/* Footer Styling */
+footer {
+    text-align: center;
+    background-color: #333;
+    color: #fff;
+    padding: 20px 0;
+    font-size: 0.9rem;
+}
+
+footer p {
+    margin: 5px 0;
+}
+
+footer p a {
     color: #f7931e;
+    text-decoration: none;
+    padding: 0 8px;
+}
+
+/* Navigation Menu Styles */
+.menu {
+    list-style: none;
+    display: flex;
+    justify-content: space-around; /* Distribute menu items evenly */
+    align-items: center;
+    padding: 0;
+    margin: 0;
+}
+
+.menu li {
+    position: relative;
+}
+
+.menu a {
+    text-decoration: none;
+    color: #fff;
+    padding: 10px 15px;
+    font-size: 1rem;
+}
+
+.menu a:hover {
+    background-color: #555;
+    border-radius: 5px;
+}
+
+/* Dropdown Menu Styles */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown a {
+    display: block;
+    padding: 10px 15px;
+    color: #fff;
     text-decoration: none;
 }
 
-footer a:hover {
-    text-decoration: underline;
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    background-color: #333;
+    min-width: 160px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-menu li {
+    display: block;
+}
+
+.dropdown-menu a {
+    padding: 10px 15px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.dropdown-menu a:hover {
+    background-color: #444;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
 }
 
 /* Community Page Styles */
@@ -989,36 +1163,6 @@ footer a:hover {
     color: #666;
     font-size: 14px;
 }
-/* General Styles */
-body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-}
-
-header {
-    background: #333;
-    color: #fff;
-    padding: 1rem;
-    text-align: center;
-}
-
-header nav {
-    margin: 1rem 0;
-}
-
-header nav a {
-    color: #fff;
-    text-decoration: none;
-    margin: 0 1rem;
-    font-size: 1.2rem;
-}
-
-header nav a:hover {
-    text-decoration: underline;
-}
 
 .account-section {
     background: #fff;
@@ -1225,5 +1369,11 @@ button:hover {
         padding: 8px;
         font-size: 0.9rem;
     }
+}
+.separator {
+    margin: 0 5px; /* Adjust spacing as needed */
+    color: inherit; /* Match text color */
+    text-decoration: none;
+    display: inline; /* Ensure it stays on the same line */
 }
 

@@ -7,35 +7,75 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>Edit Profile</h1>
+    <header class="sticky-header">
+        <div class="logo-container">
+            <img src="ultra.png" alt="Ultramarathon Finder Logo" class="logo">
+        </div>
         <nav>
-            <a href="index.html">Home</a>
-            <a href="account.html">Account</a>
+            <ul class="menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="race_directory.html">Race Directory</a></li>
+                <li class="dropdown">
+                    <a href="community.html">Community</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="gear_forum.html">Gear Forum</a></li>
+                        <li><a href="race_experiences.html">Race Experiences</a></li>
+                        <li><a href="training_tips.html">Training Tips Forum</a></li>
+                    </ul>
+                </li>
+                <li id="account-tab"></li>
+            </ul>
         </nav>
     </header>
 
-    <div class="container">
-        <h2>Update Your Information</h2>
-        <form id="profile-form">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-            
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-            
-            <button type="submit" class="btn">Save Changes</button>
-        </form>
+    <main>
+        <div class="container">
+            <h2>Update Your Information</h2>
+            <form id="profile-form">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                
+                <button type="submit" class="btn">Save Changes</button>
+            </form>
 
-        <p id="success-message" style="color: green; display: none;">Profile updated successfully!</p>
-        <p id="error-message" style="color: red; display: none;">Error updating profile.</p>
-    </div>
+            <p id="success-message" class="success-message" style="display: none;">Profile updated successfully!</p>
+            <p id="error-message" class="error-message" style="display: none;">Error updating profile.</p>
+        </div>
+    </main>
 
     <footer>
         <p>&copy; 2024 Ultramarathon Finder. All rights reserved.</p>
+        <p>
+            <a href="contact.html">Contact Us</a> | 
+            <a href="privacy.html">Privacy Policy</a> | 
+            <a href="terms.html">Terms of Service</a> | 
+            <a href="about.html">About Us</a> | 
+            <a href="faq.html">FAQ</a>
+        </p>
     </footer>
 
     <script>
+        // Dynamic navigation based on login state
+        document.addEventListener("DOMContentLoaded", () => {
+            const token = localStorage.getItem("token");
+            const accountTab = document.getElementById("account-tab");
+
+            if (token) {
+                accountTab.innerHTML = `
+                    <a href="account.html">My Account</a>
+                    <a href="logout.html">Logout</a>
+                `;
+            } else {
+                accountTab.innerHTML = `
+                    <a href="login.html">Login</a>
+                    <a href="register.html">Register</a>
+                `;
+            }
+        });
+
         // Fetch existing user details and populate the form
         async function loadProfile() {
             const token = localStorage.getItem('token');
@@ -49,7 +89,7 @@
             }
 
             try {
-                const response = await fetch('https://ultra-finder-backend-f3b8ba349529.herokuapp.com/api/auth/account', {
+                const response = await fetch('https://ultra-finder-backend.onrender.com/api/auth/account', {
                     method: 'GET',
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -89,7 +129,7 @@
             }
 
             try {
-                const response = await fetch('https://ultra-finder-backend-f3b8ba349529.herokuapp.com/api/auth/account', {
+                const response = await fetch('https://ultra-finder-backend.onrender.com/api/auth/account', {
                     method: 'PUT',
                     headers: {
                         Authorization: `Bearer ${token}`,

@@ -8,53 +8,89 @@
 </head>
 <body>
 
-<header>
-    <img src="ultralogo.jpg" alt="Ultramarathon Finder Logo" class="logo">
-    <h1>Ultramarathon Finder</h1>
+<header class="sticky-header">
+    <div class="logo-container">
+        <img src="ultra.png" alt="Ultramarathon Finder Logo" class="logo">
+    </div>
     <nav>
-        <a href="index.html">Home</a>
-        <a href="race_directory.html">Race Directory</a>
-        <a href="community.html">Community</a>
-        <a href="training_tips.html">Training Tips</a>
-        <a href="gear_forum.html">Gear Recommendations</a>
-        <a href="race_experiences.html">Race Experiences</a>
-        <a href="account.html">Account</a>
+        <ul class="menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="race_directory.html">Race Directory</a></li>
+            <li class="dropdown">
+                <a href="community.html">Community</a>
+                <ul class="dropdown-menu">
+                    <li><a href="gear_forum.html">Gear Forum</a></li>
+                    <li><a href="race_experiences.html">Race Experiences</a></li>
+                    <li><a href="training_tips.html">Training Tips Forum</a></li>
+                </ul>
+            </li>
+            <li id="account-tab"></li>
+        </ul>
     </nav>
 </header>
 
-<div class="nutrition-container">
-    <h1>Essential Gear for Ultra Marathons</h1>
-    <p>Having the right gear is critical for ultramarathons. Here’s a breakdown of essential gear to consider for training and race day:</p>
+<main>
+    <div class="nutrition-container">
+        <h1>Essential Gear for Ultra Marathons</h1>
+        <p>Having the right gear is critical for ultramarathons. Here’s a breakdown of essential gear to consider for training and race day:</p>
 
-    <h2>1. Footwear</h2>
-    <p>High-quality trail running shoes are essential. Look for shoes with good grip, durability, and support for long distances. Consider options that suit the terrain of your race.</p>
+        <h2>1. Footwear</h2>
+        <p>High-quality trail running shoes are essential. Look for shoes with good grip, durability, and support for long distances. Consider options that suit the terrain of your race.</p>
 
-    <h2>2. Hydration Packs and Bottles</h2>
-    <p>Hydration is crucial in ultramarathons. Invest in a good hydration pack or handheld bottles to carry water and electrolyte solutions. Look for packs with storage space for snacks, gels, and other essentials.</p>
+        <h2>2. Hydration Packs and Bottles</h2>
+        <p>Hydration is crucial in ultramarathons. Invest in a good hydration pack or handheld bottles to carry water and electrolyte solutions. Look for packs with storage space for snacks, gels, and other essentials.</p>
 
-    <h2>3. Clothing</h2>
-    <p>Choose lightweight, moisture-wicking clothing to stay comfortable during long runs. Layering is important for variable weather conditions. Make sure to have weather-appropriate gear, such as windproof jackets and sun-protective clothing.</p>
+        <h2>3. Clothing</h2>
+        <p>Choose lightweight, moisture-wicking clothing to stay comfortable during long runs. Layering is important for variable weather conditions. Make sure to have weather-appropriate gear, such as windproof jackets and sun-protective clothing.</p>
 
-    <h2>4. Nutrition and Energy Supplies</h2>
-    <p>Fueling during the race is key. Pack energy gels, bars, and snacks that are easy to consume on the move. Electrolyte tablets and salts can also help maintain hydration levels.</p>
+        <h2>4. Nutrition and Energy Supplies</h2>
+        <p>Fueling during the race is key. Pack energy gels, bars, and snacks that are easy to consume on the move. Electrolyte tablets and salts can also help maintain hydration levels.</p>
 
-    <h2>5. Accessories</h2>
-    <p>Accessories like headlamps, GPS watches, and trekking poles can make a big difference in challenging ultramarathons. Select gear based on the race conditions and your personal needs.</p>
+        <h2>5. Accessories</h2>
+        <p>Accessories like headlamps, GPS watches, and trekking poles can make a big difference in challenging ultramarathons. Select gear based on the race conditions and your personal needs.</p>
 
-    <div class="further-reading">
-        <h3>Further Reading</h3>
-        <ul>
-            <li><a href="https://www.halfwayanywhere.com/gear/gear-lists/the-best-ultramarathon-training-gear/" target="_blank">The Best Ultramarathon Training Gear - Halfway Anywhere</a></li>
-            <li><a href="https://ultra-x.co/mandatory-ultra-marathon-essentials-kit-list/" target="_blank">Mandatory Ultra Marathon Essentials Kit List - Ultra X</a></li>
-            <li><a href="https://www.runnersworld.com/gear/a27377428/best-trail-running-gear/" target="_blank">Best Trail Running Gear - Runner’s World</a></li>
-            <li><a href="https://www.trailrunnermag.com/gear/accessories-gear/gearing-up-for-your-first-ultramarathon/" target="_blank">Gearing Up for Your First Ultramarathon - Trail Runner Magazine</a></li>
-        </ul>
+        <div class="further-reading">
+            <h3>Further Reading</h3>
+            <ul>
+                <li><a href="https://www.halfwayanywhere.com/gear/gear-lists/the-best-ultramarathon-training-gear/" target="_blank">The Best Ultramarathon Training Gear - Halfway Anywhere</a></li>
+                <li><a href="https://ultra-x.co/mandatory-ultra-marathon-essentials-kit-list/" target="_blank">Mandatory Ultra Marathon Essentials Kit List - Ultra X</a></li>
+                <li><a href="https://www.runnersworld.com/gear/a27377428/best-trail-running-gear/" target="_blank">Best Trail Running Gear - Runner’s World</a></li>
+                <li><a href="https://www.trailrunnermag.com/gear/accessories-gear/gearing-up-for-your-first-ultramarathon/" target="_blank">Gearing Up for Your First Ultramarathon - Trail Runner Magazine</a></li>
+            </ul>
+        </div>
     </div>
-</div>
+</main>
 
 <footer>
     <p>&copy; 2024 Ultramarathon Finder. All rights reserved.</p>
+    <p>
+        <a href="contact.html">Contact Us</a> | 
+        <a href="privacy.html">Privacy Policy</a> | 
+        <a href="terms.html">Terms of Service</a> | 
+        <a href="about.html">About Us</a> | 
+        <a href="faq.html">FAQ</a>
+    </p>
 </footer>
+
+<script>
+    // Dynamic account tab
+    document.addEventListener("DOMContentLoaded", () => {
+        const token = localStorage.getItem("token");
+        const accountTab = document.getElementById("account-tab");
+
+        if (token) {
+            accountTab.innerHTML = `
+                <a href="account.html">My Account</a>
+                <a href="logout.html">Logout</a>
+            `;
+        } else {
+            accountTab.innerHTML = `
+                <a href="login.html">Login</a>
+                <a href="register.html">Register</a>
+            `;
+        }
+    });
+</script>
 
 </body>
 </html>

@@ -7,31 +7,57 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>Register</h1>
+    <header class="sticky-header">
+        <div class="logo-container">
+            <img src="ultra.png" alt="Ultramarathon Finder Logo" class="logo">
+        </div>
         <nav>
-            <a href="index.html">Home</a>
-            <a href="login.html">Login</a>
+            <ul class="menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
         </nav>
     </header>
+
     <main>
-        <section class="form-section">
-            <h2>Create an Account</h2>
-            <form id="register-form">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
-                
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-                
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-                
-                <button type="submit">Register</button>
-            </form>
-            <p id="register-message"></p>
-        </section>
+        <div class="form-container">
+            <div class="form-card">
+                <h2>Create an Account</h2>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" placeholder="Choose a username" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" placeholder="Create a password" required>
+                        <small>Password must be at least 6 characters long and include one uppercase letter, one number, and one special character.</small>
+                    </div>
+                    
+                    <button type="submit" class="orange-btn">Register</button>
+                </form>
+                <p id="register-message" class="error-message"></p>
+                <p>Already have an account? <a href="login.html">Login here</a>.</p>
+            </div>
+        </div>
     </main>
+
+    <footer>
+        <p>&copy; 2024 Ultramarathon Finder. All rights reserved.</p>
+        <p>
+            <a href="contact.html">Contact Us</a> | 
+            <a href="privacy.html">Privacy Policy</a> | 
+            <a href="terms.html">Terms of Service</a> | 
+            <a href="about.html">About Us</a> | 
+            <a href="faq.html">FAQ</a>
+        </p>
+    </footer>
 
     <script>
         document.getElementById('register-form').addEventListener('submit', async (e) => {
@@ -40,8 +66,20 @@
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
+            // Client-side validation
+            if (!username || !email || !password) {
+                document.getElementById('register-message').textContent = 'Please fill in all fields.';
+                return;
+            }
+
+            const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{6,}$/;
+            if (!passwordRegex.test(password)) {
+                document.getElementById('register-message').textContent = 'Password does not meet the requirements.';
+                return;
+            }
+
             try {
-                const response = await fetch('https://ultra-finder-backend-f3b8ba349529.herokuapp.com/api/auth/register', {
+                const response = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -51,14 +89,14 @@
 
                 const data = await response.json();
 
-                // Display success or error message
-                document.getElementById('register-message').textContent = data.message || 'Registration successful!';
-                
                 if (response.ok) {
-                    // Redirect to login page after 2 seconds
+                    document.getElementById('register-message').textContent = 'Registration successful! Redirecting to login...';
+                    document.getElementById('register-message').classList.add('success-message');
                     setTimeout(() => {
                         window.location.href = 'login.html';
                     }, 2000);
+                } else {
+                    document.getElementById('register-message').textContent = data.message || 'Error: Registration failed.';
                 }
             } catch (error) {
                 document.getElementById('register-message').textContent = 'Error: Could not register user.';

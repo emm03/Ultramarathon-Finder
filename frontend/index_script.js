@@ -1,31 +1,137 @@
 document.addEventListener("DOMContentLoaded", () => {
-    let currentIndex = 0;
+    // Initialize carousel
+    initializeCarousel();
+
+    // Authentication logic
+    const token = localStorage.getItem("token");
+    const menu = document.querySelector("ul.menu");
+
+    // Clear existing dynamic links
+    menu.querySelectorAll(".auth-link").forEach((link) => link.remove());
+
+    if (token) {
+        setupAuthenticatedMenu(menu, token);
+    } else {
+        setupUnauthenticatedMenu(menu);
+    }
+
+    // Redirect users to login if accessing restricted pages
+    redirectIfUnauthorized(token, ["account.html", "profile_edit.html"]);
+});
+
+function initializeCarousel() {
     const slides = document.querySelectorAll(".carousel-item");
-    const autoSlideInterval = 5000;
+    let currentIndex = 0;
 
     function showSlide(index) {
-        slides.forEach(slide => slide.classList.remove("active"));
-        currentIndex = (index + slides.length) % slides.length;
-        slides[currentIndex].classList.add("active");
+        slides.forEach((slide, i) => {
+            slide.classList.remove("active");
+            slide.style.opacity = 0;
+            slide.style.display = "none";
+
+            if (i === index) {
+                slide.classList.add("active");
+                slide.style.opacity = 1;
+                slide.style.display = "block";
+            }
+        });
     }
 
-    function nextSlide() {
-        showSlide(currentIndex + 1);
-    }
-
-    function prevSlide() {
-        showSlide(currentIndex - 1);
-    }
-
-    document.querySelector(".carousel-control-next").addEventListener("click", nextSlide);
-    document.querySelector(".carousel-control-prev").addEventListener("click", prevSlide);
-
-    let slideTimer = setInterval(nextSlide, autoSlideInterval);
-
-    document.querySelector(".carousel").addEventListener("mouseover", () => clearInterval(slideTimer));
-    document.querySelector(".carousel").addEventListener("mouseout", () => {
-        slideTimer = setInterval(nextSlide, autoSlideInterval);
-    });
+    const interval = setInterval(() => {
+        currentIndex = (currentIndex + 1) % slides.length;
+        showSlide(currentIndex);
+    }, 5000);
 
     showSlide(currentIndex);
-});
+
+    const prevButton = document.querySelector(".carousel-prev");
+    const nextButton = document.querySelector(".carousel-next");
+
+    if (prevButton && nextButton) {
+        prevButton.addEventListener("click", () => {
+            clearInterval(interval);
+            currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+            showSlide(currentIndex);
+        });
+
+        nextButton.addEventListener("click", () => {
+            clearInterval(interval);
+            currentIndex = (currentIndex + 1) % slides.length;
+            showSlide(currentIndex);
+        });
+    }
+}
+
+function setupAuthenticatedMenu(menu, token) {
+    const accountLink = document.createElement("li");
+    accountLink.classList.add("auth-link");
+    accountLink.innerHTML = `<a href="account.html">My Account</a>`;
+
+    const logoutLink = document.createElement("li");
+    logoutLink.classList.add("auth-link");
+    logoutLink.innerHTML = `<a id="logout-link" href="#">Logout</a>`;
+
+    menu.appendChild(accountLink);
+    menu.appendChild(logoutLink);
+
+    fetchUserProfilePicture(token, menu);
+
+    // Logout functionality
+    const logoutBtn = document.getElementById("logout-link");
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            localStorage.removeItem("token");
+            alert("You have successfully logged out.");
+            window.location.href = "login.html";
+        });
+    }
+}
+
+function setupUnauthenticatedMenu(menu) {
+    const loginLink = document.createElement("li");
+    loginLink.classList.add("auth-link");
+    loginLink.innerHTML = `<a href="login.html">Login</a>`;
+
+    const registerLink = document.createElement("li");
+    registerLink.classList.add("auth-link");
+    registerLink.innerHTML = `<a href="register.html">Register</a>`;
+
+    menu.appendChild(loginLink);
+    menu.appendChild(registerLink);
+}
+
+function redirectIfUnauthorized(token, restrictedPages) {
+    const currentPage = window.location.pathname.split("/").pop();
+
+    if (restrictedPages.includes(currentPage) && !token) {
+        alert("You must be logged in to view this page.");
+        window.location.href = "login.html";
+    }
+}
+
+async function fetchUserProfilePicture(token, menu) {
+    try {
+        const response = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/account', {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (response.ok) {
+            const { user } = await response.json();
+            const profileImg = document.createElement('img');
+            profileImg.src = user.profilePicture || 'images/default-profile.png'; // Fallback to default profile picture
+            profileImg.alt = `${user.username}'s Profile Picture`;
+            profileImg.classList.add('profile-picture-nav');
+            const accountListItem = menu.querySelector(".auth-link a[href='account.html']").parentNode;
+            accountListItem.prepend(profileImg);
+        } else {
+            console.error("Failed to fetch profile picture.");
+        }
+    } catch (error) {
+        console.error("Error fetching profile picture:", error);
+    }
+}

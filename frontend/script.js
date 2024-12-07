@@ -10,10 +10,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const response = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/forum/comments/${forumName}`);
             if (!response.ok) {
                 console.error("Error fetching comments. Status:", response.status);
+                alert("Failed to fetch comments.");
                 return;
             }
 
-            const comments = await response.json();
+            const { comments } = await response.json();
             commentsContainer.innerHTML = ""; // Clear existing comments
             comments.forEach((comment) => {
                 const commentDiv = document.createElement("div");
@@ -36,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("Comments loaded successfully.");
         } catch (error) {
             console.error("Error fetching comments:", error);
+            alert("An unexpected error occurred while fetching comments.");
         }
     }
 
@@ -46,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const token = localStorage.getItem("token");
         if (!token) {
-            alert("User is not authenticated. Please login.");
+            alert("You must be logged in to post comments. Please log in.");
             return;
         }
 
@@ -72,12 +74,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 commentForm.reset();
                 fetchComments(); // Reload comments after posting
             } else {
-                const errorData = await response.json();
-                console.error("Error posting comment:", errorData);
-                alert(`Failed to post comment: ${errorData.message}`);
+                const { message } = await response.json();
+                console.error("Error posting comment:", message);
+                alert(`Failed to post comment: ${message}`);
             }
         } catch (error) {
             console.error("Error posting comment:", error);
+            alert("An unexpected error occurred while posting the comment.");
         }
     });
 
@@ -91,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            const replies = await response.json();
+            const { replies } = await response.json();
             const repliesContainer = document.getElementById(`replies-${commentId}`);
             repliesContainer.innerHTML = ""; // Clear existing replies
 
@@ -134,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const token = localStorage.getItem("token");
         if (!token) {
-            alert("User is not authenticated. Please login.");
+            alert("You must be logged in to post replies. Please log in.");
             return;
         }
 
@@ -159,12 +162,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.log("Reply posted successfully.");
                 fetchReplies(commentId); // Reload replies after posting
             } else {
-                const errorData = await response.json();
-                console.error("Error posting reply:", errorData);
-                alert(`Failed to post reply: ${errorData.message}`);
+                const { message } = await response.json();
+                console.error("Error posting reply:", message);
+                alert(`Failed to post reply: ${message}`);
             }
         } catch (error) {
             console.error("Error posting reply:", error);
+            alert("An unexpected error occurred while posting the reply.");
         }
     }
 
@@ -175,7 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const token = localStorage.getItem("token");
             if (!token) {
-                alert("User is not authenticated. Please login.");
+                alert("You must be logged in to like comments. Please log in.");
                 return;
             }
 
@@ -193,12 +197,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.log("Comment liked successfully.");
                     fetchComments(); // Reload comments after liking
                 } else {
-                    const errorData = await response.json();
-                    console.error("Error liking comment:", errorData);
-                    alert(`Failed to like comment: ${errorData.message}`);
+                    const { message } = await response.json();
+                    console.error("Error liking comment:", message);
+                    alert(`Failed to like comment: ${message}`);
                 }
             } catch (error) {
                 console.error("Error liking comment:", error);
+                alert("An unexpected error occurred while liking the comment.");
             }
         } else if (event.target.classList.contains("reply-btn")) {
             const commentId = event.target.dataset.id;

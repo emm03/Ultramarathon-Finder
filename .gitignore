@@ -128,3 +128,9 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Ignore Python virtual environment
+venv/
+
+# Ignore other temporary or unnecessary files
+.DS_Store

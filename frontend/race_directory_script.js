@@ -8,6 +8,24 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentPage = 1;
     const racesPerPage = 20;
 
+    // Authentication logic
+    const token = localStorage.getItem("token"); // Retrieve token from local storage
+    const accountTab = document.getElementById("account-tab");
+
+    if (token) {
+        // User is logged in
+        accountTab.innerHTML = `
+            <a href="account.html">My Account</a>
+            <a href="logout.html">Logout</a>
+        `;
+    } else {
+        // User is not logged in
+        accountTab.innerHTML = `
+            <a href="login.html">Login</a>
+            <a href="register.html">Register</a>
+        `;
+    }
+
     function fetchRaces() {
         fetch("duv_ultramarathons.csv")
             .then(response => response.text())
@@ -21,17 +39,14 @@ document.addEventListener("DOMContentLoaded", () => {
     function parseCSV(data) {
         const rows = data.split("\n").slice(1);
         return rows.map(row => {
-            // Handle cases where columns are wrapped in quotes and contain commas
             const columns = row.match(/(".*?"|[^,]+)(?=\s*,|\s*$)/g);
             let [name, date, distance, location] = columns;
 
-            // Removing the surrounding quotes, if any
             name = name ? name.trim().replace(/^"|"$/g, "") : "N/A";
             date = date ? date.trim().replace(/^"|"$/g, "") : "N/A";
             distance = distance ? distance.trim().replace(/^"|"$/g, "").toLowerCase() : "N/A";
             location = location ? location.trim().replace(/^"|"$/g, "") : "N/A";
 
-            // Remove "N/A" entries
             if (name === "N/A" || date === "N/A" || distance === "N/A" || location === "N/A") {
                 return null;
             }

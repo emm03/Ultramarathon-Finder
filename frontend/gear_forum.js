@@ -3,6 +3,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const commentsContainer = document.getElementById("commentsContainer");
     const forumName = "gear_forum"; // Forum identifier
 
+    // Authentication logic for account tab
+    const token = localStorage.getItem("token");
+    const accountTab = document.getElementById("account-tab");
+
+    if (token) {
+        accountTab.innerHTML = `
+            <a href="account.html">My Account</a>
+            <a href="logout.html">Logout</a>
+        `;
+    } else {
+        accountTab.innerHTML = `
+            <a href="login.html">Login</a>
+            <a href="register.html">Register</a>
+        `;
+    }
+
     // Fetch and display comments
     async function fetchComments() {
         try {
@@ -46,7 +62,6 @@ document.addEventListener("DOMContentLoaded", () => {
         event.preventDefault();
         const content = document.getElementById("commentContent").value.trim();
 
-        const token = localStorage.getItem("token");
         if (!token) {
             alert("User is not authenticated. Please login.");
             return;
@@ -137,7 +152,6 @@ document.addEventListener("DOMContentLoaded", () => {
         event.preventDefault();
         const content = event.target.querySelector("textarea").value.trim();
 
-        const token = localStorage.getItem("token");
         if (!token) {
             alert("User is not authenticated. Please login.");
             return;
@@ -179,7 +193,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (event.target.classList.contains("like-btn")) {
             const commentId = event.target.dataset.id;
 
-            const token = localStorage.getItem("token");
             if (!token) {
                 alert("User is not authenticated. Please login.");
                 return;

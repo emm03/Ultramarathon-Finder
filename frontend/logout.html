@@ -14,6 +14,7 @@
     <main class="container">
         <h2>You have successfully logged out.</h2>
         <p>Thank you for using Ultramarathon Finder!</p>
+        <a href="index.html" class="btn">Return to Homepage</a>
         <a href="login.html" class="btn">Login Again</a>
     </main>
 
@@ -22,9 +23,14 @@
     </footer>
 
     <script>
-        // Clear the token and perform logout
+        // Clear the token and provide user feedback
         document.addEventListener("DOMContentLoaded", () => {
-            localStorage.removeItem('token'); // Remove the JWT token
+            // Remove the JWT token from localStorage
+            localStorage.removeItem('token'); 
+            
+            // Optional: Clear any other user-related data if necessary
+            sessionStorage.clear(); // If you're storing any session-based data
+
             console.log('User logged out: token cleared');
         });
     </script>
