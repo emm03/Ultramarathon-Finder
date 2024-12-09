@@ -31,7 +31,7 @@
     <main>
         <section class="account-container">
             <div class="account-card">
-                <div class="profile-section">
+                <div class="profile-container">
                     <img id="profile-pic" src="images/default-profile.png" alt="User Profile Picture" class="profile-pic">
                     <label for="upload-input" class="upload-btn">Upload Profile Photo</label>
                     <input type="file" id="upload-input" accept="image/*" style="display: none;">
@@ -46,7 +46,7 @@
                 <button class="orange-btn" onclick="window.location.href='activity.html'">View Activities</button>
                 <button class="orange-btn" id="logout-button">Log Out</button>
             </div>
-        </section>
+        </section>       
     </main>
 
     <footer>
@@ -61,6 +61,7 @@
     </footer>
 
     <script>
+        // Fetch and display account info
         async function fetchAccountInfo() {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -81,7 +82,7 @@
                 if (response.ok) {
                     const { user } = await response.json();
                     document.getElementById('username').textContent = `Welcome, ${user.username}!`;
-                    document.getElementById('email').textContent = `Email: ${user.email}`;
+                    document.getElementById('email').innerHTML = `<strong>Email:</strong> ${user.email}`;
                     if (user.profilePicture) {
                         document.getElementById('profile-pic').src = user.profilePicture;
                     }
@@ -97,6 +98,7 @@
             }
         }
 
+        // Handle profile picture upload
         document.getElementById('upload-input').addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) {
@@ -138,12 +140,14 @@
             }
         });
 
+        // Handle logout
         document.getElementById('logout-button').addEventListener('click', () => {
             localStorage.removeItem('token');
             alert("You have successfully logged out.");
             window.location.href = 'login.html';
         });
 
+        // Load account info on page load
         fetchAccountInfo();
     </script>
 </body>

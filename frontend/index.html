@@ -23,15 +23,29 @@
                         <li><a href="training_tips.html">Training Tips Forum</a></li>
                     </ul>
                 </li>
-                <!-- Login/Register or My Account/Logout buttons are dynamically generated in index_script.js -->
+                <li id="account-tab"></li>
             </ul>
         </nav>
     </header>
 
     <main>
+        <!-- Profile Section -->
+        <section class="profile-container">
+            <div class="account-card">
+                <div class="profile-section">
+                    <img id="profile-pic" src="images/default-profile.png" alt="User Profile Picture" class="profile-pic">
+                </div>
+                <div class="info-section">
+                    <h3 id="username">Welcome, User!</h3>
+                    <p id="email"><strong>Email:</strong> user@example.com</p>
+                </div>
+            </div>
+        </section>
+
         <!-- Carousel Section -->
         <div class="carousel">
             <div class="carousel-inner">
+                <!-- Carousel items -->
                 <div class="carousel-item active">
                     <img src="images/ultramarathon_images/download1_ultramarathon.jpeg" alt="Trail Run">
                     <div class="carousel-overlay">
@@ -48,38 +62,7 @@
                         <button onclick="window.location.href='race_directory.html'">Find a Race</button>
                     </div>
                 </div>
-                <div class="carousel-item">
-                    <img src="images/ultramarathon_images/download3_ultramarathon.jpg" alt="Desert Landscape">
-                    <div class="carousel-overlay">
-                        <h1>Welcome to Ultramarathon Connect</h1>
-                        <p>Discover, prepare, and connect with ultramarathons worldwide!</p>
-                        <button onclick="window.location.href='race_directory.html'">Find a Race</button>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="images/ultramarathon_images/download4_ultramarathon.jpeg" alt="Forest Path">
-                    <div class="carousel-overlay">
-                        <h1>Welcome to Ultramarathon Connect</h1>
-                        <p>Discover, prepare, and connect with ultramarathons worldwide!</p>
-                        <button onclick="window.location.href='race_directory.html'">Find a Race</button>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="images/ultramarathon_images/download5_ultramarathon.jpeg" alt="Scenic Mountain View">
-                    <div class="carousel-overlay">
-                        <h1>Welcome to Ultramarathon Connect</h1>
-                        <p>Discover, prepare, and connect with ultramarathons worldwide!</p>
-                        <button onclick="window.location.href='race_directory.html'">Find a Race</button>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <img src="images/ultramarathon_images/ultra_trail.jpg" alt="Ultramarathon Trail">
-                    <div class="carousel-overlay">
-                        <h1>Welcome to Ultramarathon Connect</h1>
-                        <p>Discover, prepare, and connect with ultramarathons worldwide!</p>
-                        <button onclick="window.location.href='race_directory.html'">Find a Race</button>
-                    </div>
-                </div>
+                <!-- Add more carousel items as needed -->
             </div>
         </div>
 
@@ -114,6 +97,61 @@
         </p>
     </footer>
 
-    <script src="index_script.js"></script>
+    <script>
+        // Fetch and update user information dynamically
+        async function loadProfileInfo() {
+            const token = localStorage.getItem('token');
+            const accountTab = document.getElementById("account-tab");
+
+            if (!token) {
+                document.getElementById('username').textContent = 'Welcome, Guest!';
+                document.getElementById('email').textContent = '';
+                document.getElementById('profile-pic').src = 'images/default-profile.png';
+                accountTab.innerHTML = `
+                    <a href="login.html">Login</a>
+                    <a href="register.html">Register</a>
+                `;
+                return;
+            }
+
+            try {
+                const response = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/account', {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (response.ok) {
+                    const { user } = await response.json();
+                    document.getElementById('username').textContent = `Welcome, ${user.username}!`;
+                    document.getElementById('email').textContent = `Email: ${user.email}`;
+                    if (user.profilePicture) {
+                        document.getElementById('profile-pic').src = user.profilePicture;
+                    }
+                    accountTab.innerHTML = `
+                        <a href="account.html">My Account</a>
+                        <a href="logout.html">Logout</a>
+                    `;
+                } else {
+                    console.error("Error fetching profile info:", await response.text());
+                    accountTab.innerHTML = `
+                        <a href="login.html">Login</a>
+                        <a href="register.html">Register</a>
+                    `;
+                }
+            } catch (error) {
+                console.error("Error loading profile info:", error);
+                accountTab.innerHTML = `
+                    <a href="login.html">Login</a>
+                    <a href="register.html">Register</a>
+                `;
+            }
+        }
+
+        // Call the function on page load
+        document.addEventListener('DOMContentLoaded', loadProfileInfo);
+    </script>
 </body>
 </html>

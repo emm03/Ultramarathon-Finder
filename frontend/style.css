@@ -1376,4 +1376,149 @@ button:hover {
     text-decoration: none;
     display: inline; /* Ensure it stays on the same line */
 }
+/* Account Page Styling */
+.account-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #f8f9fa; /* Light background for contrast */
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    max-width: 800px;
+    margin: 20px auto; /* Center and add spacing */
+}
+
+/* Account Card */
+.account-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap; /* Make it responsive */
+    text-align: center;
+    background-color: #ffffff; /* White background for the card */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Profile Picture */
+.profile-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    max-width: 200px; /* Restrict width */
+}
+
+.profile-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #d96100; /* Highlight border */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* User Info Section */
+.info-section h3 {
+    font-size: 1.5em;
+    color: #333333; /* Darker text for readability */
+    margin: 10px 0;
+}
+
+.info-section p {
+    font-size: 1em;
+    color: #666666; /* Subtle text for secondary info */
+}
+
+/* Account Actions */
+.account-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+}
+
+.account-actions .orange-btn {
+    background-color: #f57c00; /* Matching orange theme */
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.account-actions .orange-btn:hover {
+    background-color: #d96100; /* Darker hover effect */
+}
+
+/* Upload Button */
+.upload-btn {
+    background-color: #f57c00;
+    color: #ffffff;
+    padding: 8px 12px;
+    border-radius: 5px;
+    border: none;
+    font-size: 0.9em;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background-color 0.3s;
+}
+
+.upload-btn:hover {
+    background-color: #d96100;
+}
+/* Profile Section Styling for Index */
+.profile-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f8f9fa; /* Light background */
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    max-width: 800px;
+    margin: 20px auto; /* Center the section */
+}
+
+/* Profile Picture Styling */
+.profile-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #d96100; /* Highlight border */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-right: 20px;
+}
+
+/* Info Section Styling */
+.info-section h3 {
+    font-size: 1.5em;
+    color: #333333; /* Darker text for readability */
+    margin-bottom: 5px;
+}
+
+.info-section p {
+    font-size: 1em;
+    color: #666666; /* Subtle text */
+    margin: 0;
+}
+.profile-picture-nav {
+    width: 30px; /* Adjust as needed */
+    height: 30px; /* Match width for circular appearance */
+    border-radius: 50%;
+    margin-right: 10px; /* Space between image and link */
+    object-fit: cover;
+    vertical-align: middle; /* Aligns with the text */
+}
+
+
+
 

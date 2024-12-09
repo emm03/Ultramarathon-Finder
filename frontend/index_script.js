@@ -112,7 +112,7 @@ function redirectIfUnauthorized(token, restrictedPages) {
 
 async function fetchUserProfilePicture(token, menu) {
     try {
-        const response = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/account', {
+        const response = await fetch('/api/auth/account', {
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${token}`,
