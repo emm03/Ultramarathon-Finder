@@ -134,3 +134,6 @@ venv/
 
 # Ignore other temporary or unnecessary files
 .DS_Store
+
+# Build files (if applicable)
+dist/
