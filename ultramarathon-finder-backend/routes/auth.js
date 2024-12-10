@@ -50,6 +50,7 @@ router.post('/upload-profile-picture', authenticateToken, upload.single('profile
         res.status(200).json({
             message: 'Profile picture uploaded successfully',
             profilePicture: `/uploads/${req.file.filename}`,
+            fileDetails: req.file, // Debugging: Include file details in the response
         });
     } catch (error) {
         res.status(500).json({ message: 'Error uploading profile picture', error: error.message });
@@ -86,15 +87,12 @@ router.post('/login', async (req, res) => {
     if (!email || !password) return res.status(400).json({ message: 'Email and password are required' });
 
     try {
-        // Find user by email
         const user = await User.findOne({ email });
         if (!user) return res.status(404).json({ message: 'User not found' });
 
-        // Check if the password matches
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
 
-        // Generate JWT token
         const token = jwt.sign(
             { userId: user._id, username: user.username },
             process.env.JWT_SECRET,
