@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import authRoutes from './routes/auth.js';
-import forumRoutes from './routes/forum.js'; // Forum routes
+import forumRoutes from './routes/forum.js';
 import path from 'path';
 
 // Load environment variables
@@ -30,7 +30,7 @@ app.use(cors({
             callback(new Error('Not allowed by CORS'));
         }
     },
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
@@ -43,12 +43,13 @@ mongoose
         process.exit(1);
     });
 
-// Serve uploaded files statically
+// Serve uploaded files and other static assets
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+app.use('/static', express.static(path.join(process.cwd(), 'public')));
 
 // API Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/forum', forumRoutes); // Forum routes
+app.use('/api/forum', forumRoutes);
 
 // Health check
 app.get('/', (req, res) => {
@@ -58,6 +59,11 @@ app.get('/', (req, res) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
     res.status(500).json({ message: 'Unexpected error', error: err.message });
+});
+
+// Catch 404 errors
+app.use((req, res) => {
+    res.status(404).json({ message: 'Endpoint not found' });
 });
 
 // Start the server
