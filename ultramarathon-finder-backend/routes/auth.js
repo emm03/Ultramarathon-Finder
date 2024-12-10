@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
 import User from '../models/User.js';
 
 const router = express.Router();
@@ -24,11 +25,27 @@ export const authenticateToken = (req, res, next) => {
     }
 };
 
+// Ensure 'uploads' directory exists
+const uploadPath = path.join(process.cwd(), 'uploads');
+if (!fs.existsSync(uploadPath)) {
+    console.log('Uploads directory does not exist. Creating now...');
+    fs.mkdirSync(uploadPath, { recursive: true });
+    console.log('Uploads directory created successfully.');
+} else {
+    console.log('Uploads directory already exists.');
+}
+
 // Multer setup for file uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const uploadPath = path.join(process.cwd(), 'uploads');
-        cb(null, uploadPath);
+        console.log(`Attempting to save file to: ${uploadPath}`);
+        try {
+            fs.accessSync(uploadPath, fs.constants.W_OK); // Check if writable
+            cb(null, uploadPath);
+        } catch (err) {
+            console.error('Uploads directory is not writable:', err.message);
+            cb(new Error('Uploads directory is not writable'));
+        }
     },
     filename: (req, file, cb) => {
         cb(null, `${Date.now()}-${file.originalname}`);
@@ -50,9 +67,9 @@ router.post('/upload-profile-picture', authenticateToken, upload.single('profile
         res.status(200).json({
             message: 'Profile picture uploaded successfully',
             profilePicture: `/uploads/${req.file.filename}`,
-            fileDetails: req.file, // Debugging: Include file details in the response
         });
     } catch (error) {
+        console.error('Error uploading profile picture:', error.message);
         res.status(500).json({ message: 'Error uploading profile picture', error: error.message });
     }
 });
@@ -77,6 +94,7 @@ router.post('/register', async (req, res) => {
         await user.save();
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
+        console.error('Error during registration:', error.message);
         res.status(500).json({ message: 'Internal server error during registration' });
     }
 });
@@ -101,7 +119,8 @@ router.post('/login', async (req, res) => {
 
         res.status(200).json({ message: 'Login successful', token });
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error during login', error: error.message });
+        console.error('Error during login:', error.message);
+        res.status(500).json({ message: 'Internal server error during login' });
     }
 });
 
@@ -112,7 +131,8 @@ router.get('/account', authenticateToken, async (req, res) => {
         if (!user) return res.status(404).json({ message: 'User not found' });
         res.json({ user });
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching account info', error: error.message });
+        console.error('Error fetching account info:', error.message);
+        res.status(500).json({ message: 'Error fetching account info' });
     }
 });
 
@@ -131,7 +151,8 @@ router.put('/account', authenticateToken, async (req, res) => {
 
         res.json({ user: updatedUser, message: 'Profile updated successfully' });
     } catch (error) {
-        res.status(500).json({ message: 'Error updating profile', error: error.message });
+        console.error('Error updating profile:', error.message);
+        res.status(500).json({ message: 'Error updating profile' });
     }
 });
 
