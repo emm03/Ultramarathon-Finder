@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initializeCarousel();
 
     // Authentication logic
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token")?.trim();
     const menu = document.querySelector("ul.menu");
 
     // Clear existing dynamic links
@@ -112,7 +112,7 @@ function redirectIfUnauthorized(token, restrictedPages) {
 
 async function fetchUserProfilePicture(token, menu) {
     try {
-        const response = await fetch('/api/auth/account', {
+        const response = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/account', {
             method: 'GET',
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -129,7 +129,7 @@ async function fetchUserProfilePicture(token, menu) {
             const accountListItem = menu.querySelector(".auth-link a[href='account.html']").parentNode;
             accountListItem.prepend(profileImg);
         } else {
-            console.error("Failed to fetch profile picture.");
+            console.error("Failed to fetch profile picture:", await response.text());
         }
     } catch (error) {
         console.error("Error fetching profile picture:", error);

@@ -61,9 +61,8 @@
     </footer>
 
     <script>
-        // Fetch and display account info
         async function fetchAccountInfo() {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token')?.trim();
             if (!token) {
                 alert("You are not logged in. Redirecting to login...");
                 window.location.href = 'login.html';
@@ -98,7 +97,6 @@
             }
         }
 
-        // Handle profile picture upload
         document.getElementById('upload-input').addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) {
@@ -109,7 +107,7 @@
             const formData = new FormData();
             formData.append('profilePicture', file);
 
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token')?.trim();
             if (!token) {
                 alert("You are not logged in. Redirecting to login...");
                 window.location.href = 'login.html';
@@ -140,14 +138,12 @@
             }
         });
 
-        // Handle logout
         document.getElementById('logout-button').addEventListener('click', () => {
             localStorage.removeItem('token');
             alert("You have successfully logged out.");
             window.location.href = 'login.html';
         });
 
-        // Load account info on page load
         fetchAccountInfo();
     </script>
 </body>

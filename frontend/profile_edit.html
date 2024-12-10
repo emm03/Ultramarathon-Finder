@@ -30,11 +30,11 @@
 
     <main>
         <div class="container">
-            <h2>Update Your Information</h2>
+            <h2>Edit Your Profile</h2>
             <div class="profile-image-container">
                 <img id="profile-pic" src="images/default-profile.png" alt="Profile Picture" class="profile-img">
-                <form id="upload-form" enctype="multipart/form-data">
-                    <input type="file" id="profile-picture" name="profile-picture" accept="image/*">
+                <form id="upload-form">
+                    <input type="file" id="profile-picture" name="profilePicture" accept="image/*">
                     <button type="button" onclick="uploadProfilePicture()">Upload Picture</button>
                 </form>
                 <p id="upload-message" class="success-message" style="display: none;"></p>
@@ -47,7 +47,7 @@
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" required>
                 
-                <button type="submit" class="btn">Save Changes</button>
+                <button type="submit" class="orange-btn">Save Changes</button>
             </form>
 
             <p id="success-message" class="success-message" style="display: none;">Profile updated successfully!</p>
@@ -67,16 +67,21 @@
     </footer>
 
     <script>
-        // Dynamic navigation based on login state
+        // Handle dynamic navigation for login/logout
         document.addEventListener("DOMContentLoaded", () => {
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("token")?.trim();
             const accountTab = document.getElementById("account-tab");
 
             if (token) {
                 accountTab.innerHTML = `
                     <a href="account.html">My Account</a>
-                    <a href="logout.html">Logout</a>
+                    <a id="logout-link" href="#">Logout</a>
                 `;
+                document.getElementById("logout-link").addEventListener("click", () => {
+                    localStorage.removeItem("token");
+                    alert("You have been logged out.");
+                    window.location.href = "login.html";
+                });
             } else {
                 accountTab.innerHTML = `
                     <a href="login.html">Login</a>
@@ -85,15 +90,12 @@
             }
         });
 
-        // Fetch existing user details and populate the form
+        // Load user profile information
         async function loadProfile() {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token')?.trim();
             if (!token) {
-                document.getElementById('error-message').textContent = 'You are not logged in. Redirecting to login...';
-                document.getElementById('error-message').style.display = 'block';
-                setTimeout(() => {
-                    window.location.href = 'login.html';
-                }, 2000);
+                alert("You are not logged in. Redirecting to login...");
+                window.location.href = "login.html";
                 return;
             }
 
@@ -112,29 +114,23 @@
                     document.getElementById('email').value = user.email || '';
                     document.getElementById('profile-pic').src = user.profilePicture || 'images/default-profile.png';
                 } else {
-                    document.getElementById('error-message').textContent = 'Error loading profile information. Redirecting to login...';
-                    document.getElementById('error-message').style.display = 'block';
-                    localStorage.removeItem('token'); // Clear invalid token
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 2000);
+                    alert("Error loading profile. Redirecting to login...");
+                    localStorage.removeItem('token');
+                    window.location.href = "login.html";
                 }
             } catch (error) {
-                console.error('Error loading profile:', error);
-                document.getElementById('error-message').textContent = 'Error loading profile. Please try again.';
-                document.getElementById('error-message').style.display = 'block';
+                console.error("Error loading profile:", error);
             }
         }
 
-        // Update user profile
+        // Update profile information
         async function updateProfile() {
             const username = document.getElementById('username').value.trim();
             const email = document.getElementById('email').value.trim();
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token')?.trim();
 
             if (!token) {
-                document.getElementById('error-message').textContent = 'You are not logged in.';
-                document.getElementById('error-message').style.display = 'block';
+                alert("You are not logged in.");
                 return;
             }
 
@@ -149,74 +145,63 @@
                 });
 
                 if (response.ok) {
-                    document.getElementById('success-message').textContent = 'Profile updated successfully!';
-                    document.getElementById('success-message').style.display = 'block';
-                    document.getElementById('error-message').style.display = 'none';
-
-                    // Optional: Redirect back to account page after a short delay
+                    document.getElementById('success-message').textContent = "Profile updated successfully!";
+                    document.getElementById('success-message').style.display = "block";
                     setTimeout(() => {
-                        window.location.href = 'account.html';
+                        window.location.href = "account.html";
                     }, 2000);
                 } else {
-                    const data = await response.json();
-                    document.getElementById('error-message').textContent = data.message || 'Error updating profile.';
-                    document.getElementById('error-message').style.display = 'block';
-                    document.getElementById('success-message').style.display = 'none';
+                    const errorData = await response.json();
+                    document.getElementById('error-message').textContent = errorData.message || "Error updating profile.";
+                    document.getElementById('error-message').style.display = "block";
                 }
             } catch (error) {
-                console.error('Error updating profile:', error);
-                document.getElementById('error-message').textContent = 'Error updating profile. Please try again.';
-                document.getElementById('error-message').style.display = 'block';
-                document.getElementById('success-message').style.display = 'none';
+                console.error("Error updating profile:", error);
+                document.getElementById('error-message').textContent = "Error updating profile. Please try again.";
+                document.getElementById('error-message').style.display = "block";
             }
         }
 
         // Upload profile picture
         async function uploadProfilePicture() {
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token')?.trim();
             const profilePicture = document.getElementById('profile-picture').files[0];
 
             if (!token || !profilePicture) {
-                document.getElementById('upload-message').textContent = 'Please select a file to upload.';
-                document.getElementById('upload-message').style.display = 'block';
+                alert("Please select a file to upload.");
                 return;
             }
 
             const formData = new FormData();
-            formData.append('profile-picture', profilePicture);
+            formData.append('profilePicture', profilePicture);
 
             try {
                 const response = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/upload-profile-picture', {
                     method: 'POST',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
+                    headers: { Authorization: `Bearer ${token}` },
                     body: formData,
                 });
 
                 if (response.ok) {
-                    document.getElementById('upload-message').textContent = 'Profile picture uploaded successfully!';
-                    document.getElementById('upload-message').style.display = 'block';
+                    alert("Profile picture uploaded successfully!");
                     loadProfile(); // Refresh profile picture
                 } else {
-                    document.getElementById('upload-message').textContent = 'Error uploading profile picture.';
-                    document.getElementById('upload-message').style.display = 'block';
+                    alert("Error uploading profile picture.");
                 }
             } catch (error) {
-                console.error('Error uploading profile picture:', error);
-                document.getElementById('upload-message').textContent = 'Error uploading profile picture. Please try again.';
-                document.getElementById('upload-message').style.display = 'block';
+                console.error("Error uploading profile picture:", error);
+                alert("Error uploading profile picture. Please try again.");
             }
         }
 
-        // Form submission handler
+        // Load profile data on page load
+        loadProfile();
+
+        // Form submission for profile update
         document.getElementById('profile-form').addEventListener('submit', (e) => {
             e.preventDefault();
             updateProfile();
         });
-
-        // Load user profile on page load
-        loadProfile();
     </script>
 </body>
 </html>
