@@ -2,11 +2,18 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
+import multerS3 from 'multer-s3';
+import aws from 'aws-sdk';
 import User from '../models/User.js';
 
 const router = express.Router();
+
+// AWS S3 setup
+const s3 = new aws.S3({
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_KEY,
+    region: process.env.AWS_REGION,
+});
 
 // Middleware to authenticate token
 export const authenticateToken = (req, res, next) => {
@@ -25,33 +32,20 @@ export const authenticateToken = (req, res, next) => {
     }
 };
 
-// Ensure 'uploads' directory exists
-const uploadPath = path.join(process.cwd(), 'uploads');
-if (!fs.existsSync(uploadPath)) {
-    console.log('Uploads directory does not exist. Creating now...');
-    fs.mkdirSync(uploadPath, { recursive: true });
-    console.log('Uploads directory created successfully.');
-} else {
-    console.log('Uploads directory already exists.');
-}
-
-// Multer setup for file uploads
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        console.log(`Attempting to save file to: ${uploadPath}`);
-        try {
-            fs.accessSync(uploadPath, fs.constants.W_OK); // Check if writable
-            cb(null, uploadPath);
-        } catch (err) {
-            console.error('Uploads directory is not writable:', err.message);
-            cb(new Error('Uploads directory is not writable'));
-        }
-    },
-    filename: (req, file, cb) => {
-        cb(null, `${Date.now()}-${file.originalname}`);
-    },
+// Multer S3 setup for file uploads
+const upload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: process.env.S3_BUCKET_NAME,
+        acl: 'public-read',
+        metadata: (req, file, cb) => {
+            cb(null, { fieldName: file.fieldname });
+        },
+        key: (req, file, cb) => {
+            cb(null, `${Date.now()}-${file.originalname}`);
+        },
+    }),
 });
-const upload = multer({ storage });
 
 // Route to upload profile picture
 router.post('/upload-profile-picture', authenticateToken, upload.single('profilePicture'), async (req, res) => {
@@ -61,12 +55,12 @@ router.post('/upload-profile-picture', authenticateToken, upload.single('profile
         const user = await User.findById(req.user.userId);
         if (!user) return res.status(404).json({ message: 'User not found' });
 
-        user.profilePicture = `/uploads/${req.file.filename}`;
+        user.profilePicture = req.file.location; // S3 file URL
         await user.save();
 
         res.status(200).json({
             message: 'Profile picture uploaded successfully',
-            profilePicture: `/uploads/${req.file.filename}`,
+            profilePicture: req.file.location,
         });
     } catch (error) {
         console.error('Error uploading profile picture:', error.message);
@@ -89,7 +83,7 @@ router.post('/register', async (req, res) => {
             username,
             email,
             password: hashedPassword,
-            profilePicture: '/images/default-profile.png',
+            profilePicture: '', // Default empty profile picture
         });
         await user.save();
         res.status(201).json({ message: 'User registered successfully' });
