@@ -12,7 +12,7 @@ const router = express.Router();
 const s3 = new aws.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY,
     secretAccessKey: process.env.AWS_SECRET_KEY,
-    region: process.env.AWS_REGION,
+    region: process.env.AWS_REGION, // Ensure this matches the region of your S3 bucket
 });
 
 // Middleware to authenticate token
