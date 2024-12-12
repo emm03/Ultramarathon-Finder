@@ -46,7 +46,7 @@
                 <button class="orange-btn" onclick="window.location.href='activity.html'">View Activities</button>
                 <button class="orange-btn" id="logout-button">Log Out</button>
             </div>
-        </section>       
+        </section>
     </main>
 
     <footer>
@@ -64,6 +64,8 @@
         // Fetch and display account info
         async function fetchAccountInfo() {
             const token = localStorage.getItem('token')?.trim();
+            console.log("Token sent with request:", token); // Log token for debugging
+
             if (!token) {
                 alert("You are not logged in. Redirecting to login...");
                 window.location.href = 'login.html';
@@ -110,6 +112,8 @@
             formData.append('profilePicture', file);
 
             const token = localStorage.getItem('token')?.trim();
+            console.log("Token used for upload:", token); // Log token for debugging
+
             if (!token) {
                 alert("You are not logged in. Redirecting to login...");
                 window.location.href = 'login.html';
