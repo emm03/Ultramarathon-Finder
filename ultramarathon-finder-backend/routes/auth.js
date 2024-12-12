@@ -17,17 +17,23 @@ const s3 = new aws.S3({
 
 // Middleware to authenticate token
 export const authenticateToken = (req, res, next) => {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ message: 'Unauthorized: Token missing' });
+    const rawAuthorizationHeader = req.headers.authorization;
+    console.log("Raw Authorization Header:", rawAuthorizationHeader); // Log for debugging
+
+    const token = rawAuthorizationHeader?.split(' ')[1]?.trim();
+    if (!token) {
+        return res.status(401).json({ message: 'Unauthorized: Token missing' });
+    }
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
         next();
     } catch (error) {
-        const errorMessage = error.name === 'TokenExpiredError'
-            ? 'Token expired, please log in again'
-            : 'Invalid token';
+        const errorMessage =
+            error.name === 'TokenExpiredError'
+                ? 'Token expired, please log in again'
+                : 'Invalid token';
         res.status(403).json({ message: errorMessage });
     }
 };
@@ -71,11 +77,13 @@ router.post('/upload-profile-picture', authenticateToken, upload.single('profile
 // Register user
 router.post('/register', async (req, res) => {
     const { username, email, password } = req.body;
-    if (!username || !email || !password) return res.status(400).json({ message: 'All fields are required' });
+    if (!username || !email || !password)
+        return res.status(400).json({ message: 'All fields are required' });
 
     try {
         const existingUser = await User.findOne({ email });
-        if (existingUser) return res.status(400).json({ message: 'User already exists' });
+        if (existingUser)
+            return res.status(400).json({ message: 'User already exists' });
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -96,14 +104,16 @@ router.post('/register', async (req, res) => {
 // Login route
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
-    if (!email || !password) return res.status(400).json({ message: 'Email and password are required' });
+    if (!email || !password)
+        return res.status(400).json({ message: 'Email and password are required' });
 
     try {
         const user = await User.findOne({ email });
         if (!user) return res.status(404).json({ message: 'User not found' });
 
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
+        if (!isMatch)
+            return res.status(401).json({ message: 'Invalid credentials' });
 
         const token = jwt.sign(
             { userId: user._id, username: user.username },
@@ -121,7 +131,9 @@ router.post('/login', async (req, res) => {
 // Get account info
 router.get('/account', authenticateToken, async (req, res) => {
     try {
-        const user = await User.findById(req.user.userId).select('username email createdAt profilePicture');
+        const user = await User.findById(req.user.userId).select(
+            'username email createdAt profilePicture'
+        );
         if (!user) return res.status(404).json({ message: 'User not found' });
         res.json({ user });
     } catch (error) {
@@ -133,7 +145,8 @@ router.get('/account', authenticateToken, async (req, res) => {
 // Update profile
 router.put('/account', authenticateToken, async (req, res) => {
     const { username, email } = req.body;
-    if (!username || !email) return res.status(400).json({ message: 'Username and email are required' });
+    if (!username || !email)
+        return res.status(400).json({ message: 'Username and email are required' });
 
     try {
         const updatedUser = await User.findByIdAndUpdate(
@@ -143,7 +156,10 @@ router.put('/account', authenticateToken, async (req, res) => {
         ).select('username email profilePicture');
         if (!updatedUser) return res.status(404).json({ message: 'User not found' });
 
-        res.json({ user: updatedUser, message: 'Profile updated successfully' });
+        res.json({
+            user: updatedUser,
+            message: 'Profile updated successfully',
+        });
     } catch (error) {
         console.error('Error updating profile:', error.message);
         res.status(500).json({ message: 'Error updating profile' });
