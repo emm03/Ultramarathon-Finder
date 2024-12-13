@@ -15,6 +15,12 @@ const app = express();
 // Middleware
 app.use(express.json());
 
+// Debugging middleware to log request headers
+app.use((req, res, next) => {
+    console.log("Full Request Headers:", req.headers);
+    next();
+});
+
 // Allow requests from specific origins
 const allowedOrigins = [
     'http://127.0.0.1:5500',  // Localhost
