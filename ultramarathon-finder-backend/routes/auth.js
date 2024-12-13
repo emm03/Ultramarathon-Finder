@@ -48,28 +48,42 @@ const upload = multer({
             cb(null, { fieldName: file.fieldname });
         },
         key: (req, file, cb) => {
-            cb(null, `${Date.now()}-${file.originalname}`);
+            const uniqueKey = `${Date.now()}-${file.originalname}`;
+            console.log("Generated S3 Key:", uniqueKey); // Log generated file key
+            cb(null, uniqueKey);
         },
     }),
 });
 
 // Route to upload profile picture
 router.post('/upload-profile-picture', authenticateToken, upload.single('profilePicture'), async (req, res) => {
-    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+    console.log('Upload request received');
+    console.log('Authenticated User:', req.user); // Log user details from token
+    console.log('File Details:', req.file); // Log file details
+
+    if (!req.file) {
+        console.error('No file uploaded');
+        return res.status(400).json({ message: 'No file uploaded' });
+    }
 
     try {
         const user = await User.findById(req.user.userId);
-        if (!user) return res.status(404).json({ message: 'User not found' });
+        if (!user) {
+            console.error('User not found in the database');
+            return res.status(404).json({ message: 'User not found' });
+        }
 
+        console.log('Saving file URL to user profile');
         user.profilePicture = req.file.location; // S3 file URL
         await user.save();
 
+        console.log('Profile picture uploaded successfully:', req.file.location);
         res.status(200).json({
             message: 'Profile picture uploaded successfully',
             profilePicture: req.file.location,
         });
     } catch (error) {
-        console.error('Error uploading profile picture:', error.message);
+        console.error('Error during profile picture upload:', error.message);
         res.status(500).json({ message: 'Error uploading profile picture', error: error.message });
     }
 });
