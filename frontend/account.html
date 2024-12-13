@@ -63,14 +63,17 @@
     <script>
         // Fetch and display account info
         async function fetchAccountInfo() {
-            const token = localStorage.getItem('token')?.trim();
-            console.log("Token sent with request:", token); // Log token for debugging
+            let token = localStorage.getItem('token')?.trim();
+            console.log("Token sent with request:", token); // Debugging log
 
             if (!token) {
                 alert("You are not logged in. Redirecting to login...");
                 window.location.href = 'login.html';
                 return;
             }
+
+            // Clean up token to remove invalid characters
+            token = token.replace(/[\u2028\u2029]/g, '');
 
             try {
                 const response = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/account', {
@@ -111,14 +114,17 @@
             const formData = new FormData();
             formData.append('profilePicture', file);
 
-            const token = localStorage.getItem('token')?.trim();
-            console.log("Token used for upload:", token); // Log token for debugging
+            let token = localStorage.getItem('token')?.trim();
+            console.log("Token used for upload:", token); // Debugging log
 
             if (!token) {
                 alert("You are not logged in. Redirecting to login...");
                 window.location.href = 'login.html';
                 return;
             }
+
+            // Clean up token to remove invalid characters
+            token = token.replace(/[\u2028\u2029]/g, '');
 
             try {
                 const response = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/upload-profile-picture', {
