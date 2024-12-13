@@ -21,6 +21,7 @@ export const authenticateToken = (req, res, next) => {
     console.log("Raw Authorization Header:", rawAuthorizationHeader); // Log for debugging
 
     if (!rawAuthorizationHeader || !rawAuthorizationHeader.startsWith('Bearer ')) {
+        console.error("Authorization header missing or malformed.");
         return res.status(401).json({ message: 'Unauthorized: Authorization header missing or malformed' });
     }
 
@@ -28,9 +29,11 @@ export const authenticateToken = (req, res, next) => {
 
     // Sanitize token: remove any unwanted invisible characters
     token = token.replace(/[\u2028\u2029\s]/g, '');
+    console.log("Sanitized Token:", token); // Log sanitized token for debugging
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        console.log("Decoded Token:", decoded); // Log decoded token for debugging
         req.user = decoded;
         next();
     } catch (error) {
