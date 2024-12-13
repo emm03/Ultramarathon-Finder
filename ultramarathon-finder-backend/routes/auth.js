@@ -20,19 +20,14 @@ export const authenticateToken = (req, res, next) => {
     const rawAuthorizationHeader = req.headers.authorization;
     console.log("Raw Authorization Header:", rawAuthorizationHeader); // Log for debugging
 
-    if (!rawAuthorizationHeader) {
-        return res.status(401).json({ message: 'Unauthorized: Authorization header missing' });
+    if (!rawAuthorizationHeader || !rawAuthorizationHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ message: 'Unauthorized: Authorization header missing or malformed' });
     }
 
-    let token = rawAuthorizationHeader.split(' ')[1]?.trim();
+    let token = rawAuthorizationHeader.split(' ')[1];
 
-    if (!token) {
-        return res.status(401).json({ message: 'Unauthorized: Token missing' });
-    }
-
-    // Sanitize the token to remove unexpected characters
-    token = token.replace(/[^A-Za-z0-9-_\.]/g, '');
-    console.log("Sanitized Token:", token); // Log sanitized token for debugging
+    // Sanitize token: remove any unwanted invisible characters
+    token = token.replace(/[\u2028\u2029\s]/g, '');
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
