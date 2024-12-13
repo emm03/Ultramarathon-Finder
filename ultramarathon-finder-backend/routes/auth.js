@@ -34,6 +34,7 @@ export const authenticateToken = (req, res, next) => {
             error.name === 'TokenExpiredError'
                 ? 'Token expired, please log in again'
                 : 'Invalid token';
+        console.error("Token validation error:", errorMessage);
         res.status(403).json({ message: errorMessage });
     }
 };
