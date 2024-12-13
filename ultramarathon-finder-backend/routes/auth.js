@@ -20,10 +20,18 @@ export const authenticateToken = (req, res, next) => {
     const rawAuthorizationHeader = req.headers.authorization;
     console.log("Raw Authorization Header:", rawAuthorizationHeader); // Log for debugging
 
-    const token = rawAuthorizationHeader?.split(' ')[1]?.trim();
+    if (!rawAuthorizationHeader) {
+        return res.status(401).json({ message: 'Unauthorized: Authorization header missing' });
+    }
+
+    let token = rawAuthorizationHeader.split(' ')[1]?.trim();
+
     if (!token) {
         return res.status(401).json({ message: 'Unauthorized: Token missing' });
     }
+
+    // Remove unexpected characters from the token
+    token = token.replace(/[\u2028\u2029]/g, '');
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
