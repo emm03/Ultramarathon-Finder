@@ -27,11 +27,13 @@ app.use(cors({
         if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
+            console.error(`Blocked by CORS: ${origin}`);
             callback(new Error('Not allowed by CORS'));
         }
     },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true, // Allow credentials like cookies or authentication headers
 }));
 
 // Connect to MongoDB
@@ -58,6 +60,7 @@ app.get('/', (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
+    console.error('Error middleware:', err.message);
     res.status(500).json({ message: 'Unexpected error', error: err.message });
 });
 
