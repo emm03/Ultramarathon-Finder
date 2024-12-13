@@ -15,31 +15,18 @@ const app = express();
 // Middleware
 app.use(express.json());
 
-// Debugging middleware to log request headers
+// Debugging middleware to log all headers
 app.use((req, res, next) => {
     console.log("Full Request Headers:", req.headers);
     next();
 });
 
-// Allow requests from specific origins
-const allowedOrigins = [
-    'http://127.0.0.1:5500',  // Localhost
-    'http://localhost:5500',
-    'https://ultramarathonconnect.com', // Production URL
-];
-
+// CORS setup
 app.use(cors({
-    origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            console.error(`Blocked by CORS: ${origin}`);
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
+    origin: '*', // Allow all origins for debugging
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true, // Allow credentials like cookies or authentication headers
+    credentials: true,
 }));
 
 // Connect to MongoDB
