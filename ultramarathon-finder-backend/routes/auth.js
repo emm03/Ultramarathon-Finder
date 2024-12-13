@@ -18,27 +18,23 @@ const s3 = new aws.S3({
 // Middleware to authenticate token
 export const authenticateToken = (req, res, next) => {
     const rawAuthorizationHeader = req.headers.authorization;
-    console.log("Raw Authorization Header (before sanitization):", rawAuthorizationHeader);
+    console.log("Raw Authorization Header:", rawAuthorizationHeader);
 
     if (!rawAuthorizationHeader) {
-        console.error("Authorization header is missing");
-        return res.status(401).json({ message: 'Unauthorized: Header missing' });
+        return res.status(401).json({ message: 'Unauthorized: Authorization header missing' });
     }
 
-    // Sanitize Authorization header
-    const sanitizedHeader = rawAuthorizationHeader.replace(/[\r\n\t]/g, '').trim();
-    console.log("Sanitized Authorization Header:", sanitizedHeader);
-
-    const token = sanitizedHeader.split(' ')[1];
+    let token = rawAuthorizationHeader.split(' ')[1];
     if (!token) {
-        console.error("Token is missing after sanitization");
         return res.status(401).json({ message: 'Unauthorized: Token missing' });
     }
+
+    // Remove unexpected characters and sanitize the token
+    token = token.replace(/[\u2028\u2029]/g, '').trim();
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
-        console.log("Token successfully decoded:", decoded);
         next();
     } catch (error) {
         const errorMessage =
