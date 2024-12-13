@@ -15,6 +15,37 @@ const s3 = new aws.S3({
     region: process.env.AWS_REGION, // Ensure this matches the region of your S3 bucket
 });
 
+// Middleware to authenticate token
+export const authenticateToken = (req, res, next) => {
+    const rawAuthorizationHeader = req.headers.authorization;
+    console.log("Raw Authorization Header:", rawAuthorizationHeader); // Log for debugging
+
+    if (!rawAuthorizationHeader || !rawAuthorizationHeader.startsWith('Bearer ')) {
+        console.error("Authorization header missing or malformed.");
+        return res.status(401).json({ message: 'Unauthorized: Authorization header missing or malformed' });
+    }
+
+    let token = rawAuthorizationHeader.split(' ')[1];
+
+    // Sanitize token: remove any unwanted invisible characters
+    token = token.replace(/[^A-Za-z0-9-_\.]/g, '').trim();
+    console.log("Sanitized Token:", token); // Log sanitized token for debugging
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        console.log("Decoded Token:", decoded); // Log decoded token
+        req.user = decoded;
+        next();
+    } catch (error) {
+        const errorMessage =
+            error.name === 'TokenExpiredError'
+                ? 'Token expired, please log in again'
+                : 'Invalid token';
+        console.error("Token validation error:", errorMessage);
+        res.status(403).json({ message: errorMessage });
+    }
+};
+
 // Multer S3 setup for file uploads
 const upload = multer({
     storage: multerS3({
@@ -121,7 +152,7 @@ router.post('/login', async (req, res) => {
 });
 
 // Get account info
-router.get('/account', async (req, res) => {
+router.get('/account', authenticateToken, async (req, res) => {
     try {
         const user = await User.findById(req.user.userId).select(
             'username email createdAt profilePicture'
@@ -135,7 +166,7 @@ router.get('/account', async (req, res) => {
 });
 
 // Update profile
-router.put('/account', async (req, res) => {
+router.put('/account', authenticateToken, async (req, res) => {
     const { username, email } = req.body;
     if (!username || !email)
         return res.status(400).json({ message: 'Username and email are required' });
