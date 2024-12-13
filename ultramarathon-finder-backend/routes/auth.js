@@ -18,19 +18,21 @@ const s3 = new aws.S3({
 // Middleware to authenticate token
 export const authenticateToken = (req, res, next) => {
     const rawAuthorizationHeader = req.headers.authorization;
-    console.log("Raw Authorization Header:", rawAuthorizationHeader);
+    console.log("Raw Authorization Header:", rawAuthorizationHeader); // Log for debugging
 
     if (!rawAuthorizationHeader) {
         return res.status(401).json({ message: 'Unauthorized: Authorization header missing' });
     }
 
-    let token = rawAuthorizationHeader.split(' ')[1];
+    let token = rawAuthorizationHeader.split(' ')[1]?.trim();
+
     if (!token) {
         return res.status(401).json({ message: 'Unauthorized: Token missing' });
     }
 
-    // Remove unexpected characters and sanitize the token
-    token = token.replace(/[\u2028\u2029]/g, '').trim();
+    // Sanitize the token to remove unexpected characters
+    token = token.replace(/[^A-Za-z0-9-_\.]/g, '');
+    console.log("Sanitized Token:", token); // Log sanitized token for debugging
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -57,7 +59,7 @@ const upload = multer({
         },
         key: (req, file, cb) => {
             const uniqueKey = `${Date.now()}-${file.originalname}`;
-            console.log("Generated S3 Key:", uniqueKey);
+            console.log("Generated S3 Key:", uniqueKey); // Log generated file key
             cb(null, uniqueKey);
         },
     }),
@@ -66,8 +68,8 @@ const upload = multer({
 // Route to upload profile picture
 router.post('/upload-profile-picture', authenticateToken, upload.single('profilePicture'), async (req, res) => {
     console.log('Upload request received');
-    console.log('Authenticated User:', req.user);
-    console.log('File Details:', req.file);
+    console.log('Authenticated User:', req.user); // Log user details from token
+    console.log('File Details:', req.file); // Log file details
 
     if (!req.file) {
         console.error('No file uploaded');
