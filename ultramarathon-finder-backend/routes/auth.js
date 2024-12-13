@@ -28,7 +28,7 @@ export const authenticateToken = (req, res, next) => {
     let token = rawAuthorizationHeader.split(' ')[1];
 
     // Sanitize token: remove any unwanted invisible characters
-    token = token.replace(/[\u2028\u2029\s]/g, '');
+    token = token.replace(/[^A-Za-z0-9-_\.]/g, '').trim();
     console.log("Sanitized Token:", token); // Log sanitized token for debugging
 
     try {
