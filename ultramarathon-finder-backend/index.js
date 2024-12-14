@@ -1,13 +1,23 @@
+import dotenv from 'dotenv';
+dotenv.config(); // Load environment variables from .env file
 import express from 'express';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 import cors from 'cors';
 import authRoutes from './routes/auth.js';
 import forumRoutes from './routes/forum.js';
 import path from 'path';
 
-// Load environment variables
-dotenv.config();
+// Log loaded environment variables (for debugging)
+console.log('Loaded Environment Variables:');
+console.log({
+    PORT: process.env.PORT,
+    MONGO_URI: process.env.MONGO_URI,
+    JWT_SECRET: process.env.JWT_SECRET,
+    AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY,
+    AWS_SECRET_KEY: process.env.AWS_SECRET_KEY,
+    AWS_REGION: process.env.AWS_REGION,
+    S3_BUCKET_NAME: process.env.S3_BUCKET_NAME,
+});
 
 // Initialize Express app
 const app = express();

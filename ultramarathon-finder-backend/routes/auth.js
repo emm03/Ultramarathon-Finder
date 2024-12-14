@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
@@ -15,25 +17,28 @@ const s3 = new aws.S3({
     region: process.env.AWS_REGION, // Ensure this matches the region of your S3 bucket
 });
 
+// Log environment variables for debugging
+console.log("AWS_ACCESS_KEY:", process.env.AWS_ACCESS_KEY);
+console.log("AWS_SECRET_KEY:", process.env.AWS_SECRET_KEY);
+console.log("AWS_REGION:", process.env.AWS_REGION);
+console.log("S3_BUCKET_NAME:", process.env.S3_BUCKET_NAME);
+
 // Middleware to authenticate token
 export const authenticateToken = (req, res, next) => {
     const rawAuthorizationHeader = req.headers.authorization;
-    console.log("Raw Authorization Header:", rawAuthorizationHeader); // Log for debugging
+    console.log("Raw Authorization Header:", rawAuthorizationHeader);
 
     if (!rawAuthorizationHeader || !rawAuthorizationHeader.startsWith('Bearer ')) {
         console.error("Authorization header missing or malformed.");
         return res.status(401).json({ message: 'Unauthorized: Authorization header missing or malformed' });
     }
 
-    let token = rawAuthorizationHeader.split(' ')[1];
-
-    // Sanitize token: remove any unwanted invisible characters
-    token = token.replace(/[^A-Za-z0-9-_\.]/g, '').trim();
-    console.log("Sanitized Token:", token); // Log sanitized token for debugging
+    const token = rawAuthorizationHeader.split(' ')[1]?.trim();
+    console.log("Sanitized Token:", token);
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log("Decoded Token:", decoded); // Log decoded token
+        console.log("Decoded Token:", decoded);
         req.user = decoded;
         next();
     } catch (error) {
@@ -50,23 +55,23 @@ export const authenticateToken = (req, res, next) => {
 const upload = multer({
     storage: multerS3({
         s3: s3,
-        bucket: process.env.S3_BUCKET_NAME,
-        acl: 'public-read',
+        bucket: process.env.S3_BUCKET_NAME || 'ultramarathon-profile-pictures',
         metadata: (req, file, cb) => {
             cb(null, { fieldName: file.fieldname });
         },
         key: (req, file, cb) => {
             const uniqueKey = `${Date.now()}-${file.originalname}`;
-            console.log("Generated S3 Key:", uniqueKey); // Log generated file key
+            console.log("Generated S3 Key:", uniqueKey);
             cb(null, uniqueKey);
         },
     }),
 });
 
-// Route to upload profile picture (temporary bypass token validation for debugging)
-router.post('/upload-profile-picture', upload.single('profilePicture'), async (req, res) => {
-    console.log('Upload request received without token validation');
-    console.log('File Details:', req.file); // Log file details
+// Route to upload profile picture
+router.post('/upload-profile-picture', authenticateToken, upload.single('profilePicture'), async (req, res) => {
+    console.log('Upload request received');
+    console.log('Authenticated User:', req.user);
+    console.log('File Details:', req.file);
 
     if (!req.file) {
         console.error('No file uploaded');
@@ -74,16 +79,14 @@ router.post('/upload-profile-picture', upload.single('profilePicture'), async (r
     }
 
     try {
-        // Mock user data for debugging
-        const userId = 'mockUserId';
-        const user = await User.findById(userId);
+        const user = await User.findById(req.user.userId);
         if (!user) {
             console.error('User not found in the database');
             return res.status(404).json({ message: 'User not found' });
         }
 
         console.log('Saving file URL to user profile');
-        user.profilePicture = req.file.location; // S3 file URL
+        user.profilePicture = req.file.location;
         await user.save();
 
         console.log('Profile picture uploaded successfully:', req.file.location);
