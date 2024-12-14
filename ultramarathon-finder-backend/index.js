@@ -33,7 +33,7 @@ app.use((req, res, next) => {
 
 // CORS setup
 app.use(cors({
-    origin: '*', // Allow all origins for debugging
+    origin: 'https://ultramarathonconnect.com', // Allow requests from your Netlify frontend
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
