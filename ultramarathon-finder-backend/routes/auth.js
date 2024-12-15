@@ -25,10 +25,10 @@ console.log("S3_BUCKET_NAME:", process.env.S3_BUCKET_NAME);
 
 // Middleware to authenticate token
 export const authenticateToken = (req, res, next) => {
-    const rawAuthorizationHeader = req.headers.authorization || '';
+    let rawAuthorizationHeader = req.headers.authorization || '';
     console.log("Raw Authorization Header:", rawAuthorizationHeader);
 
-    // Check for 'Bearer ' prefix and sanitize token
+    // Ensure 'Bearer ' prefix exists
     if (!rawAuthorizationHeader.startsWith('Bearer ')) {
         return res.status(401).json({ message: 'Authorization header missing or malformed' });
     }
