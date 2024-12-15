@@ -14,7 +14,7 @@ const router = express.Router();
 const s3 = new aws.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY,
     secretAccessKey: process.env.AWS_SECRET_KEY,
-    region: process.env.AWS_REGION, // Ensure this matches the region of your S3 bucket
+    region: process.env.AWS_REGION,
 });
 
 // Log environment variables for debugging
@@ -25,27 +25,24 @@ console.log("S3_BUCKET_NAME:", process.env.S3_BUCKET_NAME);
 
 // Middleware to authenticate token
 export const authenticateToken = (req, res, next) => {
-    const rawAuthorizationHeader = req.headers.authorization || ''; // Default to empty string
+    const rawAuthorizationHeader = req.headers.authorization || '';
     console.log("Raw Authorization Header:", rawAuthorizationHeader);
 
+    // Check for 'Bearer ' prefix and sanitize token
     if (!rawAuthorizationHeader.startsWith('Bearer ')) {
-        console.error("Authorization header missing or malformed.");
-        return res.status(401).json({ message: 'Unauthorized: Authorization header missing or malformed' });
+        return res.status(401).json({ message: 'Authorization header missing or malformed' });
     }
 
-    const token = rawAuthorizationHeader.split(' ')[1]?.trim(); // Extract token
-    console.log("Sanitized Token:", token);
+    const token = rawAuthorizationHeader.split(' ')[1]?.trim();
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verify the token
-        console.log("Decoded Token:", decoded);
-        req.user = decoded; // Attach user data to request object
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
         next();
     } catch (error) {
-        console.error("Token validation error:", error.message);
         const errorMessage =
             error.name === 'TokenExpiredError'
-                ? 'Token expired, please log in again'
+                ? 'Token expired. Please log in again.'
                 : 'Invalid token';
         res.status(403).json({ message: errorMessage });
     }
