@@ -6,6 +6,7 @@ import cors from 'cors';
 import authRoutes from './routes/auth.js';
 import forumRoutes from './routes/forum.js';
 import path from 'path';
+import AWS from 'aws-sdk';
 
 // Log loaded environment variables (for debugging)
 console.log('Loaded Environment Variables:');
@@ -59,6 +60,42 @@ app.use('/api/forum', forumRoutes);
 // Health check
 app.get('/', (req, res) => {
     res.send('Ultramarathon Finder Backend is running!');
+});
+
+// Environment check endpoint
+app.get('/api/env-check', (req, res) => {
+    res.json({
+        PORT: process.env.PORT,
+        MONGO_URI: process.env.MONGO_URI ? 'Loaded' : 'Not Set',
+        JWT_SECRET: process.env.JWT_SECRET ? 'Loaded' : 'Not Set',
+        AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY ? 'Loaded' : 'Not Set',
+        AWS_SECRET_KEY: process.env.AWS_SECRET_KEY ? 'Loaded' : 'Not Set',
+        AWS_REGION: process.env.AWS_REGION ? 'Loaded' : 'Not Set',
+        S3_BUCKET_NAME: process.env.S3_BUCKET_NAME ? 'Loaded' : 'Not Set',
+    });
+});
+
+// Debug route to test S3 connectivity
+const s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_KEY,
+    region: process.env.AWS_REGION,
+});
+
+app.get('/api/s3-test', async (req, res) => {
+    try {
+        const params = {
+            Bucket: process.env.S3_BUCKET_NAME,
+            Key: 'test-object',
+            Body: 'This is a test file to validate S3 connectivity.',
+        };
+
+        const result = await s3.upload(params).promise();
+        res.json({ message: 'S3 Upload Successful', data: result });
+    } catch (error) {
+        console.error('S3 Test Error:', error.message);
+        res.status(500).json({ message: 'S3 Test Failed', error: error.message });
+    }
 });
 
 // Error handling middleware
