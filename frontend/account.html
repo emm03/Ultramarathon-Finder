@@ -62,9 +62,8 @@
     </footer>
 
     <script>
-        // Fetch and display account info
         async function fetchAccountInfo() {
-            const token = localStorage.getItem('token')?.trim();
+            let token = localStorage.getItem('token')?.trim();
             console.log("Token sent with request:", token);
 
             if (!token) {
@@ -90,8 +89,7 @@
                         document.getElementById('profile-pic').src = user.profilePicture;
                     }
                 } else {
-                    const errorText = await response.text();
-                    console.error("Error fetching account info:", errorText);
+                    console.error("Error fetching account info:", await response.text());
                     alert("Error fetching account info. Redirecting to login...");
                     localStorage.removeItem('token');
                     window.location.href = 'login.html';
@@ -102,7 +100,6 @@
             }
         }
 
-        // Handle profile picture upload
         document.getElementById('upload-input').addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) {
@@ -113,12 +110,16 @@
             const formData = new FormData();
             formData.append('profilePicture', file);
 
-            const token = localStorage.getItem('token')?.trim();
+            let token = localStorage.getItem('token')?.trim();
             if (!token) {
                 alert("You are not logged in. Redirecting to login...");
                 window.location.href = 'login.html';
                 return;
             }
+
+            // Sanitize the token
+            token = token.replace(/[\r\n\t\f\v ]+/g, '').trim();
+            console.log("Sanitized token used for upload:", token);
 
             try {
                 const response = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/upload-profile-picture', {
@@ -142,14 +143,12 @@
             }
         });
 
-        // Handle logout
         document.getElementById('logout-button').addEventListener('click', () => {
             localStorage.removeItem('token');
             alert("You have successfully logged out.");
             window.location.href = 'login.html';
         });
 
-        // Load account info on page load
         fetchAccountInfo();
     </script>
 </body>
