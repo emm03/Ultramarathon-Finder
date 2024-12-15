@@ -17,32 +17,34 @@ const s3 = new aws.S3({
     region: process.env.AWS_REGION, // Ensure this matches the region of your S3 bucket
 });
 
-// Log environment variables for debugging
+// Debugging: Log AWS environment variables
 console.log("AWS_ACCESS_KEY:", process.env.AWS_ACCESS_KEY);
-console.log("AWS_SECRET_KEY:", process.env.AWS_SECRET_KEY);
 console.log("AWS_REGION:", process.env.AWS_REGION);
 console.log("S3_BUCKET_NAME:", process.env.S3_BUCKET_NAME);
 
 // Middleware to authenticate token
 export const authenticateToken = (req, res, next) => {
-    const rawAuthorizationHeader = req.headers.authorization || ''; // Default to empty string
-    console.log("Raw Authorization Header:", rawAuthorizationHeader); // Log the raw header for debugging
-
-    if (!rawAuthorizationHeader.startsWith('Bearer ')) {
-        console.error("Authorization header missing or malformed.");
-        return res.status(401).json({ message: 'Unauthorized: Authorization header missing or malformed' });
-    }
-
-    let token = rawAuthorizationHeader.split(' ')[1]?.trim(); // Trim to avoid invisible characters
-    console.log("Sanitized Token:", token); // Log the sanitized token
-
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verify the token
-        console.log("Decoded Token:", decoded); // Log the decoded token
-        req.user = decoded; // Attach the decoded token to the request
+        const rawAuthorizationHeader = req.headers.authorization || ''; // Default to an empty string
+        console.log("Raw Authorization Header:", rawAuthorizationHeader); // Debug: Log raw header
+
+        // Validate Authorization header
+        if (!rawAuthorizationHeader.startsWith('Bearer ')) {
+            console.error("Authorization header missing or malformed.");
+            return res.status(401).json({ message: 'Unauthorized: Authorization header missing or malformed' });
+        }
+
+        // Sanitize and extract the token
+        const token = rawAuthorizationHeader.split(' ')[1]?.trim(); // Trim to avoid invisible characters
+        console.log("Sanitized Token:", token); // Debug: Log sanitized token
+
+        // Verify token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        console.log("Decoded Token:", decoded); // Debug: Log decoded token
+        req.user = decoded; // Attach decoded user to request
         next();
     } catch (error) {
-        console.error("Token validation error:", error.message); // Log the token error
+        console.error("Token validation error:", error.message); // Debug: Log token error
         const errorMessage =
             error.name === 'TokenExpiredError'
                 ? 'Token expired, please log in again'
@@ -61,7 +63,7 @@ const upload = multer({
         },
         key: (req, file, cb) => {
             const uniqueKey = `${Date.now()}-${file.originalname}`;
-            console.log("Generated S3 Key:", uniqueKey); // Log the S3 file key
+            console.log("Generated S3 Key:", uniqueKey); // Debug: Log the S3 file key
             cb(null, uniqueKey);
         },
     }),
@@ -69,16 +71,16 @@ const upload = multer({
 
 // Route to upload profile picture
 router.post('/upload-profile-picture', authenticateToken, upload.single('profilePicture'), async (req, res) => {
-    console.log('Upload request received');
-    console.log('Authenticated User:', req.user); // Log authenticated user details
-    console.log('File Details:', req.file); // Log file details
-
-    if (!req.file) {
-        console.error('No file uploaded');
-        return res.status(400).json({ message: 'No file uploaded' });
-    }
-
     try {
+        console.log('Upload request received');
+        console.log('Authenticated User:', req.user); // Debug: Log authenticated user details
+        console.log('File Details:', req.file); // Debug: Log file details
+
+        if (!req.file) {
+            console.error('No file uploaded');
+            return res.status(400).json({ message: 'No file uploaded' });
+        }
+
         const user = await User.findById(req.user.userId); // Find the user by ID
         if (!user) {
             console.error('User not found in the database');
@@ -95,7 +97,7 @@ router.post('/upload-profile-picture', authenticateToken, upload.single('profile
             profilePicture: req.file.location,
         });
     } catch (error) {
-        console.error('Error during profile picture upload:', error.message); // Log upload error
+        console.error('Error during profile picture upload:', error.message); // Debug: Log upload error
         res.status(500).json({ message: 'Error uploading profile picture', error: error.message });
     }
 });
