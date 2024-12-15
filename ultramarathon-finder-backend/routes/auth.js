@@ -25,26 +25,32 @@ console.log("S3_BUCKET_NAME:", process.env.S3_BUCKET_NAME);
 // Middleware to authenticate token
 export const authenticateToken = (req, res, next) => {
     try {
-        const rawAuthorizationHeader = req.headers.authorization || ''; // Default to an empty string
-        console.log("Raw Authorization Header:", rawAuthorizationHeader); // Debug: Log raw header
-
-        // Validate Authorization header
-        if (!rawAuthorizationHeader.startsWith('Bearer ')) {
-            console.error("Authorization header missing or malformed.");
-            return res.status(401).json({ message: 'Unauthorized: Authorization header missing or malformed' });
+        // Ensure Authorization header exists
+        const rawAuthorizationHeader = req.headers.authorization;
+        if (!rawAuthorizationHeader) {
+            console.error("Authorization header is missing.");
+            return res.status(401).json({ message: 'Unauthorized: Authorization header is missing' });
         }
 
-        // Sanitize and extract the token
-        const token = rawAuthorizationHeader.split(' ')[1]?.trim(); // Trim to avoid invisible characters
-        console.log("Sanitized Token:", token); // Debug: Log sanitized token
+        console.log("Raw Authorization Header:", rawAuthorizationHeader); // Debugging
 
-        // Verify token
+        // Validate Authorization header format
+        if (!rawAuthorizationHeader.startsWith('Bearer ')) {
+            console.error("Authorization header malformed.");
+            return res.status(401).json({ message: 'Unauthorized: Authorization header malformed' });
+        }
+
+        // Extract and sanitize the token
+        const token = rawAuthorizationHeader.replace(/[^a-zA-Z0-9\-._~+/=]/g, '').split(' ')[1]?.trim();
+        console.log("Sanitized Token:", token); // Debugging
+
+        // Verify the token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log("Decoded Token:", decoded); // Debug: Log decoded token
+        console.log("Decoded Token:", decoded); // Debugging
         req.user = decoded; // Attach decoded user to request
         next();
     } catch (error) {
-        console.error("Token validation error:", error.message); // Debug: Log token error
+        console.error("Token validation error:", error.message); // Debugging
         const errorMessage =
             error.name === 'TokenExpiredError'
                 ? 'Token expired, please log in again'
@@ -63,7 +69,7 @@ const upload = multer({
         },
         key: (req, file, cb) => {
             const uniqueKey = `${Date.now()}-${file.originalname}`;
-            console.log("Generated S3 Key:", uniqueKey); // Debug: Log the S3 file key
+            console.log("Generated S3 Key:", uniqueKey); // Debugging
             cb(null, uniqueKey);
         },
     }),
@@ -73,15 +79,15 @@ const upload = multer({
 router.post('/upload-profile-picture', authenticateToken, upload.single('profilePicture'), async (req, res) => {
     try {
         console.log('Upload request received');
-        console.log('Authenticated User:', req.user); // Debug: Log authenticated user details
-        console.log('File Details:', req.file); // Debug: Log file details
+        console.log('Authenticated User:', req.user); // Debugging
+        console.log('File Details:', req.file); // Debugging
 
         if (!req.file) {
             console.error('No file uploaded');
             return res.status(400).json({ message: 'No file uploaded' });
         }
 
-        const user = await User.findById(req.user.userId); // Find the user by ID
+        const user = await User.findById(req.user.userId);
         if (!user) {
             console.error('User not found in the database');
             return res.status(404).json({ message: 'User not found' });
@@ -97,7 +103,7 @@ router.post('/upload-profile-picture', authenticateToken, upload.single('profile
             profilePicture: req.file.location,
         });
     } catch (error) {
-        console.error('Error during profile picture upload:', error.message); // Debug: Log upload error
+        console.error('Error during profile picture upload:', error.message); // Debugging
         res.status(500).json({ message: 'Error uploading profile picture', error: error.message });
     }
 });
