@@ -25,10 +25,9 @@ console.log("S3_BUCKET_NAME:", process.env.S3_BUCKET_NAME);
 
 // Middleware to authenticate token
 export const authenticateToken = (req, res, next) => {
-    let rawAuthorizationHeader = req.headers.authorization || '';
+    const rawAuthorizationHeader = req.headers.authorization || '';
     console.log("Raw Authorization Header:", rawAuthorizationHeader);
 
-    // Ensure 'Bearer ' prefix exists
     if (!rawAuthorizationHeader.startsWith('Bearer ')) {
         return res.status(401).json({ message: 'Authorization header missing or malformed' });
     }
@@ -53,7 +52,6 @@ const upload = multer({
     storage: multerS3({
         s3: s3,
         bucket: process.env.S3_BUCKET_NAME || 'ultramarathon-profile-pictures',
-        acl: 'public-read', // Ensure files are publicly readable
         metadata: (req, file, cb) => {
             cb(null, { fieldName: file.fieldname });
         },
@@ -62,6 +60,9 @@ const upload = multer({
             console.log("Generated S3 Key:", uniqueKey);
             cb(null, uniqueKey);
         },
+        // Adding required header to enforce bucket-owner-full-control
+        contentType: multerS3.AUTO_CONTENT_TYPE,
+        acl: 'bucket-owner-full-control',
     }),
 });
 
