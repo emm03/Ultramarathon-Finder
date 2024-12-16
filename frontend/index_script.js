@@ -32,28 +32,11 @@ function initializeCarousel() {
         });
     }
 
-    function nextSlide() {
+    // Automatically advance slides every 5 seconds
+    setInterval(() => {
         currentIndex = (currentIndex + 1) % slides.length;
         showSlide(currentIndex);
-    }
-
-    function prevSlide() {
-        currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-        showSlide(currentIndex);
-    }
-
-    const interval = setInterval(nextSlide, 5000);
-
-    // Event listeners for navigation buttons
-    document.querySelector(".carousel-next").addEventListener("click", () => {
-        clearInterval(interval);
-        nextSlide();
-    });
-
-    document.querySelector(".carousel-prev").addEventListener("click", () => {
-        clearInterval(interval);
-        prevSlide();
-    });
+    }, 5000);
 
     // Initialize the first slide
     showSlide(currentIndex);

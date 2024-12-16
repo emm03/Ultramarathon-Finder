@@ -95,33 +95,37 @@ header nav a:hover {
 /* Carousel Section */
 .carousel {
     position: relative;
-    width: 100vw; /* Full width of the viewport */
-    height: 100vh; /* Full viewport height for visuals */
+    width: 100%;
+    height: 100vh;
     overflow: hidden;
-    background-color: #000; /* Fallback background */
-    margin: 0 auto;
+    background-color: #000; /* Prevent flickering */
 }
 
 .carousel-inner {
-    display: flex;
-    flex-wrap: nowrap; /* Prevent wrapping */
-    transition: transform 0.8s ease-in-out; /* Smooth slide animation */
-    height: 100%; /* Match the carousel height */
-    width: 100%; /* Full width */
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
 
 .carousel-item {
-    flex: 0 0 100%; /* Ensure each item takes up the full width */
-    height: 100%; /* Match the height of the carousel */
-    position: relative; /* For overlay positioning */
-    text-align: center; /* Center-align content inside */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out; /* Smooth fade transition */
+}
+
+.carousel-item.active {
+    opacity: 1;
+    z-index: 10;
 }
 
 .carousel-item img {
-    width: 100vw; /* Stretch the image to fit the width */
-    height: 100vh; /* Stretch the image to fit the height */
-    object-fit: cover; /* Maintain aspect ratio while covering the area */
-    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 /* Overlay Text for Carousel */
