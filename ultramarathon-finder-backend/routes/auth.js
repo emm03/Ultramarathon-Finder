@@ -145,7 +145,15 @@ router.post('/login', async (req, res) => {
             { expiresIn: '1h' }
         );
 
-        res.status(200).json({ message: 'Login successful', token });
+        res.status(200).json({ 
+            message: 'Login successful', 
+            token,
+            user: { 
+                username: user.username,
+                email: user.email,
+                profilePicture: user.profilePicture || ''
+            }
+        });
     } catch (error) {
         console.error('Error during login:', error.message);
         res.status(500).json({ message: 'Internal server error during login' });
@@ -191,3 +199,20 @@ router.put('/account', authenticateToken, async (req, res) => {
 });
 
 export default router;
+
+// Get user data (for home page or other pages)
+router.get('/user', authenticateToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.userId).select('username email profilePicture');
+        if (!user) return res.status(404).json({ message: 'User not found' });
+
+        res.status(200).json({
+            username: user.username,
+            email: user.email,
+            profilePicture: user.profilePicture || ''
+        });
+    } catch (error) {
+        console.error('Error fetching user data:', error.message);
+        res.status(500).json({ message: 'Error fetching user data' });
+    }
+});
