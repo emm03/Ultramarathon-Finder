@@ -82,6 +82,7 @@ function setupAuthenticatedMenu(menu, token) {
         logoutBtn.addEventListener("click", (e) => {
             e.preventDefault();
             localStorage.removeItem("token");
+            localStorage.removeItem("profilePicture"); // Clear stored profile picture
             alert("You have successfully logged out.");
             window.location.href = "login.html";
         });
@@ -112,24 +113,36 @@ function redirectIfUnauthorized(token, restrictedPages) {
 
 async function fetchUserProfilePicture(token, menu) {
     try {
-        const response = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/account', {
-            method: 'GET',
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-        });
+        // Load the profile picture from localStorage first
+        const storedProfilePicture = localStorage.getItem("profilePicture");
+        const profileImg = document.createElement('img');
+        profileImg.classList.add('profile-picture-nav');
+        const accountListItem = menu.querySelector(".auth-link a[href='account.html']").parentNode;
 
-        if (response.ok) {
-            const { user } = await response.json();
-            const profileImg = document.createElement('img');
-            profileImg.src = user.profilePicture || 'images/default-profile.png'; // Fallback to default profile picture
-            profileImg.alt = `${user.username}'s Profile Picture`;
-            profileImg.classList.add('profile-picture-nav');
-            const accountListItem = menu.querySelector(".auth-link a[href='account.html']").parentNode;
+        if (storedProfilePicture) {
+            // Use the stored profile picture
+            profileImg.src = storedProfilePicture;
+            profileImg.alt = "Profile Picture";
             accountListItem.prepend(profileImg);
         } else {
-            console.error("Failed to fetch profile picture:", await response.text());
+            // Fetch the profile picture from the backend
+            const response = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/account', {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                const { user } = await response.json();
+                profileImg.src = user.profilePicture || 'images/default-profile.png'; // Fallback to default
+                profileImg.alt = `${user.username}'s Profile Picture`;
+                localStorage.setItem("profilePicture", user.profilePicture || "images/default-profile.png"); // Persist the picture
+                accountListItem.prepend(profileImg);
+            } else {
+                console.error("Failed to fetch profile picture:", await response.text());
+            }
         }
     } catch (error) {
         console.error("Error fetching profile picture:", error);

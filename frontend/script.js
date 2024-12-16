@@ -214,3 +214,64 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initial load
     fetchComments();
 });
+
+// Function to fetch user details (including profile picture)
+async function fetchUserData(userId, token) {
+    try {
+        const response = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/auth/account`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch user data');
+        }
+
+        const { user } = await response.json();
+        console.log('Fetched user data:', user);
+
+        // Store user profile in localStorage for persistence
+        localStorage.setItem('userProfile', JSON.stringify(user));
+        return user;
+    } catch (error) {
+        console.error('Error fetching user data:', error.message);
+    }
+}
+
+// Function to display profile picture dynamically
+function displayProfilePicture() {
+    const userProfile = JSON.parse(localStorage.getItem('userProfile'));
+
+    if (userProfile && userProfile.profilePicture) {
+        // Select all image elements with the 'profile-picture' class
+        const profileImageElements = document.querySelectorAll('.profile-picture');
+        profileImageElements.forEach((img) => {
+            img.src = userProfile.profilePicture;
+        });
+    } else {
+        console.log('No profile picture found. Using default image.');
+    }
+}
+
+// Initialize profile picture on page load
+document.addEventListener('DOMContentLoaded', async () => {
+    const token = localStorage.getItem('token');
+
+    if (token) {
+        try {
+            // Fetch user data if not already in localStorage
+            if (!localStorage.getItem('userProfile')) {
+                await fetchUserData(null, token); // Use the current user's token
+            }
+
+            // Display the profile picture
+            displayProfilePicture();
+        } catch (error) {
+            console.error('Error initializing user profile:', error.message);
+        }
+    } else {
+        console.log('No token found. User not logged in.');
+    }
+});
