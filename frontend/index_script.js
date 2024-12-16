@@ -19,6 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
     redirectIfUnauthorized(token, ["account.html", "profile_edit.html"]);
 });
 
+// Function to initialize the carousel
 function initializeCarousel() {
     const slides = document.querySelectorAll(".carousel-item");
     let currentIndex = 0;
@@ -26,42 +27,39 @@ function initializeCarousel() {
     function showSlide(index) {
         slides.forEach((slide, i) => {
             slide.classList.remove("active");
-            slide.style.opacity = 0;
-            slide.style.display = "none";
-
-            if (i === index) {
-                slide.classList.add("active");
-                slide.style.opacity = 1;
-                slide.style.display = "block";
-            }
+            slide.style.opacity = i === index ? "1" : "0"; // Smooth fade effect
+            slide.style.zIndex = i === index ? "10" : "0";
         });
     }
 
-    const interval = setInterval(() => {
+    function nextSlide() {
         currentIndex = (currentIndex + 1) % slides.length;
         showSlide(currentIndex);
-    }, 5000);
-
-    showSlide(currentIndex);
-
-    const prevButton = document.querySelector(".carousel-prev");
-    const nextButton = document.querySelector(".carousel-next");
-
-    if (prevButton && nextButton) {
-        prevButton.addEventListener("click", () => {
-            clearInterval(interval);
-            currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-            showSlide(currentIndex);
-        });
-
-        nextButton.addEventListener("click", () => {
-            clearInterval(interval);
-            currentIndex = (currentIndex + 1) % slides.length;
-            showSlide(currentIndex);
-        });
     }
+
+    function prevSlide() {
+        currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+        showSlide(currentIndex);
+    }
+
+    const interval = setInterval(nextSlide, 5000);
+
+    // Event listeners for navigation buttons
+    document.querySelector(".carousel-next").addEventListener("click", () => {
+        clearInterval(interval);
+        nextSlide();
+    });
+
+    document.querySelector(".carousel-prev").addEventListener("click", () => {
+        clearInterval(interval);
+        prevSlide();
+    });
+
+    // Initialize the first slide
+    showSlide(currentIndex);
 }
 
+// Set up authenticated menu (My Account + Logout)
 function setupAuthenticatedMenu(menu, token) {
     const accountLink = document.createElement("li");
     accountLink.classList.add("auth-link");
@@ -82,13 +80,14 @@ function setupAuthenticatedMenu(menu, token) {
         logoutBtn.addEventListener("click", (e) => {
             e.preventDefault();
             localStorage.removeItem("token");
-            localStorage.removeItem("profilePicture"); // Clear stored profile picture
+            localStorage.removeItem("profilePicture");
             alert("You have successfully logged out.");
             window.location.href = "login.html";
         });
     }
 }
 
+// Set up unauthenticated menu (Login + Register)
 function setupUnauthenticatedMenu(menu) {
     const loginLink = document.createElement("li");
     loginLink.classList.add("auth-link");
@@ -102,6 +101,7 @@ function setupUnauthenticatedMenu(menu) {
     menu.appendChild(registerLink);
 }
 
+// Redirect unauthorized users from protected pages
 function redirectIfUnauthorized(token, restrictedPages) {
     const currentPage = window.location.pathname.split("/").pop();
 
@@ -111,21 +111,19 @@ function redirectIfUnauthorized(token, restrictedPages) {
     }
 }
 
+// Fetch and display the user's profile picture in the navigation menu
 async function fetchUserProfilePicture(token, menu) {
     try {
-        // Load the profile picture from localStorage first
         const storedProfilePicture = localStorage.getItem("profilePicture");
         const profileImg = document.createElement('img');
         profileImg.classList.add('profile-picture-nav');
         const accountListItem = menu.querySelector(".auth-link a[href='account.html']").parentNode;
 
         if (storedProfilePicture) {
-            // Use the stored profile picture
             profileImg.src = storedProfilePicture;
             profileImg.alt = "Profile Picture";
             accountListItem.prepend(profileImg);
         } else {
-            // Fetch the profile picture from the backend
             const response = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/account', {
                 method: 'GET',
                 headers: {
@@ -136,9 +134,9 @@ async function fetchUserProfilePicture(token, menu) {
 
             if (response.ok) {
                 const { user } = await response.json();
-                profileImg.src = user.profilePicture || 'images/default-profile.png'; // Fallback to default
+                profileImg.src = user.profilePicture || 'images/default-profile.png';
                 profileImg.alt = `${user.username}'s Profile Picture`;
-                localStorage.setItem("profilePicture", user.profilePicture || "images/default-profile.png"); // Persist the picture
+                localStorage.setItem("profilePicture", user.profilePicture || "images/default-profile.png");
                 accountListItem.prepend(profileImg);
             } else {
                 console.error("Failed to fetch profile picture:", await response.text());

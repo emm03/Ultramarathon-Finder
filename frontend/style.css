@@ -96,7 +96,7 @@ header nav a:hover {
 .carousel {
     position: relative;
     width: 100vw; /* Full width of the viewport */
-    height: 100vh; /* Full viewport height for better visuals */
+    height: 100vh; /* Full viewport height for visuals */
     overflow: hidden;
     background-color: #000; /* Fallback background */
     margin: 0 auto;
@@ -105,9 +105,9 @@ header nav a:hover {
 .carousel-inner {
     display: flex;
     flex-wrap: nowrap; /* Prevent wrapping */
-    transition: transform 0.5s ease-in-out; /* Smooth slide animation */
+    transition: transform 0.8s ease-in-out; /* Smooth slide animation */
     height: 100%; /* Match the carousel height */
-    width: 100%;
+    width: 100%; /* Full width */
 }
 
 .carousel-item {
@@ -120,7 +120,8 @@ header nav a:hover {
 .carousel-item img {
     width: 100vw; /* Stretch the image to fit the width */
     height: 100vh; /* Stretch the image to fit the height */
-    object-fit: cover; /* Ensure the image maintains its aspect ratio while covering the area */
+    object-fit: cover; /* Maintain aspect ratio while covering the area */
+    display: block;
 }
 
 /* Overlay Text for Carousel */
@@ -131,10 +132,10 @@ header nav a:hover {
     transform: translate(-50%, -50%);
     text-align: center;
     color: #fff;
-    background: rgba(0, 0, 0, 0.6); /* Semi-transparent background for text readability */
+    background: rgba(0, 0, 0, 0.6); /* Semi-transparent background for readability */
     padding: 20px 40px;
     border-radius: 10px;
-    max-width: 90%; /* Adapt overlay width for smaller screens */
+    max-width: 90%; /* Adjust for smaller screens */
 }
 
 .carousel-overlay h1 {
@@ -144,23 +145,59 @@ header nav a:hover {
 }
 
 .carousel-overlay p {
-    font-size: 1.5rem; /* Slightly larger font for better visibility */
+    font-size: 1.5rem; /* Slightly larger font for readability */
     margin-bottom: 20px;
 }
 
 .carousel-overlay button {
-    padding: 12px 30px; /* Adjust button size */
+    padding: 12px 30px;
     font-size: 1.2rem;
     background-color: #f7931e;
     border: none;
     border-radius: 5px;
+    color: #fff;
     cursor: pointer;
     transition: background 0.3s ease, transform 0.3s ease;
 }
 
 .carousel-overlay button:hover {
     background-color: #e5801b;
-    transform: scale(1.05); /* Add slight zoom on hover */
+    transform: scale(1.05); /* Slight zoom on hover */
+}
+
+/* Carousel Navigation Buttons */
+.carousel-prev,
+.carousel-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    color: #fff;
+    border: none;
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+    z-index: 10; /* Ensure buttons appear above other content */
+}
+
+.carousel-prev {
+    left: 20px; /* Position to the left */
+}
+
+.carousel-next {
+    right: 20px; /* Position to the right */
+}
+
+.carousel-prev:hover,
+.carousel-next:hover {
+    background-color: rgba(0, 0, 0, 0.8); /* Darker on hover */
+    transform: scale(1.1); /* Slight zoom on hover */
 }
 
 /* Responsive Design for Carousel */
@@ -180,6 +217,13 @@ header nav a:hover {
     .carousel-overlay button {
         padding: 8px 20px; /* Adjust button size */
         font-size: 1rem;
+    }
+
+    .carousel-prev,
+    .carousel-next {
+        font-size: 1.5rem;
+        width: 40px;
+        height: 40px;
     }
 }
 
