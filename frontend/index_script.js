@@ -11,8 +11,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (token) {
         setupAuthenticatedMenu(menu, token);
+        loadUserInfo(token); // Load user information in the "Welcome" section
     } else {
         setupUnauthenticatedMenu(menu);
+        setupUnauthenticatedUser(); // Default "Welcome" card setup
     }
 
     // Redirect users to login if accessing restricted pages
@@ -84,20 +86,11 @@ function setupUnauthenticatedMenu(menu) {
     menu.appendChild(registerLink);
 }
 
-// Redirect unauthorized users from protected pages
-function redirectIfUnauthorized(token, restrictedPages) {
-    const currentPage = window.location.pathname.split("/").pop();
-
-    if (restrictedPages.includes(currentPage) && !token) {
-        alert("You must be logged in to view this page.");
-        window.location.href = "login.html";
-    }
-}
-
 // Fetch and display user info in the profile section
 async function loadUserInfo(token) {
     const usernameElement = document.getElementById("username");
     const emailElement = document.getElementById("email");
+    const profilePicElement = document.getElementById("profile-pic");
 
     try {
         const response = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/account', {
@@ -112,24 +105,76 @@ async function loadUserInfo(token) {
             const { user } = await response.json();
             usernameElement.textContent = `Welcome, ${user.username}!`;
             emailElement.innerHTML = `<strong>Email:</strong> ${user.email}`;
+
+            // Update profile picture
+            if (user.profilePicture) {
+                profilePicElement.src = user.profilePicture;
+                profilePicElement.alt = `${user.username}'s Profile Picture`;
+            }
         } else {
             console.error("Failed to fetch user info:", await response.text());
-            usernameElement.textContent = "Welcome, User!";
-            emailElement.innerHTML = `<strong>Email:</strong> user@example.com`;
+            setupUnauthenticatedUser();
         }
     } catch (error) {
         console.error("Error fetching user info:", error);
-        usernameElement.textContent = "Welcome, User!";
-        emailElement.innerHTML = `<strong>Email:</strong> user@example.com`;
+        setupUnauthenticatedUser();
     }
 }
 
-// Add this call to load user info if the user is logged in
-document.addEventListener("DOMContentLoaded", () => {
-    const token = localStorage.getItem("token")?.trim();
+// Set up default "Welcome" card for unauthenticated users
+function setupUnauthenticatedUser() {
+    const usernameElement = document.getElementById("username");
+    const emailElement = document.getElementById("email");
+    const profilePicElement = document.getElementById("profile-pic");
 
-    if (token) {
-        loadUserInfo(token);
+    usernameElement.textContent = "Welcome, User!";
+    emailElement.innerHTML = `<strong>Email:</strong> user@example.com`;
+    profilePicElement.src = "images/default-profile.png";
+}
+
+// Redirect unauthorized users from protected pages
+function redirectIfUnauthorized(token, restrictedPages) {
+    const currentPage = window.location.pathname.split("/").pop();
+
+    if (restrictedPages.includes(currentPage) && !token) {
+        alert("You must be logged in to view this page.");
+        window.location.href = "login.html";
     }
-});
+}
+
+// Fetch and display the user's profile picture in the navigation menu
+async function fetchUserProfilePicture(token, menu) {
+    try {
+        const storedProfilePicture = localStorage.getItem("profilePicture");
+        const profileImg = document.createElement('img');
+        profileImg.classList.add('profile-picture-nav');
+        const accountListItem = menu.querySelector(".auth-link a[href='account.html']").parentNode;
+
+        if (storedProfilePicture) {
+            profileImg.src = storedProfilePicture;
+            profileImg.alt = "Profile Picture";
+            accountListItem.prepend(profileImg);
+        } else {
+            const response = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/account', {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.ok) {
+                const { user } = await response.json();
+                profileImg.src = user.profilePicture || 'images/default-profile.png';
+                profileImg.alt = `${user.username}'s Profile Picture`;
+                localStorage.setItem("profilePicture", user.profilePicture || "images/default-profile.png");
+                accountListItem.prepend(profileImg);
+            } else {
+                console.error("Failed to fetch profile picture:", await response.text());
+            }
+        }
+    } catch (error) {
+        console.error("Error fetching profile picture:", error);
+    }
+}
 
