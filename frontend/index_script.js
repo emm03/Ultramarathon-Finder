@@ -11,7 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (token) {
         setupAuthenticatedMenu(menu, token);
-        loadUserInfo(token); // Load user information in the "Welcome" section
+        loadUserInfo(token);
+        trackUserInactivity(); // Start inactivity tracker
     } else {
         setupUnauthenticatedMenu(menu);
         setupUnauthenticatedUser(); // Default "Welcome" card setup
@@ -64,10 +65,7 @@ function setupAuthenticatedMenu(menu, token) {
     if (logoutBtn) {
         logoutBtn.addEventListener("click", (e) => {
             e.preventDefault();
-            localStorage.removeItem("token");
-            localStorage.removeItem("profilePicture");
-            alert("You have successfully logged out.");
-            window.location.href = "login.html";
+            logoutUser();
         });
     }
 }
@@ -110,6 +108,7 @@ async function loadUserInfo(token) {
             if (user.profilePicture) {
                 profilePicElement.src = user.profilePicture;
                 profilePicElement.alt = `${user.username}'s Profile Picture`;
+                localStorage.setItem("profilePicture", user.profilePicture);
             }
         } else {
             console.error("Failed to fetch user info:", await response.text());
@@ -176,5 +175,34 @@ async function fetchUserProfilePicture(token, menu) {
     } catch (error) {
         console.error("Error fetching profile picture:", error);
     }
+}
+
+// Function to track user inactivity
+function trackUserInactivity() {
+    let inactivityTimer;
+    const maxInactivityTime = 2 * 60 * 60 * 1000; // 2 hours in milliseconds
+
+    function resetInactivityTimer() {
+        clearTimeout(inactivityTimer);
+        inactivityTimer = setTimeout(() => {
+            logoutUser();
+        }, maxInactivityTime);
+    }
+
+    // Reset the timer on user activity
+    document.addEventListener("mousemove", resetInactivityTimer);
+    document.addEventListener("keydown", resetInactivityTimer);
+    document.addEventListener("click", resetInactivityTimer);
+
+    // Start the timer initially
+    resetInactivityTimer();
+}
+
+// Function to log the user out
+function logoutUser() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("profilePicture");
+    alert("You have been logged out due to inactivity.");
+    window.location.href = "login.html";
 }
 
