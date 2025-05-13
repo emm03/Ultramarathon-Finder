@@ -346,28 +346,6 @@ header nav a:hover {
     background-color: #e5801b; /* Darker orange for hover */
 }
 
-/* Footer Links */
-footer p a {
-    color: #f7931e;
-    text-decoration: none;
-    padding: 0 10px;
-}
-
-footer p a:hover {
-    text-decoration: underline;
-}
-
-/* Community Forum Styling */
-.community-section {
-    text-align: center;
-    padding: 40px 0;
-}
-
-.community-section h1 {
-    font-size: 2rem;
-    margin-bottom: 30px;
-}
-
 /* Footer Styling */
 footer {
     text-align: center;
@@ -381,10 +359,18 @@ footer p {
     margin: 5px 0;
 }
 
-footer p a {
+/* Unified Footer Link Styling */
+footer p a:link,
+footer p a:visited,
+footer p a:hover,
+footer p a:active {
     color: #f7931e;
     text-decoration: none;
     padding: 0 8px;
+}
+
+footer p a:hover {
+    text-decoration: underline;
 }
 
 /* Navigation Menu Styles */
