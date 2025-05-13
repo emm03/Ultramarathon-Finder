@@ -364,7 +364,7 @@ footer p a:link,
 footer p a:visited,
 footer p a:hover,
 footer p a:active {
-    color: #f7931e;
+    color: #f7931e !important;
     text-decoration: none;
     padding: 0 8px;
 }
