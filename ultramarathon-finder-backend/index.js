@@ -5,11 +5,11 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import authRoutes from './routes/auth.js';
 import forumRoutes from './routes/forum.js';
+import contactRoutes from './routes/contact.js'; // ✅ Add this
 import path from 'path';
 import AWS from 'aws-sdk';
-import User from './models/User.js'; // Import User model
+import User from './models/User.js';
 
-// Log loaded environment variables (for debugging)
 console.log('Loaded Environment Variables:');
 console.log({
     PORT: process.env.PORT,
@@ -19,29 +19,24 @@ console.log({
     AWS_SECRET_KEY: process.env.AWS_SECRET_KEY,
     AWS_REGION: process.env.AWS_REGION,
     S3_BUCKET_NAME: process.env.S3_BUCKET_NAME,
+    EMAIL_USER: process.env.EMAIL_USER,
 });
 
-// Initialize Express app
 const app = express();
-
-// Middleware
 app.use(express.json());
 
-// Debugging middleware to log all headers
 app.use((req, res, next) => {
     console.log("Full Request Headers:", req.headers);
     next();
 });
 
-// CORS setup
 app.use(cors({
-    origin: 'https://ultramarathonconnect.com', // Allow requests from your Netlify frontend
+    origin: 'https://ultramarathonconnect.com',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
 }));
 
-// Connect to MongoDB
 mongoose
     .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to MongoDB'))
@@ -50,20 +45,18 @@ mongoose
         process.exit(1);
     });
 
-// Serve uploaded files and other static assets
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 app.use('/static', express.static(path.join(process.cwd(), 'public')));
 
-// API Routes
+// ✅ Register all routes
 app.use('/api/auth', authRoutes);
 app.use('/api/forum', forumRoutes);
+app.use('/api/contact', contactRoutes); // ✅ Add this
 
-// Health check
 app.get('/', (req, res) => {
     res.send('Ultramarathon Finder Backend is running!');
 });
 
-// Environment check endpoint
 app.get('/api/env-check', (req, res) => {
     res.json({
         PORT: process.env.PORT,
@@ -73,10 +66,10 @@ app.get('/api/env-check', (req, res) => {
         AWS_SECRET_KEY: process.env.AWS_SECRET_KEY ? 'Loaded' : 'Not Set',
         AWS_REGION: process.env.AWS_REGION ? 'Loaded' : 'Not Set',
         S3_BUCKET_NAME: process.env.S3_BUCKET_NAME ? 'Loaded' : 'Not Set',
+        EMAIL_USER: process.env.EMAIL_USER ? 'Loaded' : 'Not Set',
     });
 });
 
-// Debug route to test S3 connectivity
 const s3 = new AWS.S3({
     accessKeyId: process.env.AWS_ACCESS_KEY,
     secretAccessKey: process.env.AWS_SECRET_KEY,
@@ -99,7 +92,6 @@ app.get('/api/s3-test', async (req, res) => {
     }
 });
 
-// Route to fetch user data (including profile picture)
 app.get('/api/user/:id', async (req, res) => {
     try {
         const userId = req.params.id;
@@ -116,18 +108,15 @@ app.get('/api/user/:id', async (req, res) => {
     }
 });
 
-// Error handling middleware
 app.use((err, req, res, next) => {
     console.error('Error middleware:', err.message);
     res.status(500).json({ message: 'Unexpected error', error: err.message });
 });
 
-// Catch 404 errors
 app.use((req, res) => {
     res.status(404).json({ message: 'Endpoint not found' });
 });
 
-// Start the server
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
