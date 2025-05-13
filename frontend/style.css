@@ -359,17 +359,17 @@ footer p {
     margin: 5px 0;
 }
 
-/* Unified Footer Link Styling */
-footer p a:link,
-footer p a:visited,
-footer p a:hover,
-footer p a:active {
+/* Unified Footer Link Styling (with higher specificity) */
+footer .footer-links a:link,
+footer .footer-links a:visited,
+footer .footer-links a:hover,
+footer .footer-links a:active {
     color: #f7931e !important;
     text-decoration: none;
     padding: 0 8px;
 }
 
-footer p a:hover {
+footer .footer-links a:hover {
     text-decoration: underline;
 }
 
