@@ -72,6 +72,9 @@ header nav a:hover {
     border-radius: 5px;
 }
 
+/* Add to style.css */
+
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     header {
@@ -1553,6 +1556,60 @@ button:hover {
     vertical-align: middle; /* Aligns with the text */
 }
 
+/* === Mobile Fixes for Header, Nav, and Forum Cards === */
+@media (max-width: 768px) {
+  /* Scrollable top nav */
+  .menu {
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+
+  .menu::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Stack forum categories */
+  .forum-categories {
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .forum-category {
+    max-width: 90%;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  header {
+    flex-wrap: wrap;
+    height: auto;
+    padding-bottom: 10px;
+  }
+
+  header .logo {
+    width: 70px;
+  }
+
+  header nav {
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  header nav .menu {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 0 10px;
+    gap: 10px;
+  }
+
+  header nav a {
+    font-size: 0.9rem;
+    flex: 0 0 auto;
+  }
+}
 
 
 
