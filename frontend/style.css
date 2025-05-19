@@ -78,16 +78,19 @@ header nav a:hover {
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     header {
-      flex-direction: column;
-      align-items: flex-start;
-      padding: 10px;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: center;
+      justify-content: space-between;
       height: auto;
+      padding: 10px 15px;
     }
   
     header .logo-container {
-      width: 100%;
-      justify-content: center;
-      margin-bottom: 5px;
+      width: auto;
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
     }
   
     header .logo {
@@ -95,7 +98,7 @@ header nav a:hover {
     }
   
     header nav {
-      width: 100%;
+      flex: 1;
       overflow-x: auto;
       white-space: nowrap;
     }
@@ -105,18 +108,34 @@ header nav a:hover {
       overflow-x: auto;
       gap: 10px;
       padding: 0 10px;
-      margin-bottom: 10px;
+      margin: 0;
     }
   
     header nav a {
       font-size: 0.95rem;
       flex: 0 0 auto;
       padding: 10px;
+      white-space: nowrap;
     }
   
     .directory-section,
     .forum-section {
-      padding-top: 30px; /* ensure no overlap with sticky header */
+      padding-top: 30px; /* Ensure no overlap with sticky header */
+    }
+  
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 10px;
+    }
+  
+    .filters input,
+    .filters select,
+    .filters button {
+      flex: 1 1 150px;
+      min-width: 140px;
     }
   }  
 
