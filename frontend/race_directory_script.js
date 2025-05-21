@@ -8,18 +8,15 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentPage = 1;
     const racesPerPage = 20;
 
-    // Authentication logic
-    const token = localStorage.getItem("token"); // Retrieve token from local storage
+    const token = localStorage.getItem("token");
     const accountTab = document.getElementById("account-tab");
 
     if (token) {
-        // User is logged in
         accountTab.innerHTML = `
             <a href="account.html">My Account</a>
             <a href="logout.html">Logout</a>
         `;
     } else {
-        // User is not logged in
         accountTab.innerHTML = `
             <a href="login.html">Login</a>
             <a href="register.html">Register</a>
@@ -40,18 +37,18 @@ document.addEventListener("DOMContentLoaded", () => {
         const rows = data.split("\n").slice(1);
         return rows.map(row => {
             const columns = row.match(/(".*?"|[^,]+)(?=\s*,|\s*$)/g);
-            let [name, date, distance, location] = columns;
+            let [name, date, location, distance] = columns;
 
             name = name ? name.trim().replace(/^"|"$/g, "") : "N/A";
             date = date ? date.trim().replace(/^"|"$/g, "") : "N/A";
-            distance = distance ? distance.trim().replace(/^"|"$/g, "").toLowerCase() : "N/A";
             location = location ? location.trim().replace(/^"|"$/g, "") : "N/A";
+            distance = distance ? distance.trim().replace(/^"|"$/g, "").toLowerCase() : "N/A";
 
-            if (name === "N/A" || date === "N/A" || distance === "N/A" || location === "N/A") {
+            if (name === "N/A" || date === "N/A" || location === "N/A" || distance === "N/A") {
                 return null;
             }
 
-            return { name, date, distance, location };
+            return { name, date, location, distance };
         }).filter(race => race !== null);
     }
 
@@ -69,11 +66,16 @@ document.addEventListener("DOMContentLoaded", () => {
         racesToShow.forEach(race => {
             const raceElement = document.createElement("div");
             raceElement.classList.add("race-card");
+
+            const distancePills = race.distance.split(/\s+/).map(dist => {
+                return `<span class="distance-pill">${dist}</span>`;
+            }).join(" ");
+
             raceElement.innerHTML = `
                 <h3>${race.name}</h3>
                 <p><strong>Date:</strong> ${race.date}</p>
                 <p><strong>Location:</strong> ${race.location}</p>
-                <p><strong>Distance:</strong> ${race.distance}</p>
+                <p><strong>Distance:</strong> ${distancePills}</p>
             `;
             raceList.appendChild(raceElement);
         });

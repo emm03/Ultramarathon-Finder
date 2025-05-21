@@ -1089,23 +1089,30 @@ footer .footer-links a:hover {
     color: #666;
     line-height: 1.5;
 }
+
 /* Race Directory Styling */
 .directory-section {
     text-align: center;
     padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .filters {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
-.filters input, .filters select, .filters button {
+.filters input,
+.filters select,
+.filters button {
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
+    font-size: 16px;
 }
 
 .filters input {
@@ -1123,96 +1130,75 @@ footer .footer-links a:hover {
     background-color: #e5801b;
 }
 
+#race-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    justify-items: center;
+}
+
 .race-card {
     background-color: #fff;
     padding: 20px;
-    margin: 10px auto;
-    max-width: 600px;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.08);
     text-align: left;
+    transition: transform 0.2s ease-in-out;
+    border-left: 5px solid #f7931e;
+}
+
+.race-card:hover {
+    transform: translateY(-5px);
 }
 
 .race-card h3 {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     margin-bottom: 10px;
-}
-
-.race-card p {
-    font-size: 1rem;
-    color: #666;
-}
-/* Enhancing the Race Directory Style */
-.directory-section {
-    text-align: center;
-    margin: 20px;
-}
-
-.filters {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-#search-bar, #distance-filter, #reset-filters {
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    font-size: 16px;
-}
-
-#reset-filters {
-    background-color: #f7931e;
-    color: #fff;
-    cursor: pointer;
-}
-
-#reset-filters:hover {
-    background-color: #e5801b;
-}
-
-#race-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.race-card {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    margin: 10px;
-    width: 80%;
-    max-width: 600px;
-    text-align: left;
-}
-
-.race-card h3 {
-    font-size: 1.2rem;
-    margin-bottom: 5px;
     color: #333;
 }
 
 .race-card p {
-    margin: 5px 0;
-    color: #666;
+    margin: 6px 0;
     font-size: 0.95rem;
-}
-/* Center the race directory content */
-.directory-section {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
+    color: #444;
 }
 
-/* Race element styling */
-.race {
-    padding: 10px;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #ddd;
+/* Orange pill style for distance tags */
+.race-card .distance-pill {
+    display: inline-block;
+    background-color: #f7931e;
+    color: white;
+    font-size: 0.85rem;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-top: 3px 5px 3px 0;
+}
+
+/* Pagination controls */
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+.page-button {
+    padding: 8px 14px;
+    border: none;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.page-button.active {
+    background-color: #f7931e;
+    color: white;
+}
+
+.page-button:hover {
+    background-color: #e5801b;
+    color: white;
 }
 
 /* Pagination controls styling */
@@ -1654,6 +1640,3 @@ button:hover {
     flex: 0 0 auto;
   }
 }
-
-
-
