@@ -52,6 +52,37 @@ document.addEventListener("DOMContentLoaded", () => {
         }).filter(race => race !== null);
     }
 
+    function convertToMiles(value) {
+        if (value.endsWith("mi")) {
+            return parseFloat(value);
+        } else if (value.endsWith("km")) {
+            return parseFloat(value) * 0.621371;
+        }
+        return null;
+    }
+
+    function isDistanceInRange(value, min, max) {
+        const converted = convertToMiles(value);
+        return converted !== null && converted >= min && converted <= max;
+    }
+
+    function matchesDistanceFilter(distanceString, selectedRange) {
+        if (selectedRange === "") return true;
+
+        const ranges = {
+            "26-40": [26, 40],
+            "41-60": [41, 60],
+            "61-90": [61, 90],
+            "91-110": [91, 110],
+            "110+": [110, Infinity]
+        };
+
+        const [min, max] = ranges[selectedRange] || [0, Infinity];
+        const distances = distanceString.split(/\s+/);
+
+        return distances.some(dist => isDistanceInRange(dist, min, max));
+    }
+
     function displayRaces(filteredRaces) {
         raceList.innerHTML = "";
         const start = (currentPage - 1) * racesPerPage;
@@ -83,17 +114,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function filterRaces() {
         const searchText = searchBar.value.toLowerCase();
-        const selectedDistance = distanceFilter.value.toLowerCase();
+        const selectedDistance = distanceFilter.value;
 
         const filteredRaces = races.filter(race => {
             const matchesSearch = race.name.toLowerCase().includes(searchText) ||
                                   race.location.toLowerCase().includes(searchText);
-            const matchesDistance = selectedDistance === "" ||
-                race.distance.includes(selectedDistance) ||
-                (selectedDistance === "100 miles" && race.distance.includes("100mi")) ||
-                (selectedDistance === "50 miles" && race.distance.includes("50mi")) ||
-                (selectedDistance === "150 miles" && race.distance.includes("150mi")) ||
-                (selectedDistance === "200 miles" && race.distance.includes("200mi"));
+
+            const matchesDistance = matchesDistanceFilter(race.distance, selectedDistance);
 
             return matchesSearch && matchesDistance;
         });
@@ -121,35 +148,36 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             createPageButton(1, currentPage === 1);
             if (currentPage > 3) {
-                const dots = document.createElement("span");
-                dots.innerText = "...";
-                dots.classList.add("dots");
-                paginationControls.appendChild(dots);
+                paginationControls.appendChild(createEllipsis());
             }
             for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
                 createPageButton(i, currentPage === i);
             }
             if (currentPage < totalPages - 2) {
-                const dots = document.createElement("span");
-                dots.innerText = "...";
-                dots.classList.add("dots");
-                paginationControls.appendChild(dots);
+                paginationControls.appendChild(createEllipsis());
             }
             createPageButton(totalPages, currentPage === totalPages);
         }
     }
 
     function createPageButton(pageNumber, isActive) {
-        const pageButton = document.createElement("button");
-        pageButton.innerText = pageNumber;
-        pageButton.classList.add("page-button");
-        if (isActive) pageButton.classList.add("active");
-        pageButton.addEventListener("click", () => {
+        const button = document.createElement("button");
+        button.innerText = pageNumber;
+        button.classList.add("page-button");
+        if (isActive) button.classList.add("active");
+        button.addEventListener("click", () => {
             currentPage = pageNumber;
             filterRaces();
             updatePaginationControls(races.length);
         });
-        paginationControls.appendChild(pageButton);
+        paginationControls.appendChild(button);
+    }
+
+    function createEllipsis() {
+        const dots = document.createElement("span");
+        dots.innerText = "...";
+        dots.classList.add("dots");
+        return dots;
     }
 
     searchBar.addEventListener("input", filterRaces);
