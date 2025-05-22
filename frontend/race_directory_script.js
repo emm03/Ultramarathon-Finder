@@ -7,10 +7,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const regionFilter = document.getElementById("region-filter");
     const resetButton = document.getElementById("reset-filters");
     const paginationControls = document.getElementById("pagination-controls");
+    const racesPerPageSelect = document.getElementById("races-per-page");
   
     let races = [];
     let currentPage = 1;
-    const racesPerPage = 20;
+    let racesPerPage = parseInt(racesPerPageSelect?.value || 20);
   
     const countryToContinent = {
       "USA": "North America", "CAN": "North America", "MEX": "North America",
@@ -229,6 +230,13 @@ document.addEventListener("DOMContentLoaded", () => {
     monthFilter.addEventListener("change", filterRaces);
     regionFilter.addEventListener("change", filterRaces);
     resetButton.addEventListener("click", resetFilters);
+  
+    // ✅ races-per-page dropdown listener
+    racesPerPageSelect.addEventListener("change", (e) => {
+      racesPerPage = parseInt(e.target.value);
+      currentPage = 1;
+      filterRaces();
+    });
   
     fetchRaces();
   });
