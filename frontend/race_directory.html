@@ -31,7 +31,7 @@
   <main>
     <section class="directory-section">
       <h2>Race Directory</h2>
-      <p>Explore our directory of ultramarathons around the world! Use filters to find races by distance, location, and other attributes.</p>
+      <p class="directory-subtext">Explore our directory of ultramarathons around the world! Use filters to find races by distance, location, and other attributes.</p>
 
       <div class="filter-layout">
         <!-- Sidebar Filters -->
@@ -85,9 +85,18 @@
           <button id="reset-filters">Reset Filters</button>
         </aside>
 
-        <!-- Race Results Grid -->
-        <div class="race-grid">
-          <div id="race-list"></div>
+        <!-- Main Content Area -->
+        <div class="race-results-area">
+          <div class="race-controls">
+            <label for="races-per-page">Races per page:</label>
+            <select id="races-per-page">
+              <option value="20" selected>20</option>
+              <option value="40">40</option>
+              <option value="60">60</option>
+            </select>
+          </div>
+
+          <div id="race-list" class="race-grid"></div>
           <div id="pagination-controls" class="pagination-controls"></div>
         </div>
       </div>
