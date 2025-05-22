@@ -4,6 +4,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const distanceFilter = document.getElementById("distance-filter");
     const resetButton = document.getElementById("reset-filters");
     const paginationControls = document.getElementById("pagination-controls");
+    const durationCheckboxes = document.querySelectorAll("input[name='duration']");
+    const monthFilter = document.getElementById("month-filter");
+    const regionFilter = document.getElementById("region-filter");
+
     let races = [];
     let currentPage = 1;
     const racesPerPage = 20;
@@ -53,11 +57,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function convertToMiles(value) {
-        if (value.endsWith("mi")) {
-            return parseFloat(value);
-        } else if (value.endsWith("km")) {
-            return parseFloat(value) * 0.621371;
-        }
+        if (value.endsWith("mi")) return parseFloat(value);
+        if (value.endsWith("km")) return parseFloat(value) * 0.621371;
         return null;
     }
 
@@ -83,6 +84,46 @@ document.addEventListener("DOMContentLoaded", () => {
         return distances.some(dist => isDistanceInRange(dist, min, max));
     }
 
+    function formatMonth(monthName) {
+        const map = {
+            "January": "01", "February": "02", "March": "03", "April": "04",
+            "May": "05", "June": "06", "July": "07", "August": "08",
+            "September": "09", "October": "10", "November": "11", "December": "12"
+        };
+        return `.${map[monthName]}.`;
+    }
+
+    function filterRaces() {
+        const searchText = searchBar.value.toLowerCase();
+        const selectedDistance = distanceFilter.value;
+        const selectedDurations = Array.from(durationCheckboxes)
+            .filter(cb => cb.checked)
+            .map(cb => cb.value.toLowerCase());
+        const selectedMonth = monthFilter?.value || "";
+        const selectedRegion = regionFilter?.value.toLowerCase() || "";
+
+        const filteredRaces = races.filter(race => {
+            const matchesSearch = race.name.toLowerCase().includes(searchText) ||
+                                  race.location.toLowerCase().includes(searchText);
+
+            const matchesDistance = matchesDistanceFilter(race.distance, selectedDistance);
+
+            const matchesDuration = selectedDurations.length === 0 ||
+                selectedDurations.some(duration => race.distance.includes(duration));
+
+            const matchesMonth = selectedMonth === "" ||
+                race.date.includes(formatMonth(selectedMonth));
+
+            const matchesRegion = selectedRegion === "" ||
+                race.location.toLowerCase().includes(selectedRegion);
+
+            return matchesSearch && matchesDistance && matchesDuration && matchesMonth && matchesRegion;
+        });
+
+        displayRaces(filteredRaces);
+        updatePaginationControls(filteredRaces.length);
+    }
+
     function displayRaces(filteredRaces) {
         raceList.innerHTML = "";
         const start = (currentPage - 1) * racesPerPage;
@@ -98,9 +139,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const raceElement = document.createElement("div");
             raceElement.classList.add("race-card");
 
-            const distancePills = race.distance.split(/\s+/).map(dist => {
-                return `<span class="distance-pill">${dist}</span>`;
-            }).join(" ");
+            const distancePills = race.distance.split(/\s+/).map(dist =>
+                `<span class="distance-pill">${dist}</span>`
+            ).join(" ");
 
             raceElement.innerHTML = `
                 <h3>${race.name}</h3>
@@ -112,26 +153,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function filterRaces() {
-        const searchText = searchBar.value.toLowerCase();
-        const selectedDistance = distanceFilter.value;
-
-        const filteredRaces = races.filter(race => {
-            const matchesSearch = race.name.toLowerCase().includes(searchText) ||
-                                  race.location.toLowerCase().includes(searchText);
-
-            const matchesDistance = matchesDistanceFilter(race.distance, selectedDistance);
-
-            return matchesSearch && matchesDistance;
-        });
-
-        displayRaces(filteredRaces);
-        updatePaginationControls(filteredRaces.length);
-    }
-
     function resetFilters() {
         searchBar.value = "";
         distanceFilter.value = "";
+        if (monthFilter) monthFilter.value = "";
+        if (regionFilter) regionFilter.value = "";
+        durationCheckboxes.forEach(cb => cb.checked = false);
         currentPage = 1;
         filterRaces();
     }
@@ -147,15 +174,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         } else {
             createPageButton(1, currentPage === 1);
-            if (currentPage > 3) {
-                paginationControls.appendChild(createEllipsis());
-            }
+            if (currentPage > 3) paginationControls.appendChild(createEllipsis());
             for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
                 createPageButton(i, currentPage === i);
             }
-            if (currentPage < totalPages - 2) {
-                paginationControls.appendChild(createEllipsis());
-            }
+            if (currentPage < totalPages - 2) paginationControls.appendChild(createEllipsis());
             createPageButton(totalPages, currentPage === totalPages);
         }
     }
@@ -180,8 +203,12 @@ document.addEventListener("DOMContentLoaded", () => {
         return dots;
     }
 
+    // Events
     searchBar.addEventListener("input", filterRaces);
     distanceFilter.addEventListener("change", filterRaces);
+    durationCheckboxes.forEach(cb => cb.addEventListener("change", filterRaces));
+    if (monthFilter) monthFilter.addEventListener("change", filterRaces);
+    if (regionFilter) regionFilter.addEventListener("change", filterRaces);
     resetButton.addEventListener("click", resetFilters);
 
     fetchRaces();
