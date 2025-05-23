@@ -54,16 +54,25 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchPosts(sortBy = 'recent') {
         try {
             const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/forum/posts?sort=${sortBy}`);
-            const posts = await res.json();
+            const result = await res.json();
+            console.log("Fetched posts:", result);
+
+            const posts = result.posts || result; // handles both { posts: [...] } and [...] formats
 
             for (const section of Object.values(topicSections)) {
                 section.innerHTML = '';
             }
 
             posts.forEach(post => {
-                const postEl = createPostCard(post);
-                const section = topicSections[post.topic];
-                if (section) section.appendChild(postEl);
+                const normalizedTopic = post.topic.trim();
+                console.log("Post topic:", normalizedTopic);
+                const section = topicSections[normalizedTopic];
+                console.log("Topic section match found:", !!section);
+
+                if (section) {
+                    const postEl = createPostCard(post);
+                    section.appendChild(postEl);
+                }
             });
         } catch (err) {
             console.error('Error loading posts:', err);
@@ -79,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <img class="avatar" src="${post.profilePicture || 'images/default-profile.png'}" alt="User Avatar">
                 <div class="meta">
                     <strong>${post.username || 'Anonymous'}</strong><br>
-                    <small>${new Date(post.timestamp).toLocaleString()}</small>
+                    <small>${new Date(post.timestamp || post.createdAt).toLocaleString()}</small>
                 </div>
             </div>
             <h4>${post.title}</h4>
@@ -155,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Sorting toggle (if added)
+    // Sorting toggle
     if (sortToggle) {
         sortToggle.addEventListener('change', () => {
             const sortBy = sortToggle.value;
