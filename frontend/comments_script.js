@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
             postDetails.innerHTML = `
           <div class="post-card">
             <div class="post-header">
-              <img class="avatar" src="${post.profilePicture || 'images/default-profile.png'}" alt="Avatar">
+              <img class="avatar" src="${post.profilePicture || './images/default-profile.png'}" alt="Avatar">
               <div class="meta">
                 <strong>${post.username || 'Anonymous'}</strong><br>
                 <small>${new Date(post.createdAt).toLocaleString()}</small>
