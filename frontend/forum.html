@@ -2,16 +2,16 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Runner Community - Ultramarathon Connect</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
   <header class="sticky-header">
     <div class="logo-container">
-      <img src="ultra.png" alt="Ultramarathon Finder Logo" class="logo">
+      <img src="ultra.png" alt="Ultramarathon Finder Logo" class="logo" />
     </div>
     <nav>
       <ul class="menu">
@@ -28,7 +28,7 @@
     <h1 class="forum-heading">Runner-to-Runner Forum</h1>
     <p class="forum-subheading">Ask questions, share insights, and connect with ultrarunners around the world.</p>
 
-    <!-- Category Filter Cards -->
+    <!-- Category Cards -->
     <section class="forum-categories">
       <div class="category-card" data-topic="Training Tips">
         <span class="emoji">🏋️</span>
@@ -57,10 +57,10 @@
       </div>
     </section>
 
-    <!-- Start New Post Form -->
+    <!-- Post Submission -->
     <section class="post-form-section">
       <form id="post-form" class="post-form">
-        <input type="text" id="post-title" placeholder="Post Title" required>
+        <input type="text" id="post-title" placeholder="Post Title" required />
         <textarea id="post-message" placeholder="What's on your mind?" required></textarea>
         <select id="post-topic" required>
           <option value="">Select Category</option>
@@ -75,13 +75,38 @@
       </form>
     </section>
 
-    <!-- Empty category anchors for JS to scroll to -->
+    <!-- Sorting Controls -->
+    <section class="sort-section">
+      <label for="sort-select">Sort by:</label>
+      <select id="sort-select">
+        <option value="latest">Latest</option>
+        <option value="oldest">Oldest</option>
+        <option value="topic">Topic</option>
+      </select>
+    </section>
+
+    <!-- Posts Rendered by Topic -->
     <section class="forum-sections">
-      <div id="section-training"></div>
-      <div id="section-gear"></div>
-      <div id="section-race"></div>
-      <div id="section-meetup"></div>
-      <div id="section-chat"></div>
+      <div class="forum-category" id="section-training">
+        <h3>🏋️ Training Tips</h3>
+        <div id="section-training-posts"></div>
+      </div>
+      <div class="forum-category" id="section-gear">
+        <h3>🎒 Gear Recommendations</h3>
+        <div id="section-gear-posts"></div>
+      </div>
+      <div class="forum-category" id="section-race">
+        <h3>🥇 Race Advice</h3>
+        <div id="section-race-posts"></div>
+      </div>
+      <div class="forum-category" id="section-meetup">
+        <h3>🤝 Meetup Requests</h3>
+        <div id="section-meetup-posts"></div>
+      </div>
+      <div class="forum-category" id="section-chat">
+        <h3>💬 General Chat</h3>
+        <div id="section-chat-posts"></div>
+      </div>
     </section>
   </main>
 
