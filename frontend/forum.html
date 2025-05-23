@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forum - Ultramarathon Connect</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="sticky-header">
+    <div class="logo-container">
+      <img src="ultra.png" alt="Ultramarathon Connect Logo" class="logo" />
+    </div>
+    <nav>
+      <ul class="menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="race_directory.html">Race Directory</a></li>
+        <li><a href="articles.html">Articles</a></li>
+        <li><a href="forum.html" class="active">Forum</a></li>
+        <li><a href="login.html">Login</a></li>
+        <li><a href="register.html">Register</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="forum-page">
+    <section class="forum-hero">
+      <h1>Runner-to-Runner Forum</h1>
+      <p>Ask questions, share experiences, and connect with ultrarunners around the world. This is your space to build training groups, talk strategy, and trade tips.</p>
+    </section>
+
+    <section class="forum-new-post">
+      <h2>Start a New Discussion</h2>
+      <form id="new-post-form">
+        <input type="text" id="post-title" placeholder="Post Title" required />
+        <textarea id="post-content" rows="5" placeholder="What's on your mind?" required></textarea>
+        <select id="post-category">
+          <option value="Training Tips">Training Tips</option>
+          <option value="Gear Recommendations">Gear Recommendations</option>
+          <option value="Race Advice">Race Advice</option>
+          <option value="Meetup Requests">Meetup Requests</option>
+          <option value="General Chat">General Chat</option>
+        </select>
+        <button type="submit">Post</button>
+      </form>
+    </section>
+
+    <section class="forum-threads">
+      <h2>Recent Discussions</h2>
+      <div id="threads-container">
+        <!-- Threads will be dynamically injected here -->
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      &copy; 2025 Ultramarathon Connect | <a href="contact.html">Contact Us</a> |
+      <a href="privacypolicy.html">Privacy Policy</a> |
+      <a href="termsofservice.html">Terms of Service</a>
+    </p>
+  </footer>
+
+  <script src="forum_script.js"></script>
+</body>
+</html>

@@ -1800,3 +1800,99 @@ button:hover {
         justify-content: flex-start;
     }
 }
+
+/* Forum Page Layout */
+.forum-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.forum-title {
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+    color: #ff6600;
+}
+
+.forum-intro {
+    text-align: center;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    color: #444;
+}
+
+/* Thread Cards */
+.thread-card {
+    background: #fff;
+    border: 2px solid #ff6600;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    padding: 1.2rem 1.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.thread-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.thread-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.thread-title {
+    font-size: 1.4rem;
+    color: #333;
+    font-weight: bold;
+}
+
+.thread-meta {
+    font-size: 0.9rem;
+    color: #777;
+}
+
+.thread-body {
+    margin-top: 0.8rem;
+    color: #555;
+}
+
+/* Comments Section */
+.comment-box {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #ddd;
+}
+
+.comment-box textarea {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+    margin-bottom: 0.6rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    resize: vertical;
+}
+
+.comment-box button {
+    padding: 0.5rem 1rem;
+    background-color: #ff6600;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.comment-box button:hover {
+    background-color: #e65500;
+}
+
+.comment {
+    background: #f7f7f7;
+    border-left: 4px solid #ff6600;
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 5px;
+}
