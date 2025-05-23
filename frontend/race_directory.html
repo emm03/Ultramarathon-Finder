@@ -30,12 +30,19 @@
 
   <main>
     <section class="directory-section">
-      <h2>Race Directory</h2>
-      <p class="directory-subtext">Explore our directory of ultramarathons around the world! Use filters to find races by distance, location, and other attributes.</p>
+      <h2 class="directory-title">Find Your Next Epic Challenge</h2>
+      <p class="directory-subtext">Browse an ever-growing list of ultramarathons worldwide — filter by distance, region, and more to plan your next adventure.</p>
 
       <div class="filter-layout">
         <!-- Sidebar Filters -->
         <aside class="filter-sidebar">
+          <label for="races-per-page" style="font-weight: bold;">Races per page:</label>
+          <select id="races-per-page" style="margin-bottom: 1rem;">
+            <option value="20">20</option>
+            <option value="40">40</option>
+            <option value="60">60</option>
+          </select>
+
           <input type="text" id="search-bar" placeholder="Search by name, location" />
 
           <h4>Distance Range</h4>
@@ -85,18 +92,9 @@
           <button id="reset-filters">Reset Filters</button>
         </aside>
 
-        <!-- Main Content Area -->
-        <div class="race-results-area">
-          <div class="race-controls">
-            <label for="races-per-page">Races per page:</label>
-            <select id="races-per-page">
-              <option value="20" selected>20</option>
-              <option value="40">40</option>
-              <option value="60">60</option>
-            </select>
-          </div>
-
-          <div id="race-list" class="race-grid"></div>
+        <!-- Race Results Grid -->
+        <div class="race-grid">
+          <div id="race-list"></div>
           <div id="pagination-controls" class="pagination-controls"></div>
         </div>
       </div>
