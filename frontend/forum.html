@@ -28,6 +28,35 @@
     <h1 class="forum-heading">Runner-to-Runner Forum</h1>
     <p class="forum-subheading">Ask questions, share insights, and connect with ultrarunners around the world.</p>
 
+    <!-- Category Filter Cards -->
+    <section class="forum-categories">
+      <div class="category-card" data-topic="Training Tips">
+        <span class="emoji">🏋️</span>
+        <h3>Training Tips</h3>
+        <p>Strategies, plans, and advice from seasoned runners.</p>
+      </div>
+      <div class="category-card" data-topic="Gear Recommendations">
+        <span class="emoji">🎒</span>
+        <h3>Gear Recommendations</h3>
+        <p>Discuss your favorite gear for trails, races, and recovery.</p>
+      </div>
+      <div class="category-card" data-topic="Race Advice">
+        <span class="emoji">🥇</span>
+        <h3>Race Advice</h3>
+        <p>Tips on race strategy, pacing, and preparation.</p>
+      </div>
+      <div class="category-card" data-topic="Meetup Requests">
+        <span class="emoji">🤝</span>
+        <h3>Meetup Requests</h3>
+        <p>Looking to find a training buddy or local group? Post here.</p>
+      </div>
+      <div class="category-card" data-topic="General Chat">
+        <span class="emoji">💬</span>
+        <h3>General Chat</h3>
+        <p>Talk about anything ultrarunning related!</p>
+      </div>
+    </section>
+
     <!-- Start New Post Form -->
     <section class="post-form-section">
       <form id="post-form" class="post-form">
@@ -48,23 +77,23 @@
 
     <!-- Posts by Topic -->
     <section class="forum-sections">
-      <div class="forum-category">
+      <div class="forum-category" id="training-card">
         <h3>🏋️ Training Tips</h3>
         <div id="section-training"></div>
       </div>
-      <div class="forum-category">
+      <div class="forum-category" id="gear-card">
         <h3>🎒 Gear Recommendations</h3>
         <div id="section-gear"></div>
       </div>
-      <div class="forum-category">
+      <div class="forum-category" id="race-card">
         <h3>🥇 Race Advice</h3>
         <div id="section-race"></div>
       </div>
-      <div class="forum-category">
+      <div class="forum-category" id="meetup-card">
         <h3>🤝 Meetup Requests</h3>
         <div id="section-meetup"></div>
       </div>
-      <div class="forum-category">
+      <div class="forum-category" id="chat-card">
         <h3>💬 General Chat</h3>
         <div id="section-chat"></div>
       </div>

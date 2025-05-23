@@ -1801,111 +1801,153 @@ button:hover {
     }
 }
 
-/* Forum Page Layout */
-.forum-container {
-    max-width: 1000px;
-    margin: 4rem auto 2rem auto;
-    padding: 2rem;
-    background: linear-gradient(to bottom right, #fefefe, #f9f9f9);
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+/* ========== Runner Forum Redesign ========== */
+.forum-wrapper {
+    max-width: 1100px;
+    margin: 5rem auto 3rem auto;
+    padding: 0 1.5rem;
+    animation: fadeIn 0.5s ease-in;
 }
 
-.forum-title {
+.forum-heading {
+    font-size: 2.7rem;
     text-align: center;
-    font-size: 2.4rem;
-    font-weight: bold;
-    color: #ff6600;
-    margin-bottom: 0.5rem;
-    letter-spacing: 0.5px;
-}
-
-.forum-intro {
-    text-align: center;
-    font-size: 1.15rem;
-    margin-bottom: 2rem;
+    margin-bottom: 0.4rem;
     color: #333;
 }
 
-/* Post Form */
-.post-form {
-    background: #ffffff;
-    border: 2px solid #eeeeee;
-    border-radius: 10px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
+.forum-subheading {
+    text-align: center;
+    font-size: 1.1rem;
+    margin-bottom: 3rem;
+    color: #555;
 }
 
-.post-form h3 {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-    color: #222;
+/* Category Cards */
+.forum-categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
 }
 
-.post-form input,
-.post-form textarea,
-.post-form select {
-    width: 100%;
-    padding: 0.75rem;
-    margin-bottom: 1rem;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+.category-card {
     background: #fff;
-}
-
-.post-form button {
-    background-color: #ff6600;
-    color: #fff;
-    padding: 0.65rem 1.2rem;
-    font-size: 1rem;
-    border: none;
-    border-radius: 6px;
+    border: 2px solid #ff6600;
+    border-radius: 12px;
+    padding: 1.2rem 1rem;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
     cursor: pointer;
 }
 
+.category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+}
+
+.category-card h4 {
+    margin: 0;
+    font-size: 1.15rem;
+    color: #ff6600;
+}
+
+/* Post Form Section */
+.post-form-section {
+    background: #fff;
+    border: 2px solid #eee;
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 3rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+
+.post-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.post-form input[type="text"],
+.post-form textarea,
+.post-form select {
+    padding: 0.8rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: #fafafa;
+}
+
+.post-form textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.post-form button {
+    width: 120px;
+    align-self: flex-start;
+    background-color: #ff6600;
+    color: #fff;
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
 .post-form button:hover {
-    background-color: #e05500;
+    background-color: #e25700;
 }
 
-/* Post Display Cards */
-.forum-section {
-    margin-bottom: 2.5rem;
+.error-message {
+    color: red;
+    font-size: 0.9rem;
 }
 
-.forum-section h4 {
-    font-size: 1.4rem;
+/* Section Layout for Filtered Results */
+.forum-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    margin-top: 3rem;
+}
+
+.forum-category h3 {
+    font-size: 1.7rem;
     margin-bottom: 1rem;
-    color: #333;
+    color: #ff6600;
     border-bottom: 2px solid #ff6600;
     display: inline-block;
     padding-bottom: 0.3rem;
 }
 
+/* Post Card */
 .post-card {
     background: #fff;
-    border: 1px solid #ddd;
-    border-left: 5px solid #ff6600;
-    padding: 1rem;
-    margin-bottom: 1.2rem;
-    border-radius: 6px;
+    border-left: 6px solid #ff6600;
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1rem;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
-    transition: transform 0.2s ease-in-out;
+    transition: box-shadow 0.3s ease;
 }
 
 .post-card:hover {
-    transform: scale(1.01);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
 }
 
 .post-card h4 {
+    font-weight: bold;
     font-size: 1.2rem;
+    margin-bottom: 0.25rem;
     color: #222;
-    margin-bottom: 0.5rem;
 }
 
 .post-card p {
     font-size: 1rem;
-    color: #555;
+    color: #444;
     margin-bottom: 0.4rem;
 }
 
@@ -1914,7 +1956,7 @@ button:hover {
     color: #888;
 }
 
-/* Footer correction */
+/* Footer fix */
 .site-footer a {
     color: #ff6600;
     text-decoration: none;
@@ -1924,6 +1966,7 @@ button:hover {
     text-decoration: underline;
 }
 
+/* Fade-in effect */
 @keyframes fadeIn {
     from {
         opacity: 0;
