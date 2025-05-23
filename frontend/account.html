@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Account - Ultramarathon Finder</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <header class="sticky-header">
         <div class="logo-container">
@@ -15,14 +17,7 @@
             <ul class="menu">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="race_directory.html">Race Directory</a></li>
-                <li class="dropdown">
-                    <a href="community.html">Community</a>
-                    <ul class="dropdown-menu">
-                        <li><a href="gear_forum.html">Gear Forum</a></li>
-                        <li><a href="race_experiences.html">Race Experiences</a></li>
-                        <li><a href="training_tips.html">Training Tips Forum</a></li>
-                    </ul>
-                </li>
+                <li><a href="forum.html">Runner Community</a></li>
                 <li id="account-tab"></li>
             </ul>
         </nav>
@@ -32,7 +27,8 @@
         <section class="account-container">
             <div class="account-card">
                 <div class="profile-container">
-                    <img id="profile-pic" src="images/default-profile.png" alt="User Profile Picture" class="profile-pic">
+                    <img id="profile-pic" src="images/default-profile.png" alt="User Profile Picture"
+                        class="profile-pic">
                     <label for="upload-input" class="upload-btn">Upload Profile Photo</label>
                     <input type="file" id="upload-input" accept="image/*" style="display: none;">
                     <p id="upload-message" class="success-message"></p>
@@ -50,7 +46,6 @@
         </section>
     </main>
 
-    <!-- ✅ Updated Footer -->
     <footer class="site-footer">
         <div class="footer-links">
             <a href="contact.html">Contact Us</a> |
@@ -63,7 +58,6 @@
     </footer>
 
     <script>
-        // Fetch account information and load profile picture
         async function fetchAccountInfo() {
             const token = localStorage.getItem('token')?.trim();
             if (!token) {
@@ -87,7 +81,7 @@
                     document.getElementById('email').innerHTML = `<strong>Email:</strong> ${user.email}`;
                     if (user.profilePicture) {
                         document.getElementById('profile-pic').src = user.profilePicture;
-                        localStorage.setItem('profilePicture', user.profilePicture); // Persist profile picture
+                        localStorage.setItem('profilePicture', user.profilePicture);
                     }
                 } else {
                     console.error("Error fetching account info:", await response.text());
@@ -101,7 +95,6 @@
             }
         }
 
-        // Handle profile picture upload
         document.getElementById('upload-input').addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
@@ -126,7 +119,7 @@
                 if (response.ok) {
                     const { profilePicture } = await response.json();
                     document.getElementById('profile-pic').src = profilePicture;
-                    localStorage.setItem('profilePicture', profilePicture); // Persist profile picture
+                    localStorage.setItem('profilePicture', profilePicture);
                     document.getElementById('upload-message').textContent = "Profile picture updated successfully!";
                 } else {
                     console.error("Error uploading profile picture:", await response.text());
@@ -138,7 +131,6 @@
             }
         });
 
-        // Log out and clear local storage
         document.getElementById('logout-button').addEventListener('click', () => {
             localStorage.removeItem('token');
             localStorage.removeItem('profilePicture');
@@ -146,7 +138,6 @@
             window.location.href = 'login.html';
         });
 
-        // Reload persisted profile picture on page load
         document.addEventListener('DOMContentLoaded', () => {
             const storedProfilePicture = localStorage.getItem('profilePicture');
             if (storedProfilePicture) {
@@ -156,4 +147,5 @@
         });
     </script>
 </body>
+
 </html>
