@@ -2,65 +2,70 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Forum - Ultramarathon Connect</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Runner Community - Ultramarathon Connect</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Header -->
   <header class="sticky-header">
     <div class="logo-container">
-      <img src="ultra.png" alt="Ultramarathon Connect Logo" class="logo" />
+      <img src="ultra.png" alt="Ultramarathon Connect Logo" class="logo">
     </div>
     <nav>
       <ul class="menu">
         <li><a href="index.html">Home</a></li>
         <li><a href="race_directory.html">Race Directory</a></li>
         <li><a href="articles.html">Articles</a></li>
-        <li><a href="forum.html" class="active">Forum</a></li>
-        <li><a href="login.html">Login</a></li>
-        <li><a href="register.html">Register</a></li>
+        <li><a href="forum.html">Forum</a></li>
+        <li id="account-tab"></li>
       </ul>
     </nav>
   </header>
 
-  <main class="forum-page">
-    <section class="forum-hero">
-      <h1>Runner-to-Runner Forum</h1>
-      <p>Ask questions, share experiences, and connect with ultrarunners around the world. This is your space to build training groups, talk strategy, and trade tips.</p>
-    </section>
+  <!-- Forum Container -->
+  <main class="content-container forum-wrapper">
+    <h2 class="forum-heading">Runner-to-Runner Forum</h2>
+    <p class="forum-subheading">Ask questions, share insights, and connect with ultrarunners around the world.</p>
 
-    <section class="forum-new-post">
-      <h2>Start a New Discussion</h2>
-      <form id="new-post-form">
+    <!-- New Post Form -->
+    <section class="post-form-section">
+      <h3>Start a New Discussion</h3>
+      <form id="post-form" class="post-form">
         <input type="text" id="post-title" placeholder="Post Title" required />
-        <textarea id="post-content" rows="5" placeholder="What's on your mind?" required></textarea>
-        <select id="post-category">
-          <option value="Training Tips">Training Tips</option>
-          <option value="Gear Recommendations">Gear Recommendations</option>
-          <option value="Race Advice">Race Advice</option>
-          <option value="Meetup Requests">Meetup Requests</option>
-          <option value="General Chat">General Chat</option>
+        <textarea id="post-text" placeholder="What's on your mind?" required></textarea>
+        <select id="post-section" required>
+          <option value="" disabled selected>Select Category</option>
+          <option value="Training Tips">🏋️‍♀️ Training Tips</option>
+          <option value="Gear Recommendations">🎒 Gear Recommendations</option>
+          <option value="Race Advice">🎯 Race Advice</option>
+          <option value="Meetup Requests">🤝 Meetup Requests</option>
+          <option value="General Chat">💬 General Chat</option>
         </select>
-        <button type="submit">Post</button>
+        <button type="submit" class="green-btn">Post</button>
+        <p id="post-error" class="error-message"></p>
       </form>
     </section>
 
-    <section class="forum-threads">
-      <h2>Recent Discussions</h2>
-      <div id="threads-container">
-        <!-- Threads will be dynamically injected here -->
-      </div>
+    <!-- Discussion Display -->
+    <section id="forum-sections" class="forum-sections">
+      <!-- Posts by category will be dynamically inserted here -->
     </section>
   </main>
 
-  <footer>
-    <p>
-      &copy; 2025 Ultramarathon Connect | <a href="contact.html">Contact Us</a> |
-      <a href="privacypolicy.html">Privacy Policy</a> |
-      <a href="termsofservice.html">Terms of Service</a>
-    </p>
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-links">
+      <a href="contact.html">Contact Us</a> |
+      <a href="privacy.html">Privacy Policy</a> |
+      <a href="termsofservice.html">Terms of Service</a> |
+      <a href="faq.html">FAQ</a> |
+      <span>Email: <a href="mailto:ultramarathonconnect@gmail.com">ultramarathonconnect@gmail.com</a></span>
+    </div>
+    <p class="footer-copy">&copy; 2025 Ultramarathon Connect. All rights reserved.</p>
   </footer>
 
+  <!-- Forum Script -->
   <script src="forum_script.js"></script>
 </body>
 </html>

@@ -1801,98 +1801,134 @@ button:hover {
     }
 }
 
-/* Forum Page Layout */
-.forum-container {
-    max-width: 1000px;
+/* ================= Forum Page Layout ================ */
+.forum-wrapper {
+    max-width: 1100px;
     margin: 0 auto;
+    padding: 3rem 1.5rem;
+    background-color: #fff;
+}
+
+.forum-heading {
+    font-size: 2.5rem;
+    text-align: center;
+    color: #222;
+    margin-bottom: 0.3rem;
+}
+
+.forum-subheading {
+    text-align: center;
+    font-size: 1.15rem;
+    color: #666;
+    margin-bottom: 2.5rem;
+}
+
+/* ================= Post Form ================ */
+.post-form-section {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
     padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 3rem;
 }
 
-.forum-title {
-    text-align: center;
-    font-size: 2.2rem;
-    margin-bottom: 1rem;
-    color: #ff6600;
-}
-
-.forum-intro {
-    text-align: center;
-    font-size: 1.1rem;
-    margin-bottom: 2rem;
-    color: #444;
-}
-
-/* Thread Cards */
-.thread-card {
-    background: #fff;
-    border: 2px solid #ff6600;
-    border-radius: 10px;
-    margin-bottom: 1.5rem;
-    padding: 1.2rem 1.5rem;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.thread-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.thread-header {
+.post-form {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
-.thread-title {
-    font-size: 1.4rem;
-    color: #333;
-    font-weight: bold;
-}
-
-.thread-meta {
-    font-size: 0.9rem;
-    color: #777;
-}
-
-.thread-body {
-    margin-top: 0.8rem;
-    color: #555;
-}
-
-/* Comments Section */
-.comment-box {
-    margin-top: 1.5rem;
-    padding-top: 1rem;
-    border-top: 1px solid #ddd;
-}
-
-.comment-box textarea {
-    width: 100%;
+.post-form input[type="text"],
+.post-form textarea,
+.post-form select {
+    flex: 1 1 100%;
     padding: 0.8rem;
     font-size: 1rem;
-    margin-bottom: 0.6rem;
-    border-radius: 6px;
     border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.post-form textarea {
+    min-height: 100px;
     resize: vertical;
 }
 
-.comment-box button {
-    padding: 0.5rem 1rem;
-    background-color: #ff6600;
-    color: white;
+.post-form button {
+    align-self: flex-start;
+    padding: 0.7rem 1.5rem;
+    background-color: #28a745;
+    color: #fff;
     border: none;
     border-radius: 6px;
     cursor: pointer;
+    font-weight: bold;
 }
 
-.comment-box button:hover {
-    background-color: #e65500;
+.post-form button:hover {
+    background-color: #218838;
 }
 
-.comment {
-    background: #f7f7f7;
-    border-left: 4px solid #ff6600;
-    margin-top: 1rem;
-    padding: 0.75rem 1rem;
-    border-radius: 5px;
+/* ================= Forum Section Layout ================ */
+.forum-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+/* ================= Section Categories ================ */
+.forum-category {
+    margin-bottom: 2rem;
+}
+
+.forum-category h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    border-bottom: 3px solid #ff6600;
+    display: inline-block;
+    padding-bottom: 0.3rem;
+    color: #ff6600;
+}
+
+/* ================= Post Cards ================ */
+.forum-post {
+    background-color: #fff;
+    border-left: 6px solid #ff6600;
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.3s ease;
+}
+
+.forum-post:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.forum-post .post-title {
+    font-weight: bold;
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+    color: #222;
+}
+
+.forum-post .post-text {
+    color: #444;
+    font-size: 1rem;
+}
+
+/* ================= Error/Feedback ================ */
+.error-message {
+    color: #cc0000;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+/* ================= Footer Link Override ================ */
+.footer-links a {
+    color: #ff6600;
+    text-decoration: none;
+}
+
+.footer-links a:hover {
+    text-decoration: underline;
 }
