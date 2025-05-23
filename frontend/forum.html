@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Runner Community - Ultramarathon Connect</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <!-- Header -->
   <header class="sticky-header">
     <div class="logo-container">
-      <img src="ultra.png" alt="Ultramarathon Connect Logo" class="logo">
+      <img src="ultra.png" alt="Ultramarathon Finder Logo" class="logo">
     </div>
     <nav>
       <ul class="menu">
@@ -23,37 +24,53 @@
     </nav>
   </header>
 
-  <!-- Forum Container -->
-  <main class="content-container forum-wrapper">
-    <h2 class="forum-heading">Runner-to-Runner Forum</h2>
+  <main class="forum-wrapper">
+    <h1 class="forum-heading">Runner-to-Runner Forum</h1>
     <p class="forum-subheading">Ask questions, share insights, and connect with ultrarunners around the world.</p>
 
-    <!-- New Post Form -->
+    <!-- Start New Post Form -->
     <section class="post-form-section">
-      <h3>Start a New Discussion</h3>
       <form id="post-form" class="post-form">
-        <input type="text" id="post-title" placeholder="Post Title" required />
-        <textarea id="post-text" placeholder="What's on your mind?" required></textarea>
-        <select id="post-section" required>
-          <option value="" disabled selected>Select Category</option>
-          <option value="Training Tips">🏋️‍♀️ Training Tips</option>
+        <input type="text" id="post-title" placeholder="Post Title" required>
+        <textarea id="post-message" placeholder="What's on your mind?" required></textarea>
+        <select id="post-topic" required>
+          <option value="">Select Category</option>
+          <option value="Training Tips">🏋️ Training Tips</option>
           <option value="Gear Recommendations">🎒 Gear Recommendations</option>
-          <option value="Race Advice">🎯 Race Advice</option>
+          <option value="Race Advice">🥇 Race Advice</option>
           <option value="Meetup Requests">🤝 Meetup Requests</option>
           <option value="General Chat">💬 General Chat</option>
         </select>
-        <button type="submit" class="green-btn">Post</button>
-        <p id="post-error" class="error-message"></p>
+        <button type="submit">Post</button>
+        <p id="form-error" class="error-message"></p>
       </form>
     </section>
 
-    <!-- Discussion Display -->
-    <section id="forum-sections" class="forum-sections">
-      <!-- Posts by category will be dynamically inserted here -->
+    <!-- Posts by Topic -->
+    <section class="forum-sections">
+      <div class="forum-category">
+        <h3>🏋️ Training Tips</h3>
+        <div id="section-training"></div>
+      </div>
+      <div class="forum-category">
+        <h3>🎒 Gear Recommendations</h3>
+        <div id="section-gear"></div>
+      </div>
+      <div class="forum-category">
+        <h3>🥇 Race Advice</h3>
+        <div id="section-race"></div>
+      </div>
+      <div class="forum-category">
+        <h3>🤝 Meetup Requests</h3>
+        <div id="section-meetup"></div>
+      </div>
+      <div class="forum-category">
+        <h3>💬 General Chat</h3>
+        <div id="section-chat"></div>
+      </div>
     </section>
   </main>
 
-  <!-- Footer -->
   <footer class="site-footer">
     <div class="footer-links">
       <a href="contact.html">Contact Us</a> |
@@ -65,7 +82,7 @@
     <p class="footer-copy">&copy; 2025 Ultramarathon Connect. All rights reserved.</p>
   </footer>
 
-  <!-- Forum Script -->
   <script src="forum_script.js"></script>
 </body>
+
 </html>

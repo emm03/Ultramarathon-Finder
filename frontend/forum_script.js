@@ -1,5 +1,3 @@
-// forum_script.js
-
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
     const form = document.getElementById('post-form');
@@ -33,11 +31,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function createPostCard(post) {
         const div = document.createElement('div');
         div.className = 'post-card';
+        div.style.animation = "fadeIn 0.5s ease";
         div.innerHTML = `
-        <h4>${post.title}</h4>
-        <p>${post.message}</p>
-        <span class="post-meta">Posted in <strong>${post.topic}</strong></span>
-      `;
+            <h4>${post.title}</h4>
+            <p>${post.message}</p>
+            <span class="post-meta">Posted in <strong>${post.topic}</strong></span>
+        `;
         return div;
     }
 
