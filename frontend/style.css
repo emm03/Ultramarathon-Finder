@@ -1,8 +1,10 @@
 /* General Reset */
-body, html {
+body,
+html {
     margin: 0;
     padding: 0;
-    overflow-x: hidden; /* Prevent horizontal scrolling */
+    overflow-x: hidden;
+    /* Prevent horizontal scrolling */
 }
 
 /* Ensure No Unnecessary Margins or Gaps */
@@ -14,45 +16,64 @@ main {
 
 /* Header Styles */
 header {
-    display: flex; /* Use flexbox for layout */
-    align-items: center; /* Center items vertically */
-    justify-content: flex-start; /* Align all items to the left */
-    padding: 10px 20px; /* Balanced spacing */
+    display: flex;
+    /* Use flexbox for layout */
+    align-items: center;
+    /* Center items vertically */
+    justify-content: flex-start;
+    /* Align all items to the left */
+    padding: 10px 20px;
+    /* Balanced spacing */
     background-color: #333;
     color: #fff;
-    position: fixed; /* Keep the header fixed at the top */
+    position: fixed;
+    /* Keep the header fixed at the top */
     top: 0;
-    width: 100%; /* Full width */
+    width: 100%;
+    /* Full width */
     z-index: 1000;
-    height: 70px; /* Set header height */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-    gap: 20px; /* Add spacing between the logo and navigation */
+    height: 70px;
+    /* Set header height */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* Subtle shadow for depth */
+    gap: 20px;
+    /* Add spacing between the logo and navigation */
 }
 
 /* Logo Styling */
 header .logo-container {
     display: flex;
-    align-items: center; /* Vertically align */
-    justify-content: flex-start; /* Keep the logo aligned to the left */
+    align-items: center;
+    /* Vertically align */
+    justify-content: flex-start;
+    /* Keep the logo aligned to the left */
 }
 
 header .logo {
-    width: 100px; /* Adjust the width to make it proportional */
-    height: auto; /* Maintain aspect ratio */
+    width: 100px;
+    /* Adjust the width to make it proportional */
+    height: auto;
+    /* Maintain aspect ratio */
 }
 
 
 /* Navigation Styles */
 header nav {
-    display: flex; /* Align navigation items horizontally */
-    align-items: center; /* Center vertically */
-    flex-grow: 0; /* Prevent menu from stretching across the header */
+    display: flex;
+    /* Align navigation items horizontally */
+    align-items: center;
+    /* Center vertically */
+    flex-grow: 0;
+    /* Prevent menu from stretching across the header */
 }
 
 header nav .menu {
-    list-style: none; /* Remove default list styles */
-    display: flex; /* Align navigation items horizontally */
-    gap: 15px; /* Add space between navigation items */
+    list-style: none;
+    /* Remove default list styles */
+    display: flex;
+    /* Align navigation items horizontally */
+    gap: 15px;
+    /* Add space between navigation items */
     padding: 0;
     margin: 0;
 }
@@ -60,15 +81,19 @@ header nav .menu {
 header nav a {
     color: #fff;
     text-decoration: none;
-    padding: 10px 15px; /* Padding for better clickability */
+    padding: 10px 15px;
+    /* Padding for better clickability */
     font-weight: bold;
-    font-size: 1rem; /* Maintain readability */
-    white-space: nowrap; /* Prevent text wrapping */
+    font-size: 1rem;
+    /* Maintain readability */
+    white-space: nowrap;
+    /* Prevent text wrapping */
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 header nav a:hover {
-    background-color: #555; /* Subtle hover effect */
+    background-color: #555;
+    /* Subtle hover effect */
     border-radius: 5px;
 }
 
@@ -78,66 +103,67 @@ header nav a:hover {
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     header {
-      flex-direction: row;
-      flex-wrap: nowrap;
-      align-items: center;
-      justify-content: space-between;
-      height: auto;
-      padding: 10px 15px;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: space-between;
+        height: auto;
+        padding: 10px 15px;
     }
-  
+
     header .logo-container {
-      width: auto;
-      margin-bottom: 0;
-      display: flex;
-      align-items: center;
+        width: auto;
+        margin-bottom: 0;
+        display: flex;
+        align-items: center;
     }
-  
+
     header .logo {
-      width: 70px;
+        width: 70px;
     }
-  
+
     header nav {
-      flex: 1;
-      overflow-x: auto;
-      white-space: nowrap;
+        flex: 1;
+        overflow-x: auto;
+        white-space: nowrap;
     }
-  
+
     header nav .menu {
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      gap: 10px;
-      padding: 0 10px;
-      margin: 0;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        gap: 10px;
+        padding: 0 10px;
+        margin: 0;
     }
-  
+
     header nav a {
-      font-size: 0.95rem;
-      flex: 0 0 auto;
-      padding: 10px;
-      white-space: nowrap;
+        font-size: 0.95rem;
+        flex: 0 0 auto;
+        padding: 10px;
+        white-space: nowrap;
     }
-  
+
     .directory-section,
     .forum-section {
-      padding-top: 30px; /* Ensure no overlap with sticky header */
+        padding-top: 30px;
+        /* Ensure no overlap with sticky header */
     }
-  
+
     .filters {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      padding: 0 10px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        padding: 0 10px;
     }
-  
+
     .filters input,
     .filters select,
     .filters button {
-      flex: 1 1 150px;
-      min-width: 140px;
+        flex: 1 1 150px;
+        min-width: 140px;
     }
-  }  
+}
 
 /* Carousel Section */
 .carousel {
@@ -145,7 +171,8 @@ header nav a:hover {
     width: 100%;
     height: 100vh;
     overflow: hidden;
-    background-color: #000; /* Prevent flickering */
+    background-color: #000;
+    /* Prevent flickering */
 }
 
 .carousel-inner {
@@ -161,7 +188,8 @@ header nav a:hover {
     width: 100%;
     height: 100%;
     opacity: 0;
-    transition: opacity 1s ease-in-out; /* Smooth fade transition */
+    transition: opacity 1s ease-in-out;
+    /* Smooth fade transition */
 }
 
 .carousel-item.active {
@@ -183,20 +211,24 @@ header nav a:hover {
     transform: translate(-50%, -50%);
     text-align: center;
     color: #fff;
-    background: rgba(0, 0, 0, 0.6); /* Semi-transparent background for readability */
+    background: rgba(0, 0, 0, 0.6);
+    /* Semi-transparent background for readability */
     padding: 20px 40px;
     border-radius: 10px;
-    max-width: 90%; /* Adjust for smaller screens */
+    max-width: 90%;
+    /* Adjust for smaller screens */
 }
 
 .carousel-overlay h1 {
-    font-size: 3rem; /* Large font for titles */
+    font-size: 3rem;
+    /* Large font for titles */
     margin-bottom: 20px;
     line-height: 1.2;
 }
 
 .carousel-overlay p {
-    font-size: 1.5rem; /* Slightly larger font for readability */
+    font-size: 1.5rem;
+    /* Slightly larger font for readability */
     margin-bottom: 20px;
 }
 
@@ -213,7 +245,8 @@ header nav a:hover {
 
 .carousel-overlay button:hover {
     background-color: #e5801b;
-    transform: scale(1.05); /* Slight zoom on hover */
+    transform: scale(1.05);
+    /* Slight zoom on hover */
 }
 
 /* Carousel Navigation Buttons */
@@ -222,7 +255,8 @@ header nav a:hover {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Semi-transparent background */
     color: #fff;
     border: none;
     font-size: 2rem;
@@ -234,39 +268,48 @@ header nav a:hover {
     align-items: center;
     cursor: pointer;
     transition: background 0.3s ease, transform 0.3s ease;
-    z-index: 10; /* Ensure buttons appear above other content */
+    z-index: 10;
+    /* Ensure buttons appear above other content */
 }
 
 .carousel-prev {
-    left: 20px; /* Position to the left */
+    left: 20px;
+    /* Position to the left */
 }
 
 .carousel-next {
-    right: 20px; /* Position to the right */
+    right: 20px;
+    /* Position to the right */
 }
 
 .carousel-prev:hover,
 .carousel-next:hover {
-    background-color: rgba(0, 0, 0, 0.8); /* Darker on hover */
-    transform: scale(1.1); /* Slight zoom on hover */
+    background-color: rgba(0, 0, 0, 0.8);
+    /* Darker on hover */
+    transform: scale(1.1);
+    /* Slight zoom on hover */
 }
 
 /* Responsive Design for Carousel */
 @media (max-width: 768px) {
     .carousel {
-        height: 50vh; /* Reduce height for smaller screens */
+        height: 50vh;
+        /* Reduce height for smaller screens */
     }
 
     .carousel-overlay h1 {
-        font-size: 2rem; /* Adjust heading size */
+        font-size: 2rem;
+        /* Adjust heading size */
     }
 
     .carousel-overlay p {
-        font-size: 1rem; /* Adjust paragraph size */
+        font-size: 1rem;
+        /* Adjust paragraph size */
     }
 
     .carousel-overlay button {
-        padding: 8px 20px; /* Adjust button size */
+        padding: 8px 20px;
+        /* Adjust button size */
         font-size: 1rem;
     }
 
@@ -280,30 +323,42 @@ header nav a:hover {
 
 /* Welcome Section */
 .welcome-section {
-    margin: 60px auto; /* Add consistent spacing above and below */
-    padding: 40px 60px; /* Increase padding for breathing room */
-    text-align: center; /* Center align text */
+    margin: 60px auto;
+    /* Add consistent spacing above and below */
+    padding: 40px 60px;
+    /* Increase padding for breathing room */
+    text-align: center;
+    /* Center align text */
     color: #fff;
-    background: rgba(40, 40, 40, 1); /* Slightly darker background */
-    border-radius: 12px; /* Smoothly rounded edges */
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
-    max-width: 1000px; /* Wider section for better layout on large screens */
+    background: rgba(40, 40, 40, 1);
+    /* Slightly darker background */
+    border-radius: 12px;
+    /* Smoothly rounded edges */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+    /* Slightly stronger shadow */
+    max-width: 1000px;
+    /* Wider section for better layout on large screens */
 }
 
 .welcome-section h1 {
-    font-size: 2.8rem; /* Larger font for prominence */
-    margin-bottom: 25px; /* Add space below the heading */
+    font-size: 2.8rem;
+    /* Larger font for prominence */
+    margin-bottom: 25px;
+    /* Add space below the heading */
     font-weight: bold;
 }
 
 .welcome-section p {
-    font-size: 1.4rem; /* Larger font for readability */
+    font-size: 1.4rem;
+    /* Larger font for readability */
     margin-bottom: 25px;
-    line-height: 1.8; /* Increase line spacing for better readability */
+    line-height: 1.8;
+    /* Increase line spacing for better readability */
 }
 
 .welcome-section button {
-    padding: 15px 30px; /* Larger button for better visibility */
+    padding: 15px 30px;
+    /* Larger button for better visibility */
     font-size: 1.3rem;
     background-color: #f7931e;
     border: none;
@@ -314,7 +369,8 @@ header nav a:hover {
 
 .welcome-section button:hover {
     background-color: #e5801b;
-    transform: scale(1.05); /* Slight zoom effect on hover */
+    transform: scale(1.05);
+    /* Slight zoom effect on hover */
 }
 
 /* Features Section */
@@ -322,21 +378,26 @@ header nav a:hover {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
-    gap: 30px; /* Add spacing between cards */
+    gap: 30px;
+    /* Add spacing between cards */
     margin: 40px auto;
-    padding: 0 20px; /* Add padding for smaller screens */
-    max-width: 1200px; /* Limit width for better alignment */
+    padding: 0 20px;
+    /* Add padding for smaller screens */
+    max-width: 1200px;
+    /* Limit width for better alignment */
 }
 
 .feature {
     flex: 1;
     min-width: 250px;
-    max-width: 350px; /* Ensure consistent size */
+    max-width: 350px;
+    /* Ensure consistent size */
     text-align: center;
     background: #f7f7f7;
     border-radius: 10px;
     padding: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow */
 }
 
 .feature h2 {
@@ -367,30 +428,38 @@ header nav a:hover {
 
 /* Specific styles for Login and Register buttons */
 .account-buttons {
-    display: flex; /* Flexbox for Login/Register alignment */
-    justify-content: center; /* Center horizontally */
-    gap: 10px; /* Add spacing between Login and Register */
-    margin-top: 0; /* Align Login/Register buttons with others */
+    display: flex;
+    /* Flexbox for Login/Register alignment */
+    justify-content: center;
+    /* Center horizontally */
+    gap: 10px;
+    /* Add spacing between Login and Register */
+    margin-top: 0;
+    /* Align Login/Register buttons with others */
 }
 
 /* General orange button styling */
 .orange-btn {
     display: inline-block;
-    margin: 10px auto; /* Adjusted for spacing */
+    margin: 10px auto;
+    /* Adjusted for spacing */
     padding: 10px 20px;
-    background-color: #f7931e; /* Orange button color */
+    background-color: #f7931e;
+    /* Orange button color */
     color: #fff;
     border-radius: 5px;
     text-decoration: none;
     font-weight: bold;
     border: none;
     font-size: 1rem;
-    cursor: pointer; /* Pointer cursor for buttons */
+    cursor: pointer;
+    /* Pointer cursor for buttons */
     text-align: center;
 }
 
 .orange-btn:hover {
-    background-color: #e5801b; /* Darker orange for hover */
+    background-color: #e5801b;
+    /* Darker orange for hover */
 }
 
 /* Footer Styling */
@@ -424,7 +493,8 @@ footer .footer-links a:hover {
 .menu {
     list-style: none;
     display: flex;
-    justify-content: space-around; /* Distribute menu items evenly */
+    justify-content: space-around;
+    /* Distribute menu items evenly */
     align-items: center;
     padding: 0;
     margin: 0;
@@ -574,7 +644,8 @@ footer .footer-links a:hover {
 }
 
 /* Community Forum and Recent Posts Styling */
-.forum-section, .recent-posts {
+.forum-section,
+.recent-posts {
     margin: 40px auto;
     max-width: 800px;
     padding: 20px;
@@ -582,7 +653,8 @@ footer .footer-links a:hover {
     border-radius: 8px;
 }
 
-.forum-topic, .post {
+.forum-topic,
+.post {
     margin-bottom: 20px;
     padding: 20px;
     background-color: #ffffff;
@@ -591,18 +663,21 @@ footer .footer-links a:hover {
     text-align: center;
 }
 
-.forum-topic h3, .post h3 {
+.forum-topic h3,
+.post h3 {
     font-size: 1.5rem;
     color: #333;
 }
 
-.forum-topic p, .post p {
+.forum-topic p,
+.post p {
     font-size: 1rem;
     color: #666;
     margin: 10px 0;
 }
 
-.forum-topic button, .post button {
+.forum-topic button,
+.post button {
     background-color: #f7931e;
     color: #ffffff;
     padding: 10px 20px;
@@ -613,7 +688,8 @@ footer .footer-links a:hover {
     text-decoration: none;
 }
 
-.forum-topic button:hover, .post button:hover {
+.forum-topic button:hover,
+.post button:hover {
     background-color: #e5801b;
 }
 
@@ -807,6 +883,7 @@ footer .footer-links a:hover {
 .view-posts-button:hover {
     background-color: #e5801b;
 }
+
 /* Community Forum Layout */
 .community-section {
     text-align: center;
@@ -900,6 +977,7 @@ footer .footer-links a:hover {
 .read-more-button:hover {
     background-color: #e5801b;
 }
+
 /* Forum Section Styles */
 .forum-section {
     text-align: center;
@@ -915,7 +993,8 @@ footer .footer-links a:hover {
 }
 
 .forum-card {
-    width: 30%; /* Adjust to fit three in a row */
+    width: 30%;
+    /* Adjust to fit three in a row */
     background-color: #fff;
     padding: 20px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
@@ -990,12 +1069,16 @@ footer .footer-links a:hover {
 
 .forum-categories {
     display: flex;
-    justify-content: space-between; /* Spread the boxes evenly */
+    justify-content: space-between;
+    /* Spread the boxes evenly */
     gap: 20px;
-    max-width: 1200px; /* Increase max width */
+    max-width: 1200px;
+    /* Increase max width */
     margin: 0 auto;
-    flex-wrap: nowrap; /* Prevent wrapping */
-    padding: 0 20px; /* Add padding for responsiveness */
+    flex-wrap: nowrap;
+    /* Prevent wrapping */
+    padding: 0 20px;
+    /* Add padding for responsiveness */
 }
 
 .forum-category {
@@ -1003,8 +1086,10 @@ footer .footer-links a:hover {
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    flex: 1; /* Make each box flexible and take equal space */
-    max-width: 30%; /* Limit width to about a third */
+    flex: 1;
+    /* Make each box flexible and take equal space */
+    max-width: 30%;
+    /* Limit width to about a third */
     text-align: center;
 }
 
@@ -1030,6 +1115,7 @@ footer .footer-links a:hover {
 .forum-category button:hover {
     background-color: #e5801b;
 }
+
 /* Forum Form */
 .forum-form {
     margin: 20px 0;
@@ -1100,41 +1186,44 @@ footer .footer-links a:hover {
 
 .filter-layout {
     display: grid;
-    grid-template-columns: 340px 1fr;
+    grid-template-columns: 320px 1fr;
     gap: 2rem;
-    padding: 1.5rem;
-  }
-  
-  .filter-sidebar {
+    padding: 0 1rem;
+    /* remove side whitespace */
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.filter-sidebar {
     background-color: #f9f9f9;
     padding: 1rem;
     border-radius: 10px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 100px;
     height: fit-content;
-  }
-  
-  .filter-sidebar h4 {
+}
+
+.filter-sidebar h4 {
     margin-top: 1.2rem;
     font-size: 1rem;
     font-weight: bold;
-  }
-  
-  .filter-sidebar label,
-  .filter-sidebar select {
+}
+
+.filter-sidebar label,
+.filter-sidebar select {
     display: block;
     margin: 0.3rem 0;
-  }
-  
-  #search-bar {
+}
+
+#search-bar {
     width: 100%;
     padding: 0.5rem;
     margin-bottom: 1rem;
     border-radius: 6px;
     border: 1px solid #ccc;
-  }
-  
+}
+
 #race-list {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
@@ -1230,6 +1319,7 @@ footer .footer-links a:hover {
 .pagination-controls .page-button:hover {
     background-color: #d96e15;
 }
+
 .pagination-controls .dots {
     padding: 0 5px;
     color: #666;
@@ -1357,7 +1447,8 @@ button:hover {
 }
 
 /* Button Styling */
-.like-btn, .reply-btn {
+.like-btn,
+.reply-btn {
     margin-top: 10px;
     margin-right: 10px;
     background-color: orange;
@@ -1370,11 +1461,13 @@ button:hover {
     transition: background-color 0.3s ease;
 }
 
-.like-btn:hover, .reply-btn:hover {
+.like-btn:hover,
+.reply-btn:hover {
     background-color: darkorange;
 }
 
-.like-btn:focus, .reply-btn:focus {
+.like-btn:focus,
+.reply-btn:focus {
     outline: none;
 }
 
@@ -1432,7 +1525,8 @@ button:hover {
         font-size: 0.9rem;
     }
 
-    .like-btn, .reply-btn {
+    .like-btn,
+    .reply-btn {
         padding: 6px 10px;
         font-size: 0.8rem;
     }
@@ -1442,12 +1536,17 @@ button:hover {
         font-size: 0.9rem;
     }
 }
+
 .separator {
-    margin: 0 5px; /* Adjust spacing as needed */
-    color: inherit; /* Match text color */
+    margin: 0 5px;
+    /* Adjust spacing as needed */
+    color: inherit;
+    /* Match text color */
     text-decoration: none;
-    display: inline; /* Ensure it stays on the same line */
+    display: inline;
+    /* Ensure it stays on the same line */
 }
+
 /* Account Page Styling */
 .account-container {
     display: flex;
@@ -1455,11 +1554,14 @@ button:hover {
     align-items: center;
     justify-content: center;
     padding: 20px;
-    background-color: #f8f9fa; /* Light background for contrast */
+    background-color: #f8f9fa;
+    /* Light background for contrast */
     border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow for depth */
     max-width: 800px;
-    margin: 20px auto; /* Center and add spacing */
+    margin: 20px auto;
+    /* Center and add spacing */
 }
 
 /* Account Card */
@@ -1467,12 +1569,15 @@ button:hover {
     display: flex;
     align-items: center;
     gap: 20px;
-    flex-wrap: wrap; /* Make it responsive */
+    flex-wrap: wrap;
+    /* Make it responsive */
     text-align: center;
-    background-color: #ffffff; /* White background for the card */
+    background-color: #ffffff;
+    /* White background for the card */
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow */
 }
 
 /* Profile Picture */
@@ -1481,7 +1586,8 @@ button:hover {
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    max-width: 200px; /* Restrict width */
+    max-width: 200px;
+    /* Restrict width */
 }
 
 .profile-pic {
@@ -1489,20 +1595,23 @@ button:hover {
     height: 100px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #d96100; /* Highlight border */
+    border: 2px solid #d96100;
+    /* Highlight border */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* User Info Section */
 .info-section h3 {
     font-size: 1.5em;
-    color: #333333; /* Darker text for readability */
+    color: #333333;
+    /* Darker text for readability */
     margin: 10px 0;
 }
 
 .info-section p {
     font-size: 1em;
-    color: #666666; /* Subtle text for secondary info */
+    color: #666666;
+    /* Subtle text for secondary info */
 }
 
 /* Account Actions */
@@ -1513,7 +1622,8 @@ button:hover {
 }
 
 .account-actions .orange-btn {
-    background-color: #f57c00; /* Matching orange theme */
+    background-color: #f57c00;
+    /* Matching orange theme */
     color: #ffffff;
     padding: 10px 20px;
     border-radius: 5px;
@@ -1526,7 +1636,8 @@ button:hover {
 }
 
 .account-actions .orange-btn:hover {
-    background-color: #d96100; /* Darker hover effect */
+    background-color: #d96100;
+    /* Darker hover effect */
 }
 
 /* Upload Button */
@@ -1545,6 +1656,7 @@ button:hover {
 .upload-btn:hover {
     background-color: #d96100;
 }
+
 /* Profile Section Styling for Index */
 .profile-container {
     display: flex;
@@ -1552,11 +1664,14 @@ button:hover {
     justify-content: center;
     margin-top: 20px;
     padding: 20px;
-    background-color: #f8f9fa; /* Light background */
+    background-color: #f8f9fa;
+    /* Light background */
     border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow */
     max-width: 800px;
-    margin: 20px auto; /* Center the section */
+    margin: 20px auto;
+    /* Center the section */
 }
 
 /* Profile Picture Styling */
@@ -1565,7 +1680,8 @@ button:hover {
     height: 100px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #d96100; /* Highlight border */
+    border: 2px solid #d96100;
+    /* Highlight border */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     margin-right: 20px;
 }
@@ -1573,91 +1689,98 @@ button:hover {
 /* Info Section Styling */
 .info-section h3 {
     font-size: 1.5em;
-    color: #333333; /* Darker text for readability */
+    color: #333333;
+    /* Darker text for readability */
     margin-bottom: 5px;
 }
 
 .info-section p {
     font-size: 1em;
-    color: #666666; /* Subtle text */
+    color: #666666;
+    /* Subtle text */
     margin: 0;
 }
+
 .profile-picture-nav {
-    width: 30px; /* Adjust as needed */
-    height: 30px; /* Match width for circular appearance */
+    width: 30px;
+    /* Adjust as needed */
+    height: 30px;
+    /* Match width for circular appearance */
     border-radius: 50%;
-    margin-right: 10px; /* Space between image and link */
+    margin-right: 10px;
+    /* Space between image and link */
     object-fit: cover;
-    vertical-align: middle; /* Aligns with the text */
+    vertical-align: middle;
+    /* Aligns with the text */
 }
 
 /* === Mobile Fixes for Header, Nav, and Forum Cards === */
 @media (max-width: 768px) {
-  /* Scrollable top nav */
-  .menu {
-    overflow-x: auto;
-    white-space: nowrap;
-    scrollbar-width: none;
-  }
 
-  .menu::-webkit-scrollbar {
-    display: none;
-  }
+    /* Scrollable top nav */
+    .menu {
+        overflow-x: auto;
+        white-space: nowrap;
+        scrollbar-width: none;
+    }
 
-  /* Stack forum categories */
-  .forum-categories {
-    flex-direction: column;
-    align-items: center;
-    flex-wrap: wrap;
-  }
+    .menu::-webkit-scrollbar {
+        display: none;
+    }
 
-  .forum-category {
-    max-width: 90%;
-    width: 100%;
-    margin-bottom: 20px;
-  }
+    /* Stack forum categories */
+    .forum-categories {
+        flex-direction: column;
+        align-items: center;
+        flex-wrap: wrap;
+    }
 
-  header {
-    flex-wrap: wrap;
-    height: auto;
-    padding-bottom: 10px;
-  }
+    .forum-category {
+        max-width: 90%;
+        width: 100%;
+        margin-bottom: 20px;
+    }
 
-  header .logo {
-    width: 70px;
-  }
+    header {
+        flex-wrap: wrap;
+        height: auto;
+        padding-bottom: 10px;
+    }
 
-  header nav {
-    width: 100%;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
+    header .logo {
+        width: 70px;
+    }
 
-  header nav .menu {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding: 0 10px;
-    gap: 10px;
-  }
+    header nav {
+        width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
 
-  header nav a {
-    font-size: 0.9rem;
-    flex: 0 0 auto;
-  }
+    header nav .menu {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding: 0 10px;
+        gap: 10px;
+    }
+
+    header nav a {
+        font-size: 0.9rem;
+        flex: 0 0 auto;
+    }
 }
 
 @media (max-width: 900px) {
     .filter-layout {
-      grid-template-columns: 1fr;
+        grid-template-columns: 1fr;
     }
-  
+
     .filter-sidebar {
-      position: static;
-      margin-bottom: 2rem;
+        position: static;
+        margin-bottom: 2rem;
     }
-  
+
     .race-controls {
-      justify-content: flex-start;
+        justify-content: flex-start;
     }
-  }
-  
+}
