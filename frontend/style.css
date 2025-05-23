@@ -1189,7 +1189,6 @@ footer .footer-links a:hover {
     grid-template-columns: 320px 1fr;
     gap: 2rem;
     padding: 0 1rem;
-    /* remove side whitespace */
     max-width: 100%;
     margin: 0 auto;
 }
@@ -1226,24 +1225,23 @@ footer .footer-links a:hover {
 
 #race-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-    gap: 32px;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 24px;
     justify-items: center;
 }
 
 .race-card {
     background-color: #fff;
-    padding: 20px 24px;
+    padding: 16px 20px;
     width: 100%;
+    border: 2px solid #f7931e;
     border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.08);
-    text-align: left;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.05);
     transition: transform 0.2s ease-in-out;
-    border-left: 2px solid #f7931e;
 }
 
 .race-card:hover {
-    transform: translateY(-6px);
+    transform: translateY(-5px);
 }
 
 .race-card h3 {
