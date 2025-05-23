@@ -1826,13 +1826,18 @@ button:hover {
 
 /* Category Cards */
 .forum-categories {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 1rem;
     margin-bottom: 3rem;
+    overflow-x: auto;
+    /* allows horizontal scroll on smaller screens */
 }
 
 .category-card {
+    flex: 1;
+    min-width: 160px;
     background: #fff;
     border: 2px solid #ff6600;
     border-radius: 12px;
