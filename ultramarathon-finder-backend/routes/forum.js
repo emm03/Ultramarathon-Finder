@@ -88,7 +88,7 @@ router.post('/:forumId/comment', authenticateToken, async (req, res) => {
     const comment = new Comment({
       username: req.user.username,
       content,
-      forum: req.params.forumId
+      postId: req.params.forumId
     });
 
     await comment.save();
@@ -102,7 +102,7 @@ router.post('/:forumId/comment', authenticateToken, async (req, res) => {
 // Fetch comments for a specific forum
 router.get('/:forumId/comments', async (req, res) => {
   try {
-    const comments = await Comment.find({ forum: req.params.forumId }).sort({ timestamp: -1 });
+    const comments = await Comment.find({ postId: req.params.forumId }).sort({ timestamp: -1 });
     res.json({ comments });
   } catch (error) {
     console.error('Error fetching comments:', error.message);
