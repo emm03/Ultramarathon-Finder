@@ -1,105 +1,127 @@
-// forum.js
+// routes/forum.js
 import express from 'express';
-import Comment from '../models/Comment.js';
+import Post from '../models/Post.js';
 import { authenticateToken } from './auth.js';
 
 const router = express.Router();
 
-// Post a comment in a forum
-router.post('/:forumId/comment', authenticateToken, async (req, res) => {
-    const { content } = req.body;
+// ========== Create New Post ==========
+router.post('/posts', authenticateToken, async (req, res) => {
+  const { title, message, topic } = req.body;
 
-    if (!content) {
-        return res.status(400).json({ message: 'Content is required' });
-    }
+  if (!title || !message || !topic) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
 
-    try {
-        const comment = new Comment({
-            username: req.user.username,
-            content,
-            forum: req.params.forumId,
-        });
-        await comment.save();
+  try {
+    const newPost = new Post({
+      title,
+      message,
+      topic,
+      username: req.user.username,
+      profilePicture: req.user.profilePicture || null,
+    });
 
-        res.status(201).json({ message: 'Comment posted successfully', comment });
-    } catch (error) {
-        console.error('Error posting comment:', error.message);
-        res.status(500).json({ message: 'Internal server error while posting comment' });
-    }
+    await newPost.save();
+    res.status(201).json({ message: 'Post created', post: newPost });
+  } catch (err) {
+    console.error('Error creating post:', err.message);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
-// Fetch comments for a specific forum
-router.get('/:forumId/comments', async (req, res) => {
-    try {
-        const comments = await Comment.find({ forum: req.params.forumId }).sort({ timestamp: -1 });
-        res.json({ comments });
-    } catch (error) {
-        console.error('Error fetching comments:', error.message);
-        res.status(500).json({ message: 'Internal server error while fetching comments' });
-    }
+// ========== Get Paginated Posts ==========
+router.get('/posts', async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const sort = req.query.sort === 'popular' ? { reactions: -1 } : { createdAt: -1 };
+    const skip = (page - 1) * limit;
+
+    const posts = await Post.find().sort(sort).skip(skip).limit(limit);
+    const total = await Post.countDocuments();
+
+    res.json({
+      posts,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+    });
+  } catch (err) {
+    console.error('Error fetching posts:', err.message);
+    res.status(500).json({ message: 'Error fetching posts' });
+  }
 });
 
-// Fetch replies for a specific comment
-router.get('/comment/:commentId/replies', async (req, res) => {
-    try {
-        const comment = await Comment.findById(req.params.commentId);
-        if (!comment) {
-            return res.status(404).json({ message: 'Comment not found' });
-        }
+// ========== Add Comment to a Post ==========
+router.post('/posts/:postId/comments', authenticateToken, async (req, res) => {
+  const { content } = req.body;
+  if (!content) return res.status(400).json({ message: 'Content is required' });
 
-        res.json(comment.replies);
-    } catch (error) {
-        console.error('Error fetching replies:', error.message);
-        res.status(500).json({ message: 'Internal server error while fetching replies' });
-    }
+  try {
+    const post = await Post.findById(req.params.postId);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
+
+    const newComment = {
+      username: req.user.username,
+      content,
+      likes: 0,
+      replies: [],
+      timestamp: new Date(),
+    };
+
+    post.comments.push(newComment);
+    await post.save();
+
+    res.status(201).json({ message: 'Comment added', post });
+  } catch (err) {
+    console.error('Error adding comment:', err.message);
+    res.status(500).json({ message: 'Error adding comment' });
+  }
 });
 
-// Like a comment
-router.post('/comment/:commentId/like', authenticateToken, async (req, res) => {
-    try {
-        const comment = await Comment.findByIdAndUpdate(
-            req.params.commentId,
-            { $inc: { likes: 1 } },
-            { new: true }
-        );
+// ========== Reply to a Comment ==========
+router.post('/posts/:postId/comments/:commentId/reply', authenticateToken, async (req, res) => {
+  const { content } = req.body;
+  if (!content) return res.status(400).json({ message: 'Content is required' });
 
-        if (!comment) {
-            return res.status(404).json({ message: 'Comment not found' });
-        }
+  try {
+    const post = await Post.findById(req.params.postId);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
 
-        res.json({ message: 'Comment liked', comment });
-    } catch (error) {
-        console.error('Error liking comment:', error.message);
-        res.status(500).json({ message: 'Internal server error while liking comment' });
-    }
+    const comment = post.comments.id(req.params.commentId);
+    if (!comment) return res.status(404).json({ message: 'Comment not found' });
+
+    comment.replies.push({
+      username: req.user.username,
+      content,
+      timestamp: new Date(),
+    });
+
+    await post.save();
+    res.status(201).json({ message: 'Reply added', post });
+  } catch (err) {
+    console.error('Error adding reply:', err.message);
+    res.status(500).json({ message: 'Error adding reply' });
+  }
 });
 
-// Reply to a comment
-router.post('/comment/:commentId/reply', authenticateToken, async (req, res) => {
-    const { content } = req.body;
+// ========== Like a Comment ==========
+router.post('/posts/:postId/comments/:commentId/like', authenticateToken, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.postId);
+    if (!post) return res.status(404).json({ message: 'Post not found' });
 
-    if (!content) {
-        return res.status(400).json({ message: 'Content is required' });
-    }
+    const comment = post.comments.id(req.params.commentId);
+    if (!comment) return res.status(404).json({ message: 'Comment not found' });
 
-    try {
-        const comment = await Comment.findById(req.params.commentId);
+    comment.likes += 1;
+    await post.save();
 
-        if (!comment) {
-            return res.status(404).json({ message: 'Comment not found' });
-        }
-
-        comment.replies.push({
-            username: req.user.username,
-            content,
-        });
-
-        await comment.save();
-        res.status(201).json({ message: 'Reply added', comment });
-    } catch (error) {
-        console.error('Error replying to comment:', error.message);
-        res.status(500).json({ message: 'Internal server error while replying' });
-    }
+    res.json({ message: 'Comment liked', post });
+  } catch (err) {
+    console.error('Error liking comment:', err.message);
+    res.status(500).json({ message: 'Error liking comment' });
+  }
 });
 
 export default router;
