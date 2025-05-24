@@ -16,19 +16,24 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/forum/posts/${postId}`);
             const { post } = await res.json();
 
+            if (!post) {
+                postDetails.innerHTML = `<p>Unable to load post.</p>`;
+                return;
+            }
+
             postDetails.innerHTML = `
-          <div class="post-card">
-            <div class="post-header">
-              <img class="avatar" src="${post.profilePicture || './images/default-profile.png'}" alt="Avatar">
-              <div class="meta">
-                <strong>${post.username || 'Anonymous'}</strong><br>
-                <small>${new Date(post.createdAt).toLocaleString()}</small>
-              </div>
-            </div>
-            <h4>${post.title}</h4>
-            <p>${post.message}</p>
-          </div>
-        `;
+                <div class="post-card">
+                    <div class="post-header">
+                        <img class="avatar" src="${post.profilePicture || './images/default-profile.png'}" alt="Avatar">
+                        <div class="meta">
+                            <strong>${post.username || 'Anonymous'}</strong><br>
+                            <small>${new Date(post.createdAt).toLocaleString()}</small>
+                        </div>
+                    </div>
+                    <h4>${post.title}</h4>
+                    <p>${post.message}</p>
+                </div>
+            `;
         } catch (err) {
             postDetails.innerHTML = `<p>Unable to load post.</p>`;
             console.error("Error loading post:", err);
@@ -46,9 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const div = document.createElement('div');
                 div.className = 'comment-card';
                 div.innerHTML = `
-            <h4>${comment.username} <small>${new Date(comment.createdAt).toLocaleString()}</small></h4>
-            <p>${comment.content}</p>
-          `;
+                    <h4>${comment.username} <small>${new Date(comment.createdAt).toLocaleString()}</small></h4>
+                    <p>${comment.content}</p>
+                `;
                 commentList.appendChild(div);
             });
         } catch (error) {

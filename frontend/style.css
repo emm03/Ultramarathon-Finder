@@ -1861,7 +1861,59 @@ button:hover {
     color: #555;
 }
 
-/* Post Form Section */
+/* Post Card Layout */
+.post-card {
+    background: #fff;
+    border-left: 6px solid #ff6600;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ff6600;
+}
+
+.meta {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.9rem;
+    color: #444;
+}
+
+.post-card h4 {
+    font-size: 1.2rem;
+    color: #222;
+    margin: 0.5rem 0 0.6rem;
+}
+
+.post-card p {
+    font-size: 1rem;
+    color: #444;
+}
+
+.post-meta {
+    font-size: 0.85rem;
+    color: #888;
+    margin-top: 0.3rem;
+}
+
+/* Post Form */
 .post-form-section {
     background: #fff;
     border: 2px solid #eee;
@@ -1909,80 +1961,7 @@ button:hover {
     background-color: #e25700;
 }
 
-.error-message {
-    color: red;
-    font-size: 0.9rem;
-}
-
-/* Section Layout */
-.forum-sections {
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
-    margin-top: 3rem;
-}
-
-.forum-category h3 {
-    font-size: 1.7rem;
-    margin-bottom: 1rem;
-    color: #ff6600;
-    border-bottom: 2px solid #ff6600;
-    display: inline-block;
-    padding-bottom: 0.3rem;
-}
-
-/* Post Cards */
-.post-card {
-    background: #fff;
-    border-left: 6px solid #ff6600;
-    border-radius: 10px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
-    transition: box-shadow 0.3s ease;
-    max-width: 700px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.post-card:hover {
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-}
-
-.post-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.5rem;
-}
-
-.post-avatar {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #ff6600;
-}
-
-.post-title {
-    font-weight: bold;
-    font-size: 1.2rem;
-    color: #222;
-}
-
-.post-body {
-    font-size: 1rem;
-    color: #444;
-    margin-top: 0.5rem;
-}
-
-.post-meta {
-    font-size: 0.85rem;
-    color: #888;
-    margin-top: 0.3rem;
-}
-
-/* Reaction buttons */
+/* Reactions & Actions */
 .post-actions {
     margin-top: 0.8rem;
     display: flex;
@@ -2002,6 +1981,65 @@ button:hover {
     background-color: #ff6600;
     color: #fff;
     border-color: #ff6600;
+}
+
+/* Comments Section */
+#comment-list {
+    margin-top: 1.2rem;
+}
+
+.comment-card {
+    background: #f9f9f9;
+    border-left: 4px solid #ff6600;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+}
+
+.comment-card h4 {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 0.3rem;
+}
+
+.comment-card p {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+/* Comment Form */
+#comment-form {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+#comment-form textarea {
+    padding: 0.8rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    resize: vertical;
+}
+
+#comment-form button {
+    background-color: #ff6600;
+    color: white;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#comment-form button:hover {
+    background-color: #e25700;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.9rem;
 }
 
 /* Sort dropdown */
@@ -2031,27 +2069,4 @@ button:hover {
         opacity: 1;
         transform: translateY(0);
     }
-}
-
-/* Post Avatar Fix */
-.post-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.5rem;
-}
-
-.avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid #ff6600;
-}
-
-.meta {
-    display: flex;
-    flex-direction: column;
-    font-size: 0.9rem;
-    color: #444;
 }
