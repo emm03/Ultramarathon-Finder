@@ -76,7 +76,7 @@ router.post('/posts/:id/react', authenticateToken, async (req, res) => {
   }
 });
 
-// Post a comment in a forum
+// Post a comment on a post
 router.post('/:forumId/comment', authenticateToken, async (req, res) => {
   const { content } = req.body;
 
@@ -87,6 +87,7 @@ router.post('/:forumId/comment', authenticateToken, async (req, res) => {
   try {
     const comment = new Comment({
       username: req.user.username,
+      profilePicture: req.user.profilePicture || '',
       content,
       postId: req.params.forumId
     });
@@ -102,7 +103,7 @@ router.post('/:forumId/comment', authenticateToken, async (req, res) => {
 // Fetch comments for a specific forum
 router.get('/:forumId/comments', async (req, res) => {
   try {
-    const comments = await Comment.find({ postId: req.params.forumId }).sort({ timestamp: -1 });
+    const comments = await Comment.find({ postId: req.params.forumId }).sort({ createdAt: -1 });
     res.json({ comments });
   } catch (error) {
     console.error('Error fetching comments:', error.message);
@@ -162,6 +163,7 @@ router.post('/comment/:commentId/reply', authenticateToken, async (req, res) => 
 
     comment.replies.push({
       username: req.user.username,
+      profilePicture: req.user.profilePicture || '',
       content
     });
 
