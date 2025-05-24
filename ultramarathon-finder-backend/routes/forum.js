@@ -31,6 +31,20 @@ router.post('/posts', authenticateToken, async (req, res) => {
   }
 });
 
+// ✅ GET a single post by ID (used for post view + replies)
+router.get('/posts/:id', async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    res.json({ post });
+  } catch (error) {
+    console.error('Error fetching post:', error.message);
+    res.status(500).json({ message: 'Error fetching post' });
+  }
+});
+
 // Fetch paginated posts with optional sorting
 router.get('/posts', async (req, res) => {
   try {
