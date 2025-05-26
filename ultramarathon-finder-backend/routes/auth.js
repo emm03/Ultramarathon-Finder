@@ -11,7 +11,7 @@ import User from '../models/User.js';
 
 const router = express.Router();
 
-// AWS S3 setup
+// -------------------- AWS S3 SETUP --------------------
 const s3 = new aws.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY,
   secretAccessKey: process.env.AWS_SECRET_KEY,
@@ -100,9 +100,9 @@ router.post('/login', async (req, res) => {
     console.log("User found?", !!user);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
+    const trimmedPassword = password.trim();
     console.log("Type of received password:", typeof password);
     console.log("Raw password from frontend:", JSON.stringify(password));
-    const trimmedPassword = password.trim();
     console.log("Cleaned password:", JSON.stringify(trimmedPassword));
     console.log("Stored hash:", user.password);
 
@@ -211,7 +211,8 @@ router.post('/reset-password', async (req, res) => {
     const user = await User.findById(decoded.id);
     if (!user) return res.status(404).json({ message: 'User not found.' });
 
-    const isSame = await bcrypt.compare(newPassword.trim(), user.password);
+    const cleanedPassword = newPassword.trim();
+    const isSame = await bcrypt.compare(cleanedPassword, user.password);
     console.log("Reset attempt for:", user.email);
     console.log("Password is same as before?", isSame);
 
@@ -219,8 +220,9 @@ router.post('/reset-password', async (req, res) => {
       return res.status(400).json({ message: 'You have already used that password. Please choose a new one.' });
     }
 
-    console.log("New password (trimmed):", JSON.stringify(newPassword.trim()));
-    const hashed = await bcrypt.hash(newPassword.trim(), 10);
+    console.log("New password (trimmed):", JSON.stringify(cleanedPassword));
+    const hashed = bcrypt.hashSync(cleanedPassword, 10);
+    console.log("Hashed password being saved:", hashed);
     user.password = hashed;
     await user.save();
 
@@ -228,8 +230,10 @@ router.post('/reset-password', async (req, res) => {
     console.log("New stored hash in DB:", user.password);
     res.json({ message: 'Password updated successfully.' });
   } catch (err) {
+    console.error("Reset error:", err.message);
     res.status(400).json({ message: 'Invalid or expired token.' });
   }
 });
 
 export default router;
+
