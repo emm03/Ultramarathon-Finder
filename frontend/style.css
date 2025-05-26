@@ -2294,5 +2294,11 @@ body {
 }
 
 #race-map .leaflet-control-container {
-    z-index: 1;
+    z-index: 0 !important;
+    position: relative !important;
 }
+
+#race-map {
+    position: relative;
+    z-index: 0;
+  }  

@@ -86,17 +86,37 @@ async function setupMap() {
         scrollWheelZoom: false
     }).setView([20, 0], 2);
 
-    // Enable scroll zoom only when holding Cmd (Mac) or Ctrl (Windows)
-    map.getContainer().addEventListener("wheel", function (e) {
-        if ((e.metaKey || e.ctrlKey) && !map.scrollWheelZoom.enabled()) {
-            map.scrollWheelZoom.enable();
-            setTimeout(() => map.scrollWheelZoom.disable(), 1000);
-        }
-    });
-
+    // Add tile layer
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
+
+    // Add scroll-to-zoom message
+    const zoomHint = document.createElement("div");
+    zoomHint.textContent = "Use ⌘ + scroll to zoom the map";
+    zoomHint.style.position = "absolute";
+    zoomHint.style.top = "10px";
+    zoomHint.style.left = "10px";
+    zoomHint.style.padding = "6px 12px";
+    zoomHint.style.background = "rgba(0, 0, 0, 0.7)";
+    zoomHint.style.color = "white";
+    zoomHint.style.borderRadius = "5px";
+    zoomHint.style.fontSize = "0.85rem";
+    zoomHint.style.zIndex = "1000";
+    zoomHint.style.display = "none";
+    mapContainer.appendChild(zoomHint);
+
+    map.getContainer().addEventListener("wheel", function (e) {
+        if (!e.metaKey && !e.ctrlKey) {
+            zoomHint.style.display = "block";
+            setTimeout(() => zoomHint.style.display = "none", 1800);
+        }
+
+        if ((e.metaKey || e.ctrlKey) && !map.scrollWheelZoom.enabled()) {
+            map.scrollWheelZoom.enable();
+            setTimeout(() => map.scrollWheelZoom.disable(), 1500);
+        }
+    });
 
     const orangeIcon = L.icon({
         iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
@@ -222,7 +242,7 @@ function trackUserInactivity() {
         clearTimeout(inactivityTimer);
         localStorage.setItem("lastActive", Date.now().toString());
         inactivityTimer = setTimeout(() => {
-            logoutUser(true); // now triggers alert only on true inactivity
+            logoutUser(true);
         }, maxInactivityTime);
     }
 
