@@ -14,8 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     redirectIfUnauthorized(token, ["account.html", "profile_edit.html"]);
-    loadLatestPosts(); // For recent forum previews
-    setupMap(); // ⬅️ Ensure map loads
+    loadLatestPosts();
+    setupMap();
 });
 
 function initializeCarousel() {
@@ -37,12 +37,41 @@ function initializeCarousel() {
     showSlide(currentIndex);
 }
 
-// ----------------------- MAP SETUP -----------------------
+// -------------------- AUTH HEADER BEHAVIOR --------------------
+function setupAuthenticatedMenu(menu, token) {
+    const tab = document.getElementById("account-tab");
+    tab.innerHTML = `
+        <div class="dropdown">
+            <button class="dropbtn">My Account</button>
+            <div class="dropdown-content">
+                <a href="account.html">Profile</a>
+                <a href="#" id="logout-link">Sign Out</a>
+            </div>
+        </div>
+    `;
+
+    const logoutBtn = document.getElementById("logout-link");
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", e => {
+            e.preventDefault();
+            logoutUser();
+        });
+    }
+
+    fetchUserProfilePicture(token, menu);
+}
+
+function setupUnauthenticatedMenu(menu) {
+    const tab = document.getElementById("account-tab");
+    tab.innerHTML = `<a href="login.html">Login</a>`;
+}
+
+// -------------------- MAP --------------------
 async function setupMap() {
     const mapContainer = document.getElementById("race-map");
     if (!mapContainer) return;
 
-    const map = L.map(mapContainer).setView([20, 0], 2); // Centered globally
+    const map = L.map(mapContainer).setView([20, 0], 2);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '© OpenStreetMap contributors'
@@ -60,7 +89,7 @@ async function setupMap() {
     try {
         const response = await fetch("duv_ultramarathons.csv");
         const text = await response.text();
-        const rows = text.trim().split("\n").slice(1); // Skip header
+        const rows = text.trim().split("\n").slice(1);
 
         rows.forEach(row => {
             const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
@@ -84,43 +113,7 @@ async function setupMap() {
     }
 }
 
-// ----------------------- Other functions (same as before) -----------------------
-
-function setupAuthenticatedMenu(menu, token) {
-    const accountLink = document.createElement("li");
-    accountLink.classList.add("auth-link");
-    accountLink.innerHTML = `<a href="account.html">My Account</a>`;
-
-    const logoutLink = document.createElement("li");
-    logoutLink.classList.add("auth-link");
-    logoutLink.innerHTML = `<a id="logout-link" href="#">Logout</a>`;
-
-    menu.appendChild(accountLink);
-    menu.appendChild(logoutLink);
-
-    fetchUserProfilePicture(token, menu);
-    const logoutBtn = document.getElementById("logout-link");
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", e => {
-            e.preventDefault();
-            logoutUser();
-        });
-    }
-}
-
-function setupUnauthenticatedMenu(menu) {
-    const loginLink = document.createElement("li");
-    loginLink.classList.add("auth-link");
-    loginLink.innerHTML = `<a href="login.html">Login</a>`;
-
-    const registerLink = document.createElement("li");
-    registerLink.classList.add("auth-link");
-    registerLink.innerHTML = `<a href="register.html">Register</a>`;
-
-    menu.appendChild(loginLink);
-    menu.appendChild(registerLink);
-}
-
+// -------------------- USER HANDLING --------------------
 async function loadUserInfo(token) {
     const usernameElement = document.getElementById("username");
     const emailElement = document.getElementById("email");
@@ -176,7 +169,7 @@ async function fetchUserProfilePicture(token, menu) {
         const stored = localStorage.getItem("profilePicture");
         const profileImg = document.createElement('img');
         profileImg.classList.add('profile-picture-nav');
-        const accountNode = menu.querySelector(".auth-link a[href='account.html']").parentNode;
+        const accountNode = menu.querySelector(".auth-tab");
 
         if (stored) {
             profileImg.src = stored;
@@ -222,7 +215,7 @@ function logoutUser() {
     window.location.href = "login.html";
 }
 
-// Forum preview posts (optional)
+// -------------------- FORUM PREVIEW --------------------
 async function loadLatestPosts() {
     try {
         const response = await fetch("https://ultramarathon-finder-backend.onrender.com/api/forum/posts?limit=3");
@@ -235,16 +228,15 @@ async function loadLatestPosts() {
         posts.forEach(post => {
             const card = document.createElement("div");
             card.className = "post-card";
-            card.innerHTML = `
-                <div class="post-header">
+            card.innerHTML =
+                `<div class="post-header">
                     <img class="avatar" src="${post.profilePicture || './images/default-profile.png'}" alt="Avatar">
                     <div class="meta"><strong>${post.username || 'Anonymous'}</strong><br>
                     <small>${new Date(post.createdAt).toLocaleString()}</small></div>
                 </div>
                 <h4>${post.title}</h4>
                 <p>${post.message}</p>
-                <span class="post-meta">Posted in <strong>${post.topic}</strong></span>
-            `;
+                <span class="post-meta">Posted in <strong>${post.topic}</strong></span>`;
             container.appendChild(card);
         });
     } catch (err) {
