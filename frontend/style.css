@@ -2150,6 +2150,11 @@ button:hover {
     color: #888;
 }
 
+.latest-posts button.orange-btn {
+    display: block;
+    margin: 1rem auto 0 auto; /* centers horizontally */
+}  
+
 /* ========== Homepage - Interactive Map Preview ========== */
 .map-preview {
     margin: 4rem auto;
