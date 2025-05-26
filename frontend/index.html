@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ultramarathon Connect</title>
   <link rel="stylesheet" href="style.css" />
+  <!-- Leaflet CSS for Race Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
-
 <body>
-  <!-- Header Section -->
+  <!-- Header -->
   <header class="sticky-header">
     <div class="logo-container">
       <img src="ultra.png" alt="Ultramarathon Finder Logo" class="logo" />
@@ -24,9 +24,23 @@
     </nav>
   </header>
 
-  <!-- Main Section -->
+  <!-- Main Content -->
   <main>
-    <!-- Carousel Section -->
+    <!-- Profile Section -->
+    <section class="profile-container">
+      <div class="account-card">
+        <div class="profile-section">
+          <img id="profile-pic" src="images/default-profile.png" alt="User Profile Picture"
+               class="profile-pic" onerror="this.src='images/default-profile.png'" />
+        </div>
+        <div class="info-section">
+          <h3 id="username">Welcome, User!</h3>
+          <p id="email"><strong>Email:</strong> user@example.com</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Carousel -->
     <div class="carousel">
       <div class="carousel-inner">
         <div class="carousel-item active">
@@ -85,9 +99,23 @@
         <button class="orange-btn" onclick="window.location.href='forum.html'">Explore Runner Community</button>
       </div>
     </section>
+
+    <!-- Recent Forum Posts -->
+    <section class="forum-preview">
+      <h2>Recent Conversations</h2>
+      <div id="forum-preview-list" class="forum-preview-list"></div>
+      <button class="orange-btn" onclick="window.location.href='forum.html'">View All Posts</button>
+    </section>
+
+    <!-- Race Map Preview -->
+    <section class="map-preview">
+      <h2>Explore Upcoming Races</h2>
+      <div id="race-map"></div>
+      <button class="orange-btn" onclick="window.location.href='race_directory.html'">Browse Full Directory</button>
+    </section>
   </main>
 
-  <!-- Footer Section -->
+  <!-- Footer -->
   <footer class="site-footer">
     <div class="footer-links">
       <a href="contact.html">Contact Us</a> |
@@ -100,7 +128,7 @@
   </footer>
 
   <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="index_script.js"></script>
 </body>
-
 </html>

@@ -206,3 +206,42 @@ function logoutUser() {
     window.location.href = "login.html";
 }
 
+// Fetch and display latest forum posts on homepage
+async function loadLatestPosts() {
+    try {
+        const response = await fetch("https://ultramarathon-finder-backend.onrender.com/api/forum/posts?limit=3");
+        const data = await response.json();
+        const posts = data.posts || data;
+
+        const container = document.getElementById("latest-posts-container");
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        posts.forEach(post => {
+            const card = document.createElement("div");
+            card.className = "post-card";
+
+            card.innerHTML = `
+                <div class="post-header">
+                    <img class="avatar" src="${post.profilePicture || './images/default-profile.png'}" alt="Avatar">
+                    <div class="meta">
+                        <strong>${post.username || 'Anonymous'}</strong><br>
+                        <small>${new Date(post.createdAt).toLocaleString()}</small>
+                    </div>
+                </div>
+                <h4>${post.title}</h4>
+                <p>${post.message}</p>
+                <span class="post-meta">Posted in <strong>${post.topic}</strong></span>
+            `;
+
+            container.appendChild(card);
+        });
+    } catch (error) {
+        console.error("Error loading latest posts:", error);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadLatestPosts(); // <-- Call this when homepage loads
+});
