@@ -183,37 +183,44 @@ router.post('/forgot-password', async (req, res) => {
     }
 });
 
-router.post('/reset-password', async (req, res) => {
-    const { token, newPassword } = req.body;
-    console.log("Reset attempt received with token:", token); // <-- Add this
-    if (!token || !newPassword)
-        return res.status(400).json({ message: 'Token and new password are required.' });
+router.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email || !password)
+        return res.status(400).json({ message: 'Email and password are required' });
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.id);
-        if (!user) {
-            console.log("User not found for token");
-            return res.status(404).json({ message: 'User not found.' });
-        }
+        const user = await User.findOne({ email });
+        console.log("Login attempt for email:", email);
+        console.log("User found?", !!user);
 
-        const isSame = await bcrypt.compare(newPassword, user.password);
-        console.log("Password is same as before?", isSame); // <-- Add this
+        if (!user) return res.status(404).json({ message: 'User not found' });
 
-        if (isSame)
-            return res.status(400).json({ message: 'You have already used that password. Please choose a new one.' });
+        console.log("Stored hash:", user.password);
 
-        const hashed = await bcrypt.hash(newPassword, 10);
-        console.log("Old hash:", user.password);       
-        console.log("New hash:", hashed);
-        user.password = hashed;
-        await user.save();
+        const isMatch = await bcrypt.compare(password, user.password);
+        console.log("Password match:", isMatch);
 
-        console.log("Password updated for:", user.email); // <-- Add this
-        res.json({ message: 'Password updated successfully.' });
-    } catch (err) {
-        console.log("Reset error:", err.message); // <-- Add this
-        res.status(400).json({ message: 'Invalid or expired token.' });
+        if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
+
+        const token = jwt.sign(
+            { userId: user._id, username: user.username, profilePicture: user.profilePicture || '' },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        res.status(200).json({
+            message: 'Login successful',
+            token,
+            user: {
+                username: user.username,
+                email: user.email,
+                profilePicture: user.profilePicture || ''
+            }
+        });
+    } catch (error) {
+        console.error("Login error:", error.message);
+        res.status(500).json({ message: 'Internal server error during login' });
     }
 });
 
