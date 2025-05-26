@@ -82,7 +82,17 @@ async function setupMap() {
     const mapContainer = document.getElementById("race-map");
     if (!mapContainer) return;
 
-    const map = L.map(mapContainer).setView([20, 0], 2);
+    const map = L.map(mapContainer, {
+        scrollWheelZoom: false
+    }).setView([20, 0], 2);
+
+    // Enable scroll zoom only when holding Cmd (Mac) or Ctrl (Windows)
+    map.getContainer().addEventListener("wheel", function (e) {
+        if ((e.metaKey || e.ctrlKey) && !map.scrollWheelZoom.enabled()) {
+            map.scrollWheelZoom.enable();
+            setTimeout(() => map.scrollWheelZoom.disable(), 1000);
+        }
+    });
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '© OpenStreetMap contributors'

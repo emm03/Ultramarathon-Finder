@@ -2287,3 +2287,12 @@ body {
     margin: 0;
     background-color: #2e2e2e;
 }
+
+.leaflet-top,
+.leaflet-bottom {
+    z-index: 0;
+}
+
+#race-map .leaflet-control-container {
+    z-index: 1;
+}
