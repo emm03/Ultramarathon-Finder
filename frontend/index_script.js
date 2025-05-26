@@ -1,6 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
     initializeCarousel();
 
+    setupMap(); // Initialize Leaflet map
+
+
     const token = localStorage.getItem("token")?.trim();
     const menu = document.querySelector("ul.menu");
     menu.querySelectorAll(".auth-link").forEach(link => link.remove());
@@ -19,6 +22,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // New additions
     loadLatestPosts();
     setupMap();
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    loadLatestPosts(); // Load recent forum posts
+    setupMap();        // Load race map
 });
 
 // Carousel logic

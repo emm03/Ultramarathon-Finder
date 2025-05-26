@@ -427,12 +427,12 @@ header nav a:hover {
 
 .forum-preview {
     text-align: center;
-    margin: 4rem 0;
-  }
-  
-  .forum-preview button {
+    margin: 4rem auto 2rem auto;
+}
+
+.forum-preview button.orange-btn {
     margin-top: 1rem;
-  }  
+}
 
 /* Specific styles for Login and Register buttons */
 .account-buttons {
@@ -1245,6 +1245,13 @@ footer .footer-links a:hover {
     margin-bottom: 1rem;
     border-radius: 6px;
     border: 1px solid #ccc;
+}
+
+#race-map {
+    height: 350px;
+    width: 100%;
+    margin: 2rem auto;
+    border-radius: 10px;
 }
 
 #race-list {
