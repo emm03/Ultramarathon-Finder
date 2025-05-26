@@ -1247,12 +1247,15 @@ footer .footer-links a:hover {
     border: 1px solid #ccc;
 }
 
+/* Map Preview */
 #race-map {
-    height: 350px;
     width: 100%;
-    margin: 2rem auto;
-    border-radius: 10px;
+    height: 450px;
+    margin: 20px auto;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+
 
 #race-list {
     display: grid !important;
@@ -2152,8 +2155,9 @@ button:hover {
 
 .latest-posts button.orange-btn {
     display: block;
-    margin: 1rem auto 0 auto; /* centers horizontally */
-}  
+    margin: 1rem auto 0 auto;
+    /* centers horizontally */
+}
 
 /* ========== Homepage - Interactive Map Preview ========== */
 .map-preview {

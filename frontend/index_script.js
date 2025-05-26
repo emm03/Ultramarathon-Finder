@@ -242,3 +242,40 @@ function setupMap() {
         .bindPopup("Example Race in San Francisco")
         .openPopup();
 }
+
+// Load and display all races on map from CSV
+async function setupMapFromCSV() {
+    const mapContainer = document.getElementById('race-map');
+    if (!mapContainer) return;
+
+    const map = L.map('race-map').setView([37.0902, -95.7129], 2); // Centered over US
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    try {
+        const response = await fetch('duv_ultramarathons.csv');
+        const text = await response.text();
+        const lines = text.trim().split('\n').slice(1); // Skip header
+
+        for (let line of lines) {
+            const [name, date, location, distance] = line.split(',');
+
+            const geocodeResponse = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}`);
+            const results = await geocodeResponse.json();
+
+            if (results.length > 0) {
+                const { lat, lon } = results[0];
+                L.marker([lat, lon])
+                    .addTo(map)
+                    .bindPopup(`<strong>${name}</strong><br>${location}<br>${date} - ${distance}`);
+            }
+        }
+    } catch (err) {
+        console.error('Error loading race data for map:', err);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    setupMapFromCSV(); // <-- Load map markers when homepage loads
+});
