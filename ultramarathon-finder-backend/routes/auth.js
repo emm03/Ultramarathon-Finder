@@ -235,4 +235,28 @@ router.post('/reset-password', async (req, res) => {
     }
 });
 
+// -------------------- DEBUG: Manual Hash Test --------------------
+router.post('/manual-hash-debug', async (req, res) => {
+    const { testPassword } = req.body;
+
+    if (!testPassword) {
+        return res.status(400).json({ message: 'Missing test password.' });
+    }
+
+    try {
+        const trimmed = testPassword.trim();
+        const hash = await bcrypt.hash(trimmed, 10);
+        const match = await bcrypt.compare(trimmed, hash);
+
+        console.log("🧪 DEBUG - Raw password:", testPassword);
+        console.log("🧪 DEBUG - Trimmed:", trimmed);
+        console.log("🧪 DEBUG - Hash:", hash);
+        console.log("🧪 DEBUG - Match result:", match);
+
+        res.json({ match, hash });
+    } catch (err) {
+        res.status(500).json({ message: 'Error during manual hash test', error: err.message });
+    }
+});
+
 export default router;
