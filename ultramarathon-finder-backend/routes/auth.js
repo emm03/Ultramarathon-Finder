@@ -101,8 +101,13 @@ router.post('/login', async (req, res) => {
 
         if (!user) return res.status(404).json({ message: 'User not found' });
 
+        console.log("Type of received password:", typeof password);
+        console.log("Raw password from frontend:", `"${password}"`);
+        const cleaned = password.trim();
+        console.log("Cleaned password:", `"${cleaned}"`);
         console.log("Stored hash:", user.password);
-        const isMatch = await bcrypt.compare(password.trim(), user.password);
+
+        const isMatch = await bcrypt.compare(cleaned, user.password);
         console.log("Password match:", isMatch);
 
         console.log("DEBUG TEST: Comparing plain password manually...");
