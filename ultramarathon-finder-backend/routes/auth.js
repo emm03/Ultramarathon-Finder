@@ -185,26 +185,34 @@ router.post('/forgot-password', async (req, res) => {
 
 router.post('/reset-password', async (req, res) => {
     const { token, newPassword } = req.body;
+    console.log("Reset attempt received with token:", token); // <-- Add this
     if (!token || !newPassword)
         return res.status(400).json({ message: 'Token and new password are required.' });
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const user = await User.findById(decoded.id);
-        if (!user) return res.status(404).json({ message: 'User not found.' });
+        if (!user) {
+            console.log("User not found for token");
+            return res.status(404).json({ message: 'User not found.' });
+        }
 
         const isSame = await bcrypt.compare(newPassword, user.password);
-        if (isSame) return res.status(400).json({ message: 'You have already used that password. Please choose a new one.' });
+        console.log("Password is same as before?", isSame); // <-- Add this
+
+        if (isSame)
+            return res.status(400).json({ message: 'You have already used that password. Please choose a new one.' });
 
         const hashed = await bcrypt.hash(newPassword, 10);
-        console.log("New hashed password:", hashed);
+        console.log("Old hash:", user.password);       
+        console.log("New hash:", hashed);
         user.password = hashed;
         await user.save();
-        console.log("Password successfully updated for:", user.email);
 
+        console.log("Password updated for:", user.email); // <-- Add this
         res.json({ message: 'Password updated successfully.' });
     } catch (err) {
-        console.error("Reset password error:", err.message);
+        console.log("Reset error:", err.message); // <-- Add this
         res.status(400).json({ message: 'Invalid or expired token.' });
     }
 });
