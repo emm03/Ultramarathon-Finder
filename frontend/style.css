@@ -425,6 +425,15 @@ header nav a:hover {
     background-color: #e5801b;
 }
 
+.forum-preview {
+    text-align: center;
+    margin: 4rem 0;
+  }
+  
+  .forum-preview button {
+    margin-top: 1rem;
+  }  
+
 /* Specific styles for Login and Register buttons */
 .account-buttons {
     display: flex;
