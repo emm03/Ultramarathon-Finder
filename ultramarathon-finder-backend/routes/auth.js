@@ -221,13 +221,17 @@ router.post('/reset-password', async (req, res) => {
         }
 
         console.log("New password (trimmed):", `"${newPassword.trim()}"`);
-        const hashed = await bcrypt.hash(newPassword.trim(), 10);
+
+        const salt = await bcrypt.genSalt(10);
+        const hashed = await bcrypt.hash(newPassword.trim(), salt);
+
         user.password = hashed;
         await user.save();
 
         console.log("Password updated for:", user.email);
         console.log("New stored hash in DB:", user.password);
         res.json({ message: 'Password updated successfully.' });
+
     } catch (err) {
         res.status(400).json({ message: 'Invalid or expired token.' });
     }
