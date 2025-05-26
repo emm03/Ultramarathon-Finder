@@ -1,9 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     initializeCarousel();
-
-    setupMap(); // Initialize Leaflet map
-
-
+    setupMap(); // Load races on the map
     const token = localStorage.getItem("token")?.trim();
     const menu = document.querySelector("ul.menu");
     menu.querySelectorAll(".auth-link").forEach(link => link.remove());
@@ -18,18 +15,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     redirectIfUnauthorized(token, ["account.html", "profile_edit.html"]);
-
-    // New additions
     loadLatestPosts();
-    setupMap();
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-    loadLatestPosts(); // Load recent forum posts
-    setupMap();        // Load race map
-});
-
-// Carousel logic
+// Carousel functionality
 function initializeCarousel() {
     const slides = document.querySelectorAll(".carousel-item");
     let currentIndex = 0;
@@ -50,7 +39,6 @@ function initializeCarousel() {
     showSlide(currentIndex);
 }
 
-// Auth menu
 function setupAuthenticatedMenu(menu, token) {
     const accountLink = document.createElement("li");
     accountLink.classList.add("auth-link");
@@ -64,7 +52,6 @@ function setupAuthenticatedMenu(menu, token) {
     menu.appendChild(logoutLink);
 
     fetchUserProfilePicture(token, menu);
-
     document.getElementById("logout-link").addEventListener("click", (e) => {
         e.preventDefault();
         logoutUser();
@@ -119,7 +106,6 @@ function setupUnauthenticatedUser() {
     const usernameElement = document.getElementById("username");
     const emailElement = document.getElementById("email");
     const profilePicElement = document.getElementById("profile-pic");
-
     usernameElement.textContent = "Welcome, User!";
     emailElement.innerHTML = `<strong>Email:</strong> user@example.com`;
     profilePicElement.src = "images/default-profile.png";
@@ -180,7 +166,6 @@ function trackUserInactivity() {
     document.addEventListener("mousemove", resetInactivityTimer);
     document.addEventListener("keydown", resetInactivityTimer);
     document.addEventListener("click", resetInactivityTimer);
-
     resetInactivityTimer();
 }
 
@@ -191,7 +176,6 @@ function logoutUser() {
     window.location.href = "login.html";
 }
 
-// -------- NEW: Fetch and display latest forum posts --------
 async function loadLatestPosts() {
     try {
         const response = await fetch("https://ultramarathon-finder-backend.onrender.com/api/forum/posts?limit=3");
@@ -201,11 +185,9 @@ async function loadLatestPosts() {
         if (!container) return;
 
         container.innerHTML = '';
-
         posts.forEach(post => {
             const card = document.createElement("div");
             card.className = "post-card";
-
             card.innerHTML = `
                 <div class="post-header">
                     <img class="avatar" src="${post.profilePicture || './images/default-profile.png'}" alt="Avatar">
@@ -225,57 +207,38 @@ async function loadLatestPosts() {
     }
 }
 
-// -------- NEW: Race Map Setup --------
-function setupMap() {
+// ================= Race Map Setup =================
+async function setupMap() {
     const mapContainer = document.getElementById("race-map");
     if (!mapContainer) return;
 
-    const map = L.map("race-map").setView([37.773972, -122.431297], 4); // U.S. center
+    const map = L.map("race-map").setView([37.773972, -122.431297], 4);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '© OpenStreetMap contributors',
     }).addTo(map);
 
-    // Example marker
-    L.marker([37.773972, -122.431297])
-        .addTo(map)
-        .bindPopup("Example Race in San Francisco")
-        .openPopup();
-}
-
-// Load and display all races on map from CSV
-async function setupMapFromCSV() {
-    const mapContainer = document.getElementById('race-map');
-    if (!mapContainer) return;
-
-    const map = L.map('race-map').setView([37.0902, -95.7129], 2); // Centered over US
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-    }).addTo(map);
-
     try {
-        const response = await fetch('duv_ultramarathons.csv');
+        const response = await fetch("duv_ultramarathons-opencage-geocoded-7784221373.csv");
         const text = await response.text();
-        const lines = text.trim().split('\n').slice(1); // Skip header
+        const rows = text.split("\n").slice(1); // skip header
 
-        for (let line of lines) {
-            const [name, date, location, distance] = line.split(',');
+        rows.forEach(row => {
+            const cols = row.split(",");
+            const raceName = cols[0]?.trim();
+            const lat = parseFloat(cols[cols.length - 3]);
+            const lng = parseFloat(cols[cols.length - 2]);
 
-            const geocodeResponse = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}`);
-            const results = await geocodeResponse.json();
-
-            if (results.length > 0) {
-                const { lat, lon } = results[0];
-                L.marker([lat, lon])
-                    .addTo(map)
-                    .bindPopup(`<strong>${name}</strong><br>${location}<br>${date} - ${distance}`);
+            if (!isNaN(lat) && !isNaN(lng)) {
+                L.circleMarker([lat, lng], {
+                    radius: 6,
+                    color: "#f7931e",
+                    fillColor: "#f7931e",
+                    fillOpacity: 0.9
+                }).addTo(map).bindPopup(`<strong>${raceName}</strong>`);
             }
-        }
-    } catch (err) {
-        console.error('Error loading race data for map:', err);
+        });
+    } catch (error) {
+        console.error("Failed to load races:", error);
     }
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-    setupMapFromCSV(); // <-- Load map markers when homepage loads
-});
