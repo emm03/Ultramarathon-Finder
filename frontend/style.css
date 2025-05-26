@@ -1,10 +1,9 @@
 /* General Reset */
-body,
-html {
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
-    /* Prevent horizontal scrolling */
+body {
+    font-family: 'Segoe UI', 'Cambria', 'Helvetica Neue', sans-serif;
+    color: #333;
+    line-height: 1.6;
+    background: #fafafa;
 }
 
 /* Ensure No Unnecessary Margins or Gaps */
@@ -172,7 +171,7 @@ header nav a:hover {
     height: 100vh;
     overflow: hidden;
     background-color: #000;
-    /* Prevent flickering */
+    margin-top: 2rem;
 }
 
 .carousel-inner {
@@ -213,7 +212,7 @@ header nav a:hover {
     color: #fff;
     background: rgba(0, 0, 0, 0.6);
     /* Semi-transparent background for readability */
-    padding: 20px 40px;
+    padding: 2rem;
     border-radius: 10px;
     max-width: 90%;
     /* Adjust for smaller screens */
@@ -1674,19 +1673,16 @@ button:hover {
 
 /* Profile Section Styling for Index */
 .profile-container {
+    max-width: 1100px;
+    margin: 3rem auto;
+    padding: 1.5rem;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     display: flex;
-    align-items: center;
     justify-content: center;
-    margin-top: 20px;
-    padding: 20px;
-    background-color: #f8f9fa;
-    /* Light background */
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    /* Subtle shadow */
-    max-width: 800px;
-    margin: 20px auto;
-    /* Center the section */
+    align-items: center;
+    flex-direction: column;
 }
 
 /* Profile Picture Styling */
