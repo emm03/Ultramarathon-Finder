@@ -42,7 +42,7 @@ async function setupMap() {
     const mapContainer = document.getElementById("race-map");
     if (!mapContainer) return;
 
-    const map = L.map(mapContainer).setView([0, 0], 2);
+    const map = L.map(mapContainer).setView([20, 0], 2); // Centered globally
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '© OpenStreetMap contributors'
@@ -55,6 +55,8 @@ async function setupMap() {
         popupAnchor: [0, -25]
     });
 
+    const markerCluster = L.markerClusterGroup();
+
     try {
         const response = await fetch("duv_ultramarathons.csv");
         const text = await response.text();
@@ -62,18 +64,21 @@ async function setupMap() {
 
         rows.forEach(row => {
             const cols = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-            const name = cols[0];
+            const name = cols[0]?.replace(/^"|"$/g, "");
             const date = cols[1];
             const location = cols[2];
             const lat = parseFloat(cols[4]);
             const lng = parseFloat(cols[5]);
 
             if (!isNaN(lat) && !isNaN(lng)) {
-                L.marker([lat, lng], { icon: orangeIcon })
-                    .bindPopup(`<strong>${name}</strong><br>${date}<br>${location}`)
-                    .addTo(map);
+                const marker = L.marker([lat, lng], { icon: orangeIcon }).bindPopup(
+                    `<strong>${name}</strong><br>${date}<br>${location}`
+                );
+                markerCluster.addLayer(marker);
             }
         });
+
+        map.addLayer(markerCluster);
     } catch (err) {
         console.error("Error loading race map:", err);
     }
@@ -192,7 +197,7 @@ async function fetchUserProfilePicture(token, menu) {
 
         profileImg.alt = "Profile Picture";
         accountNode.prepend(profileImg);
-    } catch {}
+    } catch { }
 }
 
 function trackUserInactivity() {
