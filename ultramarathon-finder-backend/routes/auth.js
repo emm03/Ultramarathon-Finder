@@ -102,11 +102,9 @@ router.post('/login', async (req, res) => {
         if (!user) return res.status(404).json({ message: 'User not found' });
 
         console.log("Stored hash:", user.password);
-
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = await bcrypt.compare(password.trim(), user.password);
         console.log("Password match:", isMatch);
 
-        // DEBUG MANUAL CHECK
         console.log("DEBUG TEST: Comparing plain password manually...");
         const manualTest = await bcrypt.compare("ultEchicago65b!", user.password);
         console.log("Manual bcrypt compare result:", manualTest);
@@ -209,7 +207,7 @@ router.post('/reset-password', async (req, res) => {
         const user = await User.findById(decoded.id);
         if (!user) return res.status(404).json({ message: 'User not found.' });
 
-        const isSame = await bcrypt.compare(newPassword, user.password);
+        const isSame = await bcrypt.compare(newPassword.trim(), user.password);
         console.log("Reset attempt for:", user.email);
         console.log("Password is same as before?", isSame);
 
@@ -217,6 +215,7 @@ router.post('/reset-password', async (req, res) => {
             return res.status(400).json({ message: 'You have already used that password. Please choose a new one.' });
         }
 
+        console.log("New password (trimmed):", `"${newPassword.trim()}"`);
         const hashed = await bcrypt.hash(newPassword.trim(), 10);
         user.password = hashed;
         await user.save();
@@ -227,15 +226,6 @@ router.post('/reset-password', async (req, res) => {
     } catch (err) {
         res.status(400).json({ message: 'Invalid or expired token.' });
     }
-});
-
-// -------------------- MANUAL TEST RESET --------------------
-router.post('/api/test-reset', async (req, res) => {
-    const user = await User.findOne({ email: "emmibishop3@gmail.com" });
-    const newHash = await bcrypt.hash("ultEchicago65b!", 10);
-    user.password = newHash;
-    await user.save();
-    res.send("Password manually reset to ultEchicago65b!");
 });
 
 export default router;
