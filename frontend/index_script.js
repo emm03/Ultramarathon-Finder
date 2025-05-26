@@ -4,6 +4,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const menu = document.querySelector("ul.menu");
     menu.querySelectorAll(".auth-link").forEach(link => link.remove());
 
+    // Inactivity check
+    const lastActive = localStorage.getItem("lastActive");
+    const now = Date.now();
+
+    if (token && lastActive && now - parseInt(lastActive) > 2 * 60 * 60 * 1000) {
+        logoutUser(true);
+        return;
+    }
+
+    localStorage.setItem("lastActive", now.toString());
+
     if (token) {
         setupAuthenticatedMenu(menu, token);
         loadUserInfo(token);
@@ -54,7 +65,7 @@ function setupAuthenticatedMenu(menu, token) {
     if (logoutBtn) {
         logoutBtn.addEventListener("click", e => {
             e.preventDefault();
-            logoutUser();
+            logoutUser(false);
         });
     }
 
@@ -196,22 +207,30 @@ async function fetchUserProfilePicture(token, menu) {
 function trackUserInactivity() {
     let inactivityTimer;
     const maxInactivityTime = 2 * 60 * 60 * 1000;
+
     function reset() {
         clearTimeout(inactivityTimer);
+        localStorage.setItem("lastActive", Date.now().toString());
         inactivityTimer = setTimeout(() => {
-            logoutUser();
+            logoutUser(true); // now triggers alert only on true inactivity
         }, maxInactivityTime);
     }
+
     ["mousemove", "keydown", "click"].forEach(event =>
         document.addEventListener(event, reset)
     );
+
     reset();
 }
 
-function logoutUser() {
+function logoutUser(fromInactivity = false) {
     localStorage.removeItem("token");
     localStorage.removeItem("profilePicture");
-    alert("You have been logged out due to inactivity.");
+
+    if (fromInactivity) {
+        alert("You have been logged out due to inactivity.");
+    }
+
     window.location.href = "login.html";
 }
 

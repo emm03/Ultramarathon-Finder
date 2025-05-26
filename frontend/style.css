@@ -2220,3 +2220,59 @@ button:hover {
 .dropdown:hover .dropdown-content {
     display: block;
 }
+
+/* Login Page Styling */
+.login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 140px);
+    /* adjusts for header + footer */
+    padding: 20px;
+}
+
+.login-card {
+    background: #fff;
+    padding: 2.5rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+}
+
+.login-card h2 {
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    color: #333;
+}
+
+.login-card .form-group {
+    margin-bottom: 1.25rem;
+    text-align: left;
+}
+
+.login-card label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+    color: #444;
+}
+
+.login-card input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.login-card button.orange-btn {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.login-card p {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+}
