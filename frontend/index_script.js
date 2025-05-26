@@ -1,43 +1,115 @@
 document.addEventListener("DOMContentLoaded", () => {
     initializeCarousel();
-
+    setupMap();
+    loadLatestPosts();
+  
     const token = localStorage.getItem("token")?.trim();
     const menu = document.querySelector("ul.menu");
-
     menu.querySelectorAll(".auth-link").forEach((link) => link.remove());
-
+  
     if (token) {
-        setupAuthenticatedMenu(menu, token);
-        loadUserInfo(token);
-        trackUserInactivity();
+      setupAuthenticatedMenu(menu, token);
+      loadUserInfo(token);
+      trackUserInactivity();
     } else {
-        setupUnauthenticatedMenu(menu);
-        setupUnauthenticatedUser();
+      setupUnauthenticatedMenu(menu);
+      setupUnauthenticatedUser();
     }
-
+  
     redirectIfUnauthorized(token, ["account.html", "profile_edit.html"]);
-    loadLatestPosts();
-    setupMap();
-});
-
-function initializeCarousel() {
+  });
+  
+  // Carousel
+  function initializeCarousel() {
     const slides = document.querySelectorAll(".carousel-item");
     let currentIndex = 0;
     function showSlide(index) {
-        slides.forEach((slide, i) => {
-            slide.classList.remove("active");
-            slide.style.opacity = i === index ? "1" : "0";
-            slide.style.zIndex = i === index ? "10" : "0";
-        });
+      slides.forEach((slide, i) => {
+        slide.classList.remove("active");
+        slide.style.opacity = i === index ? "1" : "0";
+        slide.style.zIndex = i === index ? "10" : "0";
+      });
     }
     setInterval(() => {
-        currentIndex = (currentIndex + 1) % slides.length;
-        showSlide(currentIndex);
+      currentIndex = (currentIndex + 1) % slides.length;
+      showSlide(currentIndex);
     }, 5000);
     showSlide(currentIndex);
-}
-
-function setupAuthenticatedMenu(menu, token) {
+  }
+  
+  // Map Setup for All Ultramarathon Races
+  async function setupMap() {
+    const mapContainer = document.getElementById("race-map");
+    if (!mapContainer) return;
+  
+    const map = L.map("race-map").setView([20, 0], 2.1);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; OpenStreetMap contributors',
+    }).addTo(map);
+  
+    try {
+      const response = await fetch("duv_ultramarathons.csv");
+      const text = await response.text();
+      const rows = text.split("\n").slice(1); // Skip header row
+  
+      rows.forEach((row) => {
+        const cols = row.split(",");
+        if (cols.length < 7) return;
+  
+        const race = cols[0].trim();
+        const date = cols[1]?.trim();
+        const lat = parseFloat(cols[4]);
+        const lng = parseFloat(cols[5]);
+  
+        if (!isNaN(lat) && !isNaN(lng)) {
+          L.circleMarker([lat, lng], {
+            radius: 6,
+            color: "#ff6600",
+            fillColor: "#ff6600",
+            fillOpacity: 0.85,
+            weight: 1
+          })
+            .addTo(map)
+            .bindPopup(`<strong>${race}</strong><br>${date}`);
+        }
+      });
+    } catch (err) {
+      console.error("Failed to load races:", err);
+    }
+  }
+  
+  // Latest Forum Posts
+  async function loadLatestPosts() {
+    try {
+      const res = await fetch("https://ultramarathon-finder-backend.onrender.com/api/forum/posts?limit=3");
+      const data = await res.json();
+      const posts = data.posts || data;
+      const container = document.getElementById("forum-preview-list");
+      if (!container) return;
+      container.innerHTML = "";
+      posts.forEach((post) => {
+        const card = document.createElement("div");
+        card.className = "post-card";
+        card.innerHTML = `
+          <div class="post-header">
+            <img class="avatar" src="${post.profilePicture || "./images/default-profile.png"}" alt="Avatar">
+            <div class="meta">
+              <strong>${post.username || "Anonymous"}</strong><br>
+              <small>${new Date(post.createdAt).toLocaleString()}</small>
+            </div>
+          </div>
+          <h4>${post.title}</h4>
+          <p>${post.message}</p>
+          <span class="post-meta">Posted in <strong>${post.topic}</strong></span>`;
+        container.appendChild(card);
+      });
+    } catch (err) {
+      console.error("Error loading posts:", err);
+    }
+  }
+  
+  // Authentication helpers
+  function setupAuthenticatedMenu(menu, token) {
     const accountLink = document.createElement("li");
     accountLink.classList.add("auth-link");
     accountLink.innerHTML = `<a href="account.html">My Account</a>`;
@@ -48,12 +120,12 @@ function setupAuthenticatedMenu(menu, token) {
     menu.appendChild(logoutLink);
     fetchUserProfilePicture(token, menu);
     document.getElementById("logout-link").addEventListener("click", (e) => {
-        e.preventDefault();
-        logoutUser();
+      e.preventDefault();
+      logoutUser();
     });
-}
-
-function setupUnauthenticatedMenu(menu) {
+  }
+  
+  function setupUnauthenticatedMenu(menu) {
     const loginLink = document.createElement("li");
     loginLink.classList.add("auth-link");
     loginLink.innerHTML = `<a href="login.html">Login</a>`;
@@ -62,150 +134,90 @@ function setupUnauthenticatedMenu(menu) {
     registerLink.innerHTML = `<a href="register.html">Register</a>`;
     menu.appendChild(loginLink);
     menu.appendChild(registerLink);
-}
-
-function loadUserInfo(token) {
+  }
+  
+  function loadUserInfo(token) {
+    const usernameEl = document.getElementById("username");
+    const emailEl = document.getElementById("email");
+    const picEl = document.getElementById("profile-pic");
+  
     fetch("https://ultramarathon-finder-backend.onrender.com/api/auth/account", {
-        method: "GET",
-        headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-        },
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
     })
-        .then((res) => res.json())
-        .then(({ user }) => {
-            document.getElementById("username").textContent = `Welcome, ${user.username}!`;
-            document.getElementById("email").innerHTML = `<strong>Email:</strong> ${user.email}`;
-            if (user.profilePicture) {
-                document.getElementById("profile-pic").src = user.profilePicture;
-                localStorage.setItem("profilePicture", user.profilePicture);
-            }
-        })
-        .catch((error) => {
-            console.error("Error loading account info:", error);
-            setupUnauthenticatedUser();
-        });
-}
-
-function setupUnauthenticatedUser() {
+      .then((res) => res.json())
+      .then(({ user }) => {
+        usernameEl.textContent = `Welcome, ${user.username}!`;
+        emailEl.innerHTML = `<strong>Email:</strong> ${user.email}`;
+        if (user.profilePicture) {
+          picEl.src = user.profilePicture;
+          localStorage.setItem("profilePicture", user.profilePicture);
+        }
+      })
+      .catch((err) => {
+        console.error("Fetch error:", err);
+        setupUnauthenticatedUser();
+      });
+  }
+  
+  function setupUnauthenticatedUser() {
     document.getElementById("username").textContent = "Welcome, User!";
     document.getElementById("email").innerHTML = `<strong>Email:</strong> user@example.com`;
     document.getElementById("profile-pic").src = "images/default-profile.png";
-}
-
-function redirectIfUnauthorized(token, restrictedPages) {
-    const currentPage = window.location.pathname.split("/").pop();
-    if (restrictedPages.includes(currentPage) && !token) {
-        alert("You must be logged in to view this page.");
-        window.location.href = "login.html";
-    }
-}
-
-function fetchUserProfilePicture(token, menu) {
+  }
+  
+  function fetchUserProfilePicture(token, menu) {
+    const stored = localStorage.getItem("profilePicture");
     const profileImg = document.createElement("img");
     profileImg.classList.add("profile-picture-nav");
     const accountItem = menu.querySelector(".auth-link a[href='account.html']").parentNode;
-    const storedPic = localStorage.getItem("profilePicture");
-    if (storedPic) {
-        profileImg.src = storedPic;
-        accountItem.prepend(profileImg);
-        return;
-    }
-    fetch("https://ultramarathon-finder-backend.onrender.com/api/auth/account", {
+  
+    if (stored) {
+      profileImg.src = stored;
+      accountItem.prepend(profileImg);
+    } else {
+      fetch("https://ultramarathon-finder-backend.onrender.com/api/auth/account", {
         method: "GET",
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    })
+        headers: { Authorization: `Bearer ${token}` },
+      })
         .then((res) => res.json())
         .then(({ user }) => {
-            const pic = user.profilePicture || "images/default-profile.png";
-            profileImg.src = pic;
-            localStorage.setItem("profilePicture", pic);
-            accountItem.prepend(profileImg);
+          const src = user.profilePicture || "images/default-profile.png";
+          localStorage.setItem("profilePicture", src);
+          profileImg.src = src;
+          accountItem.prepend(profileImg);
         });
-}
-
-function logoutUser() {
+    }
+  }
+  
+  function redirectIfUnauthorized(token, protectedPages) {
+    const current = window.location.pathname.split("/").pop();
+    if (protectedPages.includes(current) && !token) {
+      alert("You must be logged in to view this page.");
+      window.location.href = "login.html";
+    }
+  }
+  
+  function trackUserInactivity() {
+    let timer;
+    const max = 2 * 60 * 60 * 1000;
+    function reset() {
+      clearTimeout(timer);
+      timer = setTimeout(() => logoutUser(), max);
+    }
+    ["mousemove", "keydown", "click"].forEach((evt) =>
+      document.addEventListener(evt, reset)
+    );
+    reset();
+  }
+  
+  function logoutUser() {
     localStorage.removeItem("token");
     localStorage.removeItem("profilePicture");
-    alert("You have been logged out due to inactivity.");
+    alert("You have been logged out.");
     window.location.href = "login.html";
-}
-
-function trackUserInactivity() {
-    let timer;
-    const maxInactive = 2 * 60 * 60 * 1000;
-    const resetTimer = () => {
-        clearTimeout(timer);
-        timer = setTimeout(logoutUser, maxInactive);
-    };
-    ["mousemove", "keydown", "click"].forEach((e) => document.addEventListener(e, resetTimer));
-    resetTimer();
-}
-
-function loadLatestPosts() {
-    fetch("https://ultramarathon-finder-backend.onrender.com/api/forum/posts?limit=3")
-        .then((res) => res.json())
-        .then((data) => {
-            const posts = data.posts || [];
-            const container = document.getElementById("forum-preview-list");
-            if (!container) return;
-            container.innerHTML = "";
-            posts.forEach((post) => {
-                const card = document.createElement("div");
-                card.className = "post-card";
-                card.innerHTML = `
-            <div class="post-header">
-              <img class="avatar" src="${post.profilePicture || './images/default-profile.png'}" alt="Avatar">
-              <div class="meta">
-                <strong>${post.username || "Anonymous"}</strong><br>
-                <small>${new Date(post.createdAt).toLocaleString()}</small>
-              </div>
-            </div>
-            <h4>${post.title}</h4>
-            <p>${post.message}</p>
-            <span class="post-meta">Posted in <strong>${post.topic}</strong></span>
-          `;
-                container.appendChild(card);
-            });
-        });
-}
-
-async function setupMap() {
-    const mapContainer = document.getElementById("race-map");
-    if (!mapContainer) return;
-
-    const map = L.map("race-map").setView([37.8, -96], 2);
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '&copy; OpenStreetMap contributors',
-    }).addTo(map);
-
-    try {
-        const response = await fetch("duv_ultramarathons.csv");
-        const text = await response.text();
-        const rows = text.trim().split("\n").slice(1);
-
-        rows.forEach((row) => {
-            const cols = row.split(",");
-            const raceName = cols[0];
-            const lat = parseFloat(cols[4]);
-            const lng = parseFloat(cols[5]);
-
-            if (!isNaN(lat) && !isNaN(lng)) {
-                L.circleMarker([lat, lng], {
-                    radius: 6,
-                    fillColor: "#ff6600",
-                    color: "#ff6600",
-                    weight: 1,
-                    opacity: 1,
-                    fillOpacity: 0.9,
-                })
-                    .bindPopup(`<strong>${raceName}</strong>`)
-                    .addTo(map);
-            }
-        });
-    } catch (error) {
-        console.error("Error loading map data:", error);
-    }
-}
+  }
+  
