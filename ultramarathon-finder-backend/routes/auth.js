@@ -213,6 +213,7 @@ router.post('/reset-password', async (req, res) => {
         await user.save();
 
         console.log("Password updated for:", user.email);
+        console.log("New stored hash in DB:", user.password);
         res.json({ message: 'Password updated successfully.' });
     } catch (err) {
         res.status(400).json({ message: 'Invalid or expired token.' });
