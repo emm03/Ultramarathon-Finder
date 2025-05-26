@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
     initializeCarousel();
-
     const token = localStorage.getItem("token")?.trim();
     const menu = document.querySelector("ul.menu");
     menu.querySelectorAll(".auth-link").forEach((link) => link.remove());
@@ -15,12 +14,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     redirectIfUnauthorized(token, ["account.html", "profile_edit.html"]);
-
     loadLatestPosts();
     setupMap();
 });
 
-// Carousel
+// === Carousel ===
 function initializeCarousel() {
     const slides = document.querySelectorAll(".carousel-item");
     let currentIndex = 0;
@@ -41,6 +39,7 @@ function initializeCarousel() {
     showSlide(currentIndex);
 }
 
+// === Auth ===
 function setupAuthenticatedMenu(menu, token) {
     const accountLink = document.createElement("li");
     accountLink.classList.add("auth-link");
@@ -52,16 +51,12 @@ function setupAuthenticatedMenu(menu, token) {
 
     menu.appendChild(accountLink);
     menu.appendChild(logoutLink);
-
     fetchUserProfilePicture(token, menu);
 
-    const logoutBtn = document.getElementById("logout-link");
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            logoutUser();
-        });
-    }
+    document.getElementById("logout-link").addEventListener("click", (e) => {
+        e.preventDefault();
+        logoutUser();
+    });
 }
 
 function setupUnauthenticatedMenu(menu) {
@@ -78,13 +73,9 @@ function setupUnauthenticatedMenu(menu) {
 }
 
 function setupUnauthenticatedUser() {
-    const usernameElement = document.getElementById("username");
-    const emailElement = document.getElementById("email");
-    const profilePicElement = document.getElementById("profile-pic");
-
-    usernameElement.textContent = "Welcome, User!";
-    emailElement.innerHTML = `<strong>Email:</strong> user@example.com`;
-    profilePicElement.src = "images/default-profile.png";
+    document.getElementById("username").textContent = "Welcome, User!";
+    document.getElementById("email").innerHTML = `<strong>Email:</strong> user@example.com`;
+    document.getElementById("profile-pic").src = "images/default-profile.png";
 }
 
 function redirectIfUnauthorized(token, restrictedPages) {
@@ -97,49 +88,38 @@ function redirectIfUnauthorized(token, restrictedPages) {
 
 async function fetchUserProfilePicture(token, menu) {
     try {
-        const storedProfilePicture = localStorage.getItem("profilePicture");
+        const stored = localStorage.getItem("profilePicture");
         const profileImg = document.createElement("img");
         profileImg.classList.add("profile-picture-nav");
-        const accountListItem = menu.querySelector(".auth-link a[href='account.html']").parentNode;
 
-        if (storedProfilePicture) {
-            profileImg.src = storedProfilePicture;
-            profileImg.alt = "Profile Picture";
-            accountListItem.prepend(profileImg);
+        const listItem = menu.querySelector(".auth-link a[href='account.html']").parentNode;
+        if (stored) {
+            profileImg.src = stored;
         } else {
-            const response = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/account', {
-                method: 'GET',
-                headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+            const res = await fetch("https://ultramarathon-finder-backend.onrender.com/api/auth/account", {
+                headers: { Authorization: `Bearer ${token}` }
             });
-
-            if (response.ok) {
-                const { user } = await response.json();
-                profileImg.src = user.profilePicture || 'images/default-profile.png';
-                profileImg.alt = `${user.username}'s Profile Picture`;
-                localStorage.setItem("profilePicture", user.profilePicture || "images/default-profile.png");
-                accountListItem.prepend(profileImg);
-            }
+            const { user } = await res.json();
+            profileImg.src = user.profilePicture || "images/default-profile.png";
+            localStorage.setItem("profilePicture", profileImg.src);
         }
-    } catch (error) {
-        console.error("Error fetching profile picture:", error);
+        listItem.prepend(profileImg);
+    } catch (err) {
+        console.error("Error fetching profile picture:", err);
     }
 }
 
 function trackUserInactivity() {
-    let inactivityTimer;
-    const maxInactivityTime = 2 * 60 * 60 * 1000;
-
-    function resetInactivityTimer() {
-        clearTimeout(inactivityTimer);
-        inactivityTimer = setTimeout(() => {
-            logoutUser();
-        }, maxInactivityTime);
-    }
-
-    document.addEventListener("mousemove", resetInactivityTimer);
-    document.addEventListener("keydown", resetInactivityTimer);
-    document.addEventListener("click", resetInactivityTimer);
-    resetInactivityTimer();
+    let timeout;
+    const maxTime = 2 * 60 * 60 * 1000;
+    const reset = () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(logoutUser, maxTime);
+    };
+    document.addEventListener("mousemove", reset);
+    document.addEventListener("keydown", reset);
+    document.addEventListener("click", reset);
+    reset();
 }
 
 function logoutUser() {
@@ -149,21 +129,20 @@ function logoutUser() {
     window.location.href = "login.html";
 }
 
+// === Forum Preview ===
 async function loadLatestPosts() {
     try {
-        const response = await fetch("https://ultramarathon-finder-backend.onrender.com/api/forum/posts?limit=3");
-        const data = await response.json();
+        const res = await fetch("https://ultramarathon-finder-backend.onrender.com/api/forum/posts?limit=3");
+        const data = await res.json();
         const posts = data.posts || data;
 
         const container = document.getElementById("forum-preview-list");
         if (!container) return;
-
         container.innerHTML = '';
 
         posts.forEach(post => {
             const card = document.createElement("div");
             card.className = "post-card";
-
             card.innerHTML = `
                 <div class="post-header">
                     <img class="avatar" src="${post.profilePicture || './images/default-profile.png'}" alt="Avatar">
@@ -176,15 +155,14 @@ async function loadLatestPosts() {
                 <p>${post.message}</p>
                 <span class="post-meta">Posted in <strong>${post.topic}</strong></span>
             `;
-
             container.appendChild(card);
         });
-    } catch (error) {
-        console.error("Error loading latest posts:", error);
+    } catch (err) {
+        console.error("Error loading latest posts:", err);
     }
 }
 
-// ========== MAP SETUP ==========
+// === Map ===
 async function setupMap() {
     const mapContainer = document.getElementById("race-map");
     if (!mapContainer) return;
@@ -195,20 +173,20 @@ async function setupMap() {
     }).addTo(map);
 
     const orangeIcon = new L.Icon({
-        iconUrl: 'https://chart.googleapis.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|ff6f00',
-        iconSize: [21, 34],
-        iconAnchor: [10, 34],
-        popupAnchor: [0, -30],
+        iconUrl: 'https://chart.googleapis.com/chart?chst=d_map_pin_icon&chld=flag|ff6f00',
+        iconSize: [30, 48],
+        iconAnchor: [15, 48],
+        popupAnchor: [0, -40],
         shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.1/images/marker-shadow.png',
         shadowSize: [41, 41]
     });
 
     try {
-        const response = await fetch("duv_ultramarathons.csv");
-        const text = await response.text();
-        const rows = text.split("\n").slice(1);
+        const res = await fetch("duv_ultramarathons.csv");
+        const text = await res.text();
+        const lines = text.split("\n").slice(1); // skip header
 
-        rows.forEach(row => {
+        lines.forEach(row => {
             const cols = row.split(",");
             const raceName = cols[0];
             const date = cols[1];
@@ -222,6 +200,6 @@ async function setupMap() {
             }
         });
     } catch (err) {
-        console.error("Failed to load CSV map data:", err);
+        console.error("Failed to load map data:", err);
     }
 }
