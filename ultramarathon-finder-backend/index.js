@@ -6,7 +6,6 @@ import cors from 'cors';
 import authRoutes from './routes/auth.js';
 import forumRoutes from './routes/forum.js';
 import contactRoutes from './routes/contact.js';
-import resetRoutes from './routes/reset.js'; // ✅ ADDED
 import path from 'path';
 import AWS from 'aws-sdk';
 import User from './models/User.js';
@@ -56,7 +55,6 @@ app.use('/static', express.static(path.join(process.cwd(), 'public')));
 app.use('/api/auth', authRoutes);
 app.use('/api/forum', forumRoutes);
 app.use('/api/contact', contactRoutes);
-app.use('/api/reset', resetRoutes); // ✅ ADDED
 
 // Health Check
 app.get('/', (req, res) => {

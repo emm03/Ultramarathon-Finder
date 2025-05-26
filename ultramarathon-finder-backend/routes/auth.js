@@ -158,7 +158,15 @@ router.put('/account', authenticateToken, async (req, res) => {
     }
 });
 
-// -------------------- FORGOT PASSWORD --------------------
+// -------------------- FORGOT / RESET PASSWORD --------------------
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_PASS,
+    },
+});
+
 router.post('/forgot-password', async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ message: 'Email is required.' });
@@ -168,14 +176,6 @@ router.post('/forgot-password', async (req, res) => {
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     const resetLink = `${process.env.CLIENT_URL}/reset-password.html?token=${token}`;
-
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: process.env.GMAIL_USER,
-            pass: process.env.GMAIL_PASS
-        }
-    });
 
     const mailOptions = {
         from: process.env.GMAIL_USER,
@@ -203,12 +203,21 @@ router.post('/reset-password', async (req, res) => {
         if (!user) return res.status(404).json({ message: 'User not found.' });
 
         const isSame = await bcrypt.compare(newPassword, user.password);
-        if (isSame) return res.status(400).json({ message: 'You have already used that password. Please choose a new one.' });
+        console.log("Reset attempt for:", user.email);
+        console.log("Password is same as before?", isSame);
+
+        if (isSame) {
+            return res.status(400).json({ message: 'You have already used that password. Please choose a new one.' });
+        }
+
+        const validPassword = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+        if (!validPassword.test(newPassword)) {
+            return res.status(400).json({
+                message: 'Password must be at least 6 characters and include one uppercase letter, one number, and one special character.',
+            });
+        }
 
         const hashed = await bcrypt.hash(newPassword, 10);
-        console.log("Old hash:", user.password);
-        console.log("New hash:", hashed);
-
         user.password = hashed;
         await user.save();
 
