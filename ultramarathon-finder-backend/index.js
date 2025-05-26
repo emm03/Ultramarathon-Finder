@@ -5,12 +5,12 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import authRoutes from './routes/auth.js';
 import forumRoutes from './routes/forum.js';
-import contactRoutes from './routes/contact.js'; // ✅ default import
+import contactRoutes from './routes/contact.js';
+import resetRoutes from './routes/reset.js'; // ✅ ADDED
 import path from 'path';
 import AWS from 'aws-sdk';
-import User from './models/User.js'; // Import User model
+import User from './models/User.js';
 
-// Log loaded environment variables
 console.log('Loaded Environment Variables:');
 console.log({
   PORT: process.env.PORT,
@@ -22,17 +22,15 @@ console.log({
   S3_BUCKET_NAME: process.env.S3_BUCKET_NAME,
 });
 
-// Initialize app
 const app = express();
 
-// Middleware
 app.use(express.json());
 app.use((req, res, next) => {
   console.log("Full Request Headers:", req.headers);
   next();
 });
 
-// CORS
+// CORS config
 app.use(cors({
   origin: 'https://ultramarathonconnect.com',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -40,7 +38,7 @@ app.use(cors({
   credentials: true,
 }));
 
-// MongoDB
+// Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -57,13 +55,15 @@ app.use('/static', express.static(path.join(process.cwd(), 'public')));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/forum', forumRoutes);
-app.use('/api/contact', contactRoutes); // ✅
+app.use('/api/contact', contactRoutes);
+app.use('/api/reset', resetRoutes); // ✅ ADDED
 
+// Health Check
 app.get('/', (req, res) => {
   res.send('Ultramarathon Finder Backend is running!');
 });
 
-// Environment check
+// Env check
 app.get('/api/env-check', (req, res) => {
   res.json({
     PORT: process.env.PORT,
@@ -110,18 +110,18 @@ app.get('/api/user/:id', async (req, res) => {
   }
 });
 
-// Error middleware
+// Error handler
 app.use((err, req, res, next) => {
   console.error('Error middleware:', err.message);
   res.status(500).json({ message: 'Unexpected error', error: err.message });
 });
 
-// 404
+// 404 handler
 app.use((req, res) => {
   res.status(404).json({ message: 'Endpoint not found' });
 });
 
-// Start
+// Start server
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
