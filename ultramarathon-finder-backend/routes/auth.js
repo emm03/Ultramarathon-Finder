@@ -197,11 +197,14 @@ router.post('/reset-password', async (req, res) => {
         if (isSame) return res.status(400).json({ message: 'You have already used that password. Please choose a new one.' });
 
         const hashed = await bcrypt.hash(newPassword, 10);
+        console.log("New hashed password:", hashed);
         user.password = hashed;
         await user.save();
+        console.log("Password successfully updated for:", user.email);
 
         res.json({ message: 'Password updated successfully.' });
     } catch (err) {
+        console.error("Reset password error:", err.message);
         res.status(400).json({ message: 'Invalid or expired token.' });
     }
 });
