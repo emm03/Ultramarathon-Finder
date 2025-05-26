@@ -67,7 +67,7 @@ router.post('/upload-profile-picture', authenticateToken, upload.single('profile
     }
 });
 
-// -------------------- REGISTER / LOGIN --------------------
+// -------------------- REGISTER --------------------
 router.post('/register', async (req, res) => {
     const { username, email, password } = req.body;
     if (!username || !email || !password)
@@ -87,16 +87,24 @@ router.post('/register', async (req, res) => {
     }
 });
 
+// -------------------- LOGIN --------------------
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
+
     if (!email || !password)
         return res.status(400).json({ message: 'Email and password are required' });
 
     try {
         const user = await User.findOne({ email });
+        console.log("Login attempt for:", email);
+        console.log("User found?", !!user);
+
         if (!user) return res.status(404).json({ message: 'User not found' });
 
+        console.log("Stored hash:", user.password);
         const isMatch = await bcrypt.compare(password, user.password);
+        console.log("Password match:", isMatch);
+
         if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
 
         const token = jwt.sign(
@@ -115,6 +123,7 @@ router.post('/login', async (req, res) => {
             }
         });
     } catch (error) {
+        console.error("Login error:", error.message);
         res.status(500).json({ message: 'Internal server error during login' });
     }
 });
@@ -183,44 +192,30 @@ router.post('/forgot-password', async (req, res) => {
     }
 });
 
-router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
-
-    if (!email || !password)
-        return res.status(400).json({ message: 'Email and password are required' });
+router.post('/reset-password', async (req, res) => {
+    const { token, newPassword } = req.body;
+    if (!token || !newPassword)
+        return res.status(400).json({ message: 'Token and new password are required.' });
 
     try {
-        const user = await User.findOne({ email });
-        console.log("Login attempt for email:", email);
-        console.log("User found?", !!user);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id);
+        if (!user) return res.status(404).json({ message: 'User not found.' });
 
-        if (!user) return res.status(404).json({ message: 'User not found' });
+        const isSame = await bcrypt.compare(newPassword, user.password);
+        if (isSame) return res.status(400).json({ message: 'You have already used that password. Please choose a new one.' });
 
-        console.log("Stored hash:", user.password);
+        const hashed = await bcrypt.hash(newPassword, 10);
+        console.log("Old hash:", user.password);
+        console.log("New hash:", hashed);
 
-        const isMatch = await bcrypt.compare(password, user.password);
-        console.log("Password match:", isMatch);
+        user.password = hashed;
+        await user.save();
 
-        if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
-
-        const token = jwt.sign(
-            { userId: user._id, username: user.username, profilePicture: user.profilePicture || '' },
-            process.env.JWT_SECRET,
-            { expiresIn: '1h' }
-        );
-
-        res.status(200).json({
-            message: 'Login successful',
-            token,
-            user: {
-                username: user.username,
-                email: user.email,
-                profilePicture: user.profilePicture || ''
-            }
-        });
-    } catch (error) {
-        console.error("Login error:", error.message);
-        res.status(500).json({ message: 'Internal server error during login' });
+        console.log("Password updated for:", user.email);
+        res.json({ message: 'Password updated successfully.' });
+    } catch (err) {
+        res.status(400).json({ message: 'Invalid or expired token.' });
     }
 });
 
