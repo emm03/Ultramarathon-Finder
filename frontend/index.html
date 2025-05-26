@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ultramarathon Connect</title>
   <link rel="stylesheet" href="style.css" />
-  <!-- Leaflet CSS for Race Map -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
@@ -24,22 +23,7 @@
     </nav>
   </header>
 
-  <!-- Main Content -->
   <main>
-    <!-- Profile Section -->
-    <section class="profile-container">
-      <div class="account-card">
-        <div class="profile-section">
-          <img id="profile-pic" src="images/default-profile.png" alt="User Profile Picture"
-               class="profile-pic" onerror="this.src='images/default-profile.png'" />
-        </div>
-        <div class="info-section">
-          <h3 id="username">Welcome, User!</h3>
-          <p id="email"><strong>Email:</strong> user@example.com</p>
-        </div>
-      </div>
-    </section>
-
     <!-- Carousel -->
     <div class="carousel">
       <div class="carousel-inner">
@@ -86,6 +70,20 @@
       </div>
     </div>
 
+    <!-- Race Map Preview - Moved Up -->
+    <section class="map-preview">
+      <h2>Explore Upcoming Races</h2>
+      <iframe src="https://www.google.com/maps/d/embed?mid=1tkO5zTf7Xx13CvVGnXlBTc4hxkI7Nco&ehbc=2E312F" allowfullscreen></iframe>
+      <button class="orange-btn" onclick="window.location.href='race_directory.html'">Browse Full Directory</button>
+    </section>
+
+    <!-- Recent Forum Posts - Now Below Map -->
+    <section class="latest-posts">
+      <h2>Recent Conversations</h2>
+      <div id="forum-preview-list" class="forum-preview-list"></div>
+      <button class="orange-btn" onclick="window.location.href='forum.html'">View All Posts</button>
+    </section>
+
     <!-- Features Section -->
     <section class="features">
       <div class="feature">
@@ -98,20 +96,6 @@
         <p>Connect with fellow ultrarunners for training tips, race strategies, and meetups.</p>
         <button class="orange-btn" onclick="window.location.href='forum.html'">Explore Runner Community</button>
       </div>
-    </section>
-
-    <!-- Recent Forum Posts -->
-    <section class="forum-preview">
-      <h2>Recent Conversations</h2>
-      <div id="forum-preview-list" class="forum-preview-list"></div>
-      <button class="orange-btn" onclick="window.location.href='forum.html'">View All Posts</button>
-    </section>
-
-    <!-- Race Map Preview -->
-    <section class="map-preview">
-      <h2>Explore Upcoming Races</h2>
-      <div id="race-map"></div>
-      <button class="orange-btn" onclick="window.location.href='race_directory.html'">Browse Full Directory</button>
     </section>
   </main>
 
