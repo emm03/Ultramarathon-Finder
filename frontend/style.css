@@ -2276,3 +2276,14 @@ button:hover {
     margin-top: 1rem;
     font-size: 0.95rem;
 }
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.sticky-header {
+    width: 100%;
+    margin: 0;
+    background-color: #2e2e2e;
+}
