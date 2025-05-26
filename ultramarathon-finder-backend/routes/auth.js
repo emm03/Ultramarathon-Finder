@@ -150,7 +150,7 @@ router.put('/account', authenticateToken, async (req, res) => {
 });
 
 // -------------------- FORGOT PASSWORD --------------------
-router.post('/request-reset', async (req, res) => {
+router.post('/forgot-password', async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ message: 'Email is required.' });
 
