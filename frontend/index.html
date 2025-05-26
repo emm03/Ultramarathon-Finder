@@ -7,6 +7,7 @@
     <title>Ultramarathon Connect</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
 </head>
 
@@ -77,10 +78,8 @@
         <section class="map-preview">
             <h2>Explore Upcoming Races</h2>
             <div id="race-map"></div>
-            <button class="orange-btn" onclick="window.location.href='race_directory.html'">Browse Full
-                Directory</button>
+            <button class="orange-btn" onclick="window.location.href='race_directory.html'">Browse Full Directory</button>
         </section>
-
 
         <!-- Recent Forum Posts - Now Below Map -->
         <section class="latest-posts">
@@ -118,6 +117,7 @@
 
     <!-- Scripts -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script src="index_script.js"></script>
 </body>
 
