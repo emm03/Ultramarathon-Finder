@@ -292,3 +292,15 @@ async function loadLatestPosts() {
         console.error("Error loading forum posts:", err);
     }
 }
+
+// -------------------- ARTICLE CAROUSEL SCROLL --------------------
+function scrollCarousel(direction) {
+    const carousel = document.getElementById('articleCarousel');
+    if (!carousel) return;
+
+    const scrollAmount = 300; // Adjust this if your cards are wider/narrower
+    carousel.scrollBy({
+        left: scrollAmount * direction,
+        behavior: 'smooth'
+    });
+}
