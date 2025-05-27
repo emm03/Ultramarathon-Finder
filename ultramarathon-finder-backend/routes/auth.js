@@ -222,8 +222,12 @@ router.post('/reset-password', async (req, res) => {
         }
 
         const hashed = await bcrypt.hash(trimmedPassword, 10);
-        user.password = hashed;
-        await user.save();
+
+        // ✅ Use updateOne to bypass pre-save hook
+        await User.updateOne(
+            { _id: user._id },
+            { $set: { password: hashed } }
+        );
 
         console.log("✅ Password successfully reset for:", user.email);
         console.log("🧪 New hash:", hashed);
