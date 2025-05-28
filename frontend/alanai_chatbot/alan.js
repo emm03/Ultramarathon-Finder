@@ -1,51 +1,34 @@
-// alanai_chatbot/alan.js
-
 document.addEventListener("DOMContentLoaded", () => {
-    const alanBubble = document.getElementById("alan-bubble");
-    const alanWindow = document.getElementById("alan-window");
-    const alanForm = document.getElementById("alan-form");
-    const alanInput = document.getElementById("alan-input");
-    const alanMessages = document.getElementById("alan-messages");
+    const bubble = document.getElementById("alan-bubble");
+    const windowBox = document.getElementById("alan-window");
+    const form = document.getElementById("alan-form");
+    const input = document.getElementById("alan-input");
+    const messages = document.getElementById("alan-messages");
 
-    alanBubble.addEventListener("click", () => {
-        alanWindow.style.display = alanWindow.style.display === "block" ? "none" : "block";
+    bubble.addEventListener("click", () => {
+        windowBox.classList.toggle("open");
     });
 
-    alanForm.addEventListener("submit", async (e) => {
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const userMsg = alanInput.value.trim();
-        if (!userMsg) return;
+        const userMessage = input.value.trim();
+        if (!userMessage) return;
 
-        displayMessage("user", userMsg);
-        alanInput.value = "";
+        messages.innerHTML += `<div><strong>You:</strong> ${userMessage}</div>`;
+        input.value = "";
 
-        const alanReply = await getAlanReply(userMsg);
-        displayMessage("alan", alanReply);
-    });
-
-    function displayMessage(sender, text) {
-        const messageDiv = document.createElement("div");
-        messageDiv.className = sender;
-        messageDiv.textContent = text;
-        alanMessages.appendChild(messageDiv);
-        alanMessages.scrollTop = alanMessages.scrollHeight;
-    }
-
-    async function getAlanReply(input) {
         try {
-            const res = await fetch("https://ultramarathon-finder-backend.onrender.com/api/alan", {
+            const response = await fetch("https://ultramarathon-finder-backend.onrender.com/api/alan", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ prompt: input })
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: userMessage }),
             });
-
-            const data = await res.json();
-            return data.reply || "I'm not sure how to help with that.";
-        } catch (err) {
-            console.error(err);
-            return "Oops! Something went wrong. Try again later.";
+            const data = await response.json();
+            messages.innerHTML += `<div><strong>Alan:</strong> ${data.reply}</div>`;
+            messages.scrollTop = messages.scrollHeight;
+        } catch (error) {
+            messages.innerHTML += `<div><strong>Alan:</strong> Sorry, there was an error.</div>`;
         }
-    }
+    });
 });
+
