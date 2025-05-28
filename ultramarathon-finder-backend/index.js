@@ -1,28 +1,33 @@
 import dotenv from 'dotenv';
 dotenv.config(); // Load environment variables from .env file
+
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import path from 'path';
+import AWS from 'aws-sdk';
+
 import authRoutes from './routes/auth.js';
 import forumRoutes from './routes/forum.js';
 import contactRoutes from './routes/contact.js';
-import path from 'path';
-import AWS from 'aws-sdk';
+import alanRoute from './routes/alan.js';
 import User from './models/User.js';
+
+const app = express(); // ✅ Initialize app BEFORE using app.use()
 
 console.log('Loaded Environment Variables:');
 console.log({
   PORT: process.env.PORT,
-  MONGO_URI: process.env.MONGO_URI,
-  JWT_SECRET: process.env.JWT_SECRET,
-  AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY,
-  AWS_SECRET_KEY: process.env.AWS_SECRET_KEY,
-  AWS_REGION: process.env.AWS_REGION,
-  S3_BUCKET_NAME: process.env.S3_BUCKET_NAME,
+  MONGO_URI: process.env.MONGO_URI ? 'Loaded' : 'Not Set',
+  JWT_SECRET: process.env.JWT_SECRET ? 'Loaded' : 'Not Set',
+  AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY ? 'Loaded' : 'Not Set',
+  AWS_SECRET_KEY: process.env.AWS_SECRET_KEY ? 'Loaded' : 'Not Set',
+  AWS_REGION: process.env.AWS_REGION ? 'Loaded' : 'Not Set',
+  S3_BUCKET_NAME: process.env.S3_BUCKET_NAME ? 'Loaded' : 'Not Set',
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY ? 'Loaded' : 'Not Set'  // ✅ Added this line
 });
 
-const app = express();
-
+// Middleware
 app.use(express.json());
 app.use((req, res, next) => {
   console.log("Full Request Headers:", req.headers);
@@ -37,7 +42,7 @@ app.use(cors({
   credentials: true,
 }));
 
-// Connect to MongoDB
+// MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -51,12 +56,13 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 app.use('/static', express.static(path.join(process.cwd(), 'public')));
 
-// Routes
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/forum', forumRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/alan', alanRoute); // ✅ Alan AI route
 
-// Health Check
+// Health check
 app.get('/', (req, res) => {
   res.send('Ultramarathon Finder Backend is running!');
 });
@@ -71,10 +77,11 @@ app.get('/api/env-check', (req, res) => {
     AWS_SECRET_KEY: process.env.AWS_SECRET_KEY ? 'Loaded' : 'Not Set',
     AWS_REGION: process.env.AWS_REGION ? 'Loaded' : 'Not Set',
     S3_BUCKET_NAME: process.env.S3_BUCKET_NAME ? 'Loaded' : 'Not Set',
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY ? 'Loaded' : 'Not Set',  // ✅ Included here too
   });
 });
 
-// Test S3
+// S3 Upload Test
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY,
   secretAccessKey: process.env.AWS_SECRET_KEY,
@@ -108,13 +115,13 @@ app.get('/api/user/:id', async (req, res) => {
   }
 });
 
-// Error handler
+// Global Error Handler
 app.use((err, req, res, next) => {
   console.error('Error middleware:', err.message);
   res.status(500).json({ message: 'Unexpected error', error: err.message });
 });
 
-// 404 handler
+// 404 Fallback
 app.use((req, res) => {
   res.status(404).json({ message: 'Endpoint not found' });
 });
