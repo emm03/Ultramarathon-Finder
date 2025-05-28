@@ -86,12 +86,10 @@ async function setupMap() {
         scrollWheelZoom: false
     }).setView([20, 0], 2);
 
-    // Add tile layer
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
-    // Add scroll-to-zoom message
     const zoomHint = document.createElement("div");
     zoomHint.textContent = "Use ⌘ + scroll to zoom the map";
     zoomHint.style.position = "absolute";
@@ -139,11 +137,14 @@ async function setupMap() {
             const location = cols[2];
             const lat = parseFloat(cols[4]);
             const lng = parseFloat(cols[5]);
+            const url = cols[7]?.replace(/^"|"$/g, "").trim();
 
             if (!isNaN(lat) && !isNaN(lng)) {
-                const marker = L.marker([lat, lng], { icon: orangeIcon }).bindPopup(
-                    `<strong>${name}</strong><br>${date}<br>${location}`
-                );
+                const popupContent = `
+                    <strong>${name}</strong><br>${date}<br>${location}
+                    ${url ? `<br><a href="${url}" target="_blank" style="color: orange;">Official Site</a>` : ""}
+                `;
+                const marker = L.marker([lat, lng], { icon: orangeIcon }).bindPopup(popupContent);
                 markerCluster.addLayer(marker);
             }
         });

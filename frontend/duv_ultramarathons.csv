@@ -1,25 +1,25 @@
-Race Name,Date,Location,Distance,Latitude,Longitude,Formatted
-5th Hong Kong Trail Championships,"May 25, 2025",Tai Po District (HKG),53km,22.43995,114.1654,"Tai Po District, Hong Kong"
-9th Mount Everest 60 km Extreme Ultra Marathon,"May 29, 2025",Khumbu Valley (NEP),60km,32.81874,-85.17939,"Valley, Alabama, United States of America"
-9th Khaokho Marathon,"Jun 01, 2025","Khaem Son, Khao Kho District, Phetchabun (THA)",45km,16.65791,101.02208,"Khao Kho, Changwat Phetchabun, Thailand"
-20th Water Love Nagdong River Ultramarathon 100 km,"Jun 06, 2025","Eulsukdo, Busan (KOR)",100km,35.10278,129.04028,"South Korea, Busan Busan"
-20h Water Love Nagdong River Ultramarathon 200 km,"Jun 06, 2025","Eulsukdo, Busan (KOR)",200km,35.10278,129.04028,"South Korea, Busan Busan"
-19th Iwate Ginga 50km Marathon Challenge,"Jun 08, 2025","Nishiwaga, Iwate Pref. (JPN)",50km,,,
-19th Iwate Ginga 100km Marathon Challenge,"Jun 08, 2025","Kitakami, Iwate Pref. (JPN)",100km,,,
-19th Iwate Ginga 100km Marathon Challenge,"Jun 08, 2025","Kitakami, Iwate Pref. (JPN)",75km,,,
-22th Gwangju 50km Ultra Marathon,"Jun 14, 2025",Gwangju City (KOR),51.8km,35.15472,126.91556,"South Korea, Gwangju Gwangju"
-22th Gwangju 100km Ultra Marathon,"Jun 14, 2025",Gwangju City (KOR),100km,35.15472,126.91556,"South Korea, Gwangju Gwangju"
-11th King of Kampung Kemensah 100 Km,"Jun 14, 2025",Ampang Jaya (MAS),100km,3.0911612,101.7511259,"Cheras, Ampang Jaya Municipal Council, Hulu Langat, Malaysia"
-1st Kaga Spa by UTMB - Kaga Spa Trail Endurance100,"Jun 21, 2025",Yamanaka Onsen (JPN),105km,36.2501358,136.3746755,"Yamanaka-Onsen Bus Terminal, 山中伊切線, Yamanakaonsen-Honmachi 1-chome, Kaga, Ishikawa Prefecture 922-0121, Japan"
-1st Kaga Spa by UTMB - Kaga Spa Trail Endurance 50,"Jun 21, 2025",Yamanaka Onsen (JPN),58km,36.2501358,136.3746755,"Yamanaka-Onsen Bus Terminal, 山中伊切線, Yamanakaonsen-Honmachi 1-chome, Kaga, Ishikawa Prefecture 922-0121, Japan"
-14th Ulsan Taewha River 100 Km Ultramarathon,"Jun 21, 2025",Ulsan (KOR),100km,35.53722,129.31667,"South Korea, Ulsan Ulsan"
-14th Ulsan Taewha River 50 Km Ultramarathon,"Jun 21, 2025",Ulsan (KOR),50km,35.53722,129.31667,"South Korea, Ulsan Ulsan"
-7th Langkawi 100 Km Ultra Marathon,"Jun 21, 2025","Langkawi, Kedah (MAS)",100km,6.32649,99.8432,"Kuah, Langkawi, Malaysia"
-19th Gobi March Mongolia,"Jun 22, 2025",Ulaanbaatar (MGL),250km/6stages,47.9313599,106.9134689,"MGL radio, Sükhbaatar, Baga Toirog, Алтайн гудамж, 14180, Ulaanbaatar, Mongolia"
-6th Ultra-Trail Khao Kho,"Jun 22, 2025",Phetchabun (THA),50km,16.6758588,101.1905078,"Phetchabun Airport, Ban Rai Phathana, 2215, Phetchabun Province, Thailand"
-Hell Ultra - Manali to Leh,"Jun 23, 2025",Manali (IND),480km,32.2574,77.17481,"Manāli, Kulu, India"
-4th Deep Japan Ultra 100 - 80 km,"Jun 27, 2025",Niigata Pref. (JPN),80km,37.9128367,139.2382562,"Niigata Learning Center For Humans & The Environment, Pref. Route 264, Kita Ward, Niigata, Niigata Prefecture 950-3393, Japan"
-4th Deep Japan Ultra 100 - 165 km,"Jun 27, 2025",Niigata Pref. (JPN),165km,37.9128367,139.2382562,"Niigata Learning Center For Humans & The Environment, Pref. Route 264, Kita Ward, Niigata, Niigata Prefecture 950-3393, Japan"
+Race Name,Date,Location,Distance,Latitude,Longitude,Formatted,Website
+5th Hong Kong Trail Championships,"May 25, 2025",Tai Po District (HKG),53km,22.43995,114.1654,"Tai Po District, Hong Kong",https://hkaaa.com/en/comp_details.php?id=258
+9th Mount Everest 60 km Extreme Ultra Marathon,"May 29, 2025",Khumbu Valley (NEP),60km,32.81874,-85.17939,"Valley, Alabama, United States of America",https://everestmarathon.com/
+9th Khaokho Marathon,"Jun 01, 2025","Khaem Son, Khao Kho District, Phetchabun (THA)",45km,16.65791,101.02208,"Khao Kho, Changwat Phetchabun, Thailand",https://www.runlah.com/en/kho25
+20th Water Love Nagdong River Ultramarathon 100 km,"Jun 06, 2025","Eulsukdo, Busan (KOR)",100km,35.10278,129.04028,"South Korea, Busan Busan",https://www.ahotu.com/event/water-love-nakdonggang-river-ultra-marathon
+20h Water Love Nagdong River Ultramarathon 200 km,"Jun 06, 2025","Eulsukdo, Busan (KOR)",200km,35.10278,129.04028,"South Korea, Busan Busan",https://www.ahotu.com/event/water-love-nakdonggang-river-ultra-marathon
+19th Iwate Ginga 50km Marathon Challenge,"Jun 08, 2025","Nishiwaga, Iwate Pref. (JPN)",50km,,,https://www.iwate-ginga100.jp/
+19th Iwate Ginga 100km Marathon Challenge,"Jun 08, 2025","Kitakami, Iwate Pref. (JPN)",100km,,,https://www.iwate-ginga100.jp/
+19th Iwate Ginga 100km Marathon Challenge,"Jun 08, 2025","Kitakami, Iwate Pref. (JPN)",75km,,,https://www.iwate-ginga100.jp/
+22th Gwangju 50km Ultra Marathon,"Jun 14, 2025",Gwangju City (KOR),51.8km,35.15472,126.91556,"South Korea, Gwangju Gwangju",https://statistik.d-u-v.org/calendar.php?Language=EN&country=2&cups=all&dist=all&label=&type=past
+22th Gwangju 100km Ultra Marathon,"Jun 14, 2025",Gwangju City (KOR),100km,35.15472,126.91556,"South Korea, Gwangju Gwangju",https://statistik.d-u-v.org/calendar.php?Language=EN&country=2&cups=all&dist=all&label=&type=past
+11th King of Kampung Kemensah 100 Km,"Jun 14, 2025",Ampang Jaya (MAS),100km,3.0911612,101.7511259,"Cheras, Ampang Jaya Municipal Council, Hulu Langat, Malaysia",https://checkpointspot.asia/event/King-of-Kemensah-Trail-2025
+1st Kaga Spa by UTMB - Kaga Spa Trail Endurance100,"Jun 21, 2025",Yamanaka Onsen (JPN),105km,36.2501358,136.3746755,"Yamanaka-Onsen Bus Terminal, 山中伊切線, Yamanakaonsen-Honmachi 1-chome, Kaga, Ishikawa Prefecture 922-0121, Japan",https://kagaspa.utmb.world/
+1st Kaga Spa by UTMB - Kaga Spa Trail Endurance 50,"Jun 21, 2025",Yamanaka Onsen (JPN),58km,36.2501358,136.3746755,"Yamanaka-Onsen Bus Terminal, 山中伊切線, Yamanakaonsen-Honmachi 1-chome, Kaga, Ishikawa Prefecture 922-0121, Japan",https://kagaspa.utmb.world/
+14th Ulsan Taewha River 100 Km Ultramarathon,"Jun 21, 2025",Ulsan (KOR),100km,35.53722,129.31667,"South Korea, Ulsan Ulsan",https://www.ahotu.com/event/ulsan-taehwa-river-ultra-marathon
+14th Ulsan Taewha River 50 Km Ultramarathon,"Jun 21, 2025",Ulsan (KOR),50km,35.53722,129.31667,"South Korea, Ulsan Ulsan",https://www.ahotu.com/event/ulsan-taehwa-river-ultra-marathon
+7th Langkawi 100 Km Ultra Marathon,"Jun 21, 2025","Langkawi, Kedah (MAS)",100km,6.32649,99.8432,"Kuah, Langkawi, Malaysia",https://checkpointspot.asia/event/langkawi-ultra-2025
+19th Gobi March Mongolia,"Jun 22, 2025",Ulaanbaatar (MGL),250km/6stages,47.9313599,106.9134689,"MGL radio, Sükhbaatar, Baga Toirog, Алтайн гудамж, 14180, Ulaanbaatar, Mongolia",https://www.racingtheplanet.com/gobimarch
+6th Ultra-Trail Khao Kho,"Jun 22, 2025",Phetchabun (THA),50km,16.6758588,101.1905078,"Phetchabun Airport, Ban Rai Phathana, 2215, Phetchabun Province, Thailand",https://itra.run/Races/RaceDetails/103418
+Hell Ultra - Manali to Leh,"Jun 23, 2025",Manali (IND),480km,32.2574,77.17481,"Manāli, Kulu, India",https://thehellrace.com/the-hell-race/great-himalayan-running-festival/hell-ultra/
+4th Deep Japan Ultra 100 - 80 km,"Jun 27, 2025",Niigata Pref. (JPN),80km,37.9128367,139.2382562,"Niigata Learning Center For Humans & The Environment, Pref. Route 264, Kita Ward, Niigata, Niigata Prefecture 950-3393, Japan",https://www.deepjapanultra.com/
+4th Deep Japan Ultra 100 - 165 km,"Jun 27, 2025",Niigata Pref. (JPN),165km,37.9128367,139.2382562,"Niigata Learning Center For Humans & The Environment, Pref. Route 264, Kita Ward, Niigata, Niigata Prefecture 950-3393, Japan",https://www.deepjapanultra.com/
 3rd Hidden Village Endurance,"Jun 28, 2025",Pahang Darul Makmur (MAS),24h,4.0151175,102.1717116,"Bukit Ulu Mas, Jerantut, Malaysia"
 7th Luang Phayao Mountain Run,"Jun 29, 2025",Phayao (THA),54km,19.1666313,99.9019423,"Wiang Subdistrict, Mueang Phayao District, Thailand"
 1st Hehuanshan Ultra Run,"Jul 04, 2025",Renai Township (TPE),45.2k,,,

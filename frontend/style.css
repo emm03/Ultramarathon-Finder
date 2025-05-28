@@ -1301,6 +1301,18 @@ footer .footer-links a:hover {
     margin: 5px 6px 5px 0;
 }
 
+.race-link {
+    display: inline-block;
+    margin-top: 8px;
+    color: #ff6600;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.race-link:hover {
+    text-decoration: underline;
+}
+
 /* Pagination controls */
 .pagination-controls {
     display: flex;
