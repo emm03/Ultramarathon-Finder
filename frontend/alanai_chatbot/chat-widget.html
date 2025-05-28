@@ -1,15 +1,20 @@
 <!-- alanai_chatbot/chat-widget.html -->
 <div id="alan-chatbot">
-    <div id="alan-bubble" onclick="toggleAlanChat()">
+    <div id="alan-bubble" title="Chat with Alan">
         💬
     </div>
-    <div id="alan-window" style="display: none;">
-        <div id="alan-header">
+
+    <div id="alan-window">
+        <div id="alan-header"
+            style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background-color: #ff6a00; color: white; font-weight: bold;">
             <span>Ask Alan</span>
-            <button onclick="toggleAlanChat()">✖</button>
+            <button onclick="document.getElementById('alan-window').classList.remove('open')"
+                style="background: none; border: none; color: white; font-size: 16px; cursor: pointer;">✖</button>
         </div>
+
         <div id="alan-messages"></div>
-        <form id="alan-form" onsubmit="handleAlanSubmit(event)">
+
+        <form id="alan-form">
             <input type="text" id="alan-input" placeholder="Ask about races, training, gear..." required />
             <button type="submit">Send</button>
         </form>
