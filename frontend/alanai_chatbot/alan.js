@@ -17,9 +17,9 @@ document.addEventListener("DOMContentLoaded", () => {
         messages.innerHTML = `
             <div class="alan-welcome">
                 <p><strong>Hi, I’m Alan! 🏃‍♂️</strong></p>
-                <p>Here are a few things you can ask me:</p>
-                <ul>
-                    ${starterPrompts.map(p => `<li>• ${p}</li>`).join("")}
+                <p>You can ask me things like:</p>
+                <ul class="alan-starters">
+                    ${starterPrompts.map(p => `<li>✦ ${p}</li>`).join("")}
                 </ul>
             </div>
         `;
@@ -64,6 +64,12 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             typingEl.remove();
             messages.innerHTML += `<div class="alan-msg alan-reply"><strong>Alan:</strong> Sorry, there was an error.</div>`;
+            messages.scrollTop = messages.scrollHeight;
         }
+    });
+
+    // Enable close button functionality
+    document.getElementById("alan-close-btn").addEventListener("click", () => {
+        windowBox.classList.remove("open");
     });
 });
