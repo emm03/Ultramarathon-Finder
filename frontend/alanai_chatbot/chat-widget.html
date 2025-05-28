@@ -1,35 +1,46 @@
 <!-- alanai_chatbot/chat-widget.html -->
 <div id="alan-chatbot" aria-label="Ultramarathon Assistant Chat">
+    <!-- Chat Bubble -->
     <div id="alan-bubble" title="Chat with Alan" aria-label="Open chat">
         💬
     </div>
 
+    <!-- Chat Window -->
     <div id="alan-window" role="dialog" aria-modal="true" aria-labelledby="alan-header">
+        <!-- Header -->
         <div id="alan-header" style="
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 10px;
+        padding: 12px;
         background-color: #ff6a00;
         color: white;
         font-weight: bold;
+        font-size: 16px;
       ">
             <span>Ask Alan</span>
             <button type="button" id="alan-close-btn" aria-label="Close chat" style="
           background: none;
           border: none;
           color: white;
-          font-size: 16px;
+          font-size: 18px;
+          font-weight: normal;
           cursor: pointer;
         ">✖</button>
         </div>
 
+        <!-- Messages Area -->
         <div id="alan-messages" role="log" aria-live="polite"></div>
 
-        <form id="alan-form" aria-label="Chat input form">
+        <!-- Chat Input Form -->
+        <form id="alan-form" aria-label="Chat input form" style="display: flex; border-top: 1px solid #ddd;">
             <input type="text" id="alan-input" placeholder="Ask about races, training, gear..."
-                aria-label="Type your question" required />
-            <button type="submit" aria-label="Send message">Send</button>
+                aria-label="Type your question" autocomplete="off" required
+                style="flex: 1; border: none; padding: 12px; font-size: 14px;" />
+            <button type="submit" aria-label="Send message"
+                style="background-color: #ff6a00; color: white; border: none; padding: 12px 16px; cursor: pointer;">
+                Send
+            </button>
         </form>
     </div>
 </div>

@@ -4,15 +4,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("alan-form");
     const input = document.getElementById("alan-input");
     const messages = document.getElementById("alan-messages");
+    const closeBtn = document.getElementById("alan-close-btn");
 
-    // Starter prompts
     const starterPrompts = [
         "Find me a 100k in the fall",
         "Any races in Europe this summer?",
         "What’s a good beginner ultramarathon?",
     ];
 
-    // Show welcome suggestions
     const showWelcome = () => {
         messages.innerHTML = `
             <div class="alan-welcome">
@@ -32,6 +31,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+            windowBox.classList.remove("open");
+        });
+    }
+
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const userMessage = input.value.trim();
@@ -40,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
         messages.innerHTML += `<div class="alan-msg user-msg"><strong>You:</strong> ${userMessage}</div>`;
         input.value = "";
 
-        // Show typing indicator
         const typingEl = document.createElement("div");
         typingEl.className = "alan-msg alan-typing";
         typingEl.innerHTML = `<em>Alan is typing<span class="dots">...</span></em>`;
@@ -55,10 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             const data = await response.json();
 
-            // Remove typing indicator
             typingEl.remove();
-
-            // Show Alan's reply
             messages.innerHTML += `<div class="alan-msg alan-reply"><strong>Alan:</strong> ${data.reply}</div>`;
             messages.scrollTop = messages.scrollHeight;
         } catch (error) {
@@ -66,10 +67,5 @@ document.addEventListener("DOMContentLoaded", () => {
             messages.innerHTML += `<div class="alan-msg alan-reply"><strong>Alan:</strong> Sorry, there was an error.</div>`;
             messages.scrollTop = messages.scrollHeight;
         }
-    });
-
-    // Enable close button functionality
-    document.getElementById("alan-close-btn").addEventListener("click", () => {
-        windowBox.classList.remove("open");
     });
 });
