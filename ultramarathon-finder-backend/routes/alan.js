@@ -1,23 +1,22 @@
+// routes/alan.js
+
 import express from 'express';
 import dotenv from 'dotenv';
+import OpenAI from 'openai';
+
 dotenv.config();
-
-// Use dynamic import for ESM-compatible OpenAI SDK
-const { Configuration, OpenAIApi } = await import('openai');
-
 const router = express.Router();
 
-const configuration = new Configuration({
+const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
-const openai = new OpenAIApi(configuration);
 
 // POST /api/alan
 router.post('/', async (req, res) => {
     try {
         const { message } = req.body;
 
-        const completion = await openai.createChatCompletion({
+        const completion = await openai.chat.completions.create({
             model: 'gpt-4',
             messages: [
                 {
@@ -29,9 +28,9 @@ router.post('/', async (req, res) => {
             ],
         });
 
-        res.json({ reply: completion.data.choices[0].message.content });
+        res.json({ reply: completion.choices[0].message.content });
     } catch (err) {
-        console.error('Alan error:', err.message);
+        console.error('Alan error:', err);
         res.status(500).json({ error: 'Something went wrong with Alan.' });
     }
 });
