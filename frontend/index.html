@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="alanai_chatbot/chat-widget.css" />
 </head>
 
 <body>
@@ -80,6 +81,7 @@
             <button class="orange-btn" onclick="window.location.href='race_directory.html'">Browse Full
                 Directory</button>
         </section>
+
 
         <!-- Forum Preview -->
         <section class="latest-posts">
@@ -228,6 +230,16 @@
         </section>
     </main>
 
+    <!-- Alan Chat Widget -->
+    <div id="alan-bubble">💬</div>
+    <div id="alan-window">
+        <div id="alan-messages"></div>
+        <form id="alan-form">
+            <input id="alan-input" type="text" placeholder="Ask Alan about races..." />
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
     <!-- Footer -->
     <footer class="site-footer">
         <div class="footer-links">
@@ -239,11 +251,12 @@
         </div>
         <p class="footer-copy">&copy; 2025 Ultramarathon Connect. All rights reserved.</p>
     </footer>
-
+    
     <!-- Scripts -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script src="index_script.js"></script>
+    <script src="alanai_chatbot/alan.js"></script>
 </body>
 
 </html>

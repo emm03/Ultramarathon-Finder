@@ -1,0 +1,92 @@
+/* alanai_chatbot/chat-widget.css */
+#alan-chatbot {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    font-family: sans-serif;
+}
+
+#alan-bubble {
+    background-color: #ff6600;
+    color: white;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 56px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease;
+}
+
+#alan-bubble:hover {
+    transform: scale(1.1);
+}
+
+#alan-window {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    width: 320px;
+    height: 400px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#alan-header {
+    background-color: #ff6600;
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#alan-messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    background: #f9f9f9;
+}
+
+#alan-messages div {
+    margin-bottom: 10px;
+}
+
+#alan-messages .user {
+    text-align: right;
+    color: #444;
+}
+
+#alan-messages .alan {
+    text-align: left;
+    color: #000;
+}
+
+#alan-form {
+    display: flex;
+    border-top: 1px solid #ddd;
+}
+
+#alan-input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    font-size: 14px;
+}
+
+#alan-form button {
+    padding: 10px;
+    background: #ff6600;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
