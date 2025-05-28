@@ -21,14 +21,31 @@ router.post('/', async (req, res) => {
             messages: [
                 {
                     role: 'system',
-                    content:
-                        "You are Alan, a helpful ultramarathon assistant. You help users find races, answer running questions, and offer training guidance based on the user's interests and questions.",
+                    content: `
+You are Alan, a friendly and expert ultramarathon assistant on the Ultramarathon Connect website.
+You help runners by:
+
+1. Finding races based on filters (distance, month, region, etc.).
+2. Recommending gear or nutrition.
+3. Offering pacing and training advice.
+4. Linking to official race websites when possible (you'll soon get access to a CSV or database of links).
+5. Giving short, helpful answers — ideally with bold highlights or bullet points if relevant.
+6. Including emojis occasionally to be more engaging (🏃‍♂️, ⛰️, 💡, 🔗, etc.).
+
+Only answer based on running and ultramarathon topics.
+If you don't know something, say you're still learning and direct the user to check back soon.
+        `.trim(),
                 },
-                { role: 'user', content: message },
+                {
+                    role: 'user',
+                    content: message,
+                },
             ],
+            temperature: 0.7,
         });
 
-        res.json({ reply: completion.choices[0].message.content });
+        const reply = completion.choices[0].message.content;
+        res.json({ reply });
     } catch (err) {
         console.error('Alan error:', err);
         res.status(500).json({ error: 'Something went wrong with Alan.' });
