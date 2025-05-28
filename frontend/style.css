@@ -1305,8 +1305,8 @@ footer .footer-links a:hover {
     display: inline-block;
     margin-top: 8px;
     color: #ff6600;
-    font-weight: 500;
-    text-decoration: none;
+    font-weight: bold;
+    text-decoration: underline;
 }
 
 .race-link:hover {
