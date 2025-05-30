@@ -60,14 +60,16 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
             typingEl.remove();
 
-            const parts = data.reply.split("||");
+            const replies = data.reply.split("||");
 
-            parts.forEach(part => {
-                const clean = escapeHtml(part.trim());
+            replies.forEach(reply => {
+                const clean = escapeHtml(reply.trim());
                 const linked = convertLinks(clean);
                 messages.innerHTML += `
                     <div class="alan-msg alan-reply">
-                        <div class="alan-box"><strong>Alan:</strong> ${linked}</div>
+                        <div class="alan-box">
+                            <strong>Alan:</strong><br>${linked}
+                        </div>
                     </div>`;
             });
 
@@ -81,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function convertLinks(text) {
         const urlRegex = /((https?:\/\/)[^\s]+)/g;
-        return text.replace(urlRegex, url => `<a href="${url}" target="_blank">${url}</a>`);
+        return text.replace(urlRegex, url => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`);
     }
 
     function escapeHtml(text) {

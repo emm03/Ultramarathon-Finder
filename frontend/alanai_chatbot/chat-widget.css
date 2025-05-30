@@ -1,21 +1,20 @@
-/* Chat Bubble */
 #alan-bubble {
     position: fixed;
-    bottom: 24px;
-    right: 24px;
+    bottom: 28px;
+    right: 28px;
     background-color: #ff6a00;
     color: white;
     border-radius: 50%;
-    width: 80px;
-    height: 80px;
-    font-size: 32px;
+    width: 90px;
+    height: 90px;
+    font-size: 36px;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
     cursor: pointer;
     z-index: 9999;
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease;
 }
 
 #alan-bubble:hover {
@@ -181,16 +180,25 @@
     font-size: 14px;
 }
 
+.alan-starters {
+    padding-left: 0;
+    margin-top: 10px;
+}
+
 .alan-starters li {
-    margin-left: 16px;
-    padding: 2px 0;
+    margin-left: 0;
+    padding: 6px 0 6px 24px;
     list-style: none;
     position: relative;
+    font-size: 15px;
+    line-height: 1.5;
 }
 
 .alan-starters li::before {
     content: '✦';
     position: absolute;
-    left: -16px;
+    left: 0;
     color: #ff6a00;
+    font-size: 14px;
+    top: 4px;
 }
