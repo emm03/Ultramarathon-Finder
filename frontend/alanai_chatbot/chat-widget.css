@@ -1,20 +1,17 @@
-#alan-bubble {
+#alan-window {
     position: fixed;
-    bottom: 28px;
-    right: 28px;
-    background-color: #ff6a00;
-    color: white;
-    border-radius: 50%;
-    width: 90px;
-    height: 90px;
-    font-size: 36px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
-    cursor: pointer;
+    bottom: 120px;
+    right: 24px;
+    width: 460px;
+    max-height: 620px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+    display: none;
+    flex-direction: column;
     z-index: 9999;
-    transition: transform 0.3s ease;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
 }
 
 #alan-bubble:hover {
@@ -40,6 +37,22 @@
 
 #alan-window.open {
     display: flex;
+}
+
+#alan-window ul,
+#alan-window ol {
+    padding-left: 0;
+    margin-left: 0;
+    list-style: none;
+}
+
+#alan-window .alan-starters li::before {
+    content: '✦';
+    position: absolute;
+    left: 0;
+    color: #ff6a00;
+    font-size: 14px;
+    top: 4px;
 }
 
 #alan-messages {
