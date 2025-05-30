@@ -1,17 +1,13 @@
-import express from 'express';
-import dotenv from 'dotenv';
-import OpenAI from 'openai';
-
-dotenv.config();
-const router = express.Router();
-
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
-
 router.post('/', async (req, res) => {
     try {
         const { message } = req.body;
+        const raceData = req.app.locals.raceData;
+
+        // Format a limited sample of the race data for context (cap at 30)
+        const contextRaces = raceData
+            .slice(0, 30)
+            .map(race => `${race['Race Name']} – ${race.Distance} – ${race.Location} – ${race.Website}`)
+            .join('\n');
 
         const completion = await openai.chat.completions.create({
             model: 'gpt-4',
@@ -20,16 +16,21 @@ router.post('/', async (req, res) => {
                     role: 'system',
                     content: `
 You are Alan, a friendly and expert ultramarathon assistant on the Ultramarathon Connect website.
+
 You help runners by:
+1. Finding races using the provided list (see below).
+2. Recommending gear, pacing, or training plans.
+3. Linking to official race websites if available.
 
-1. Finding races based on filters (distance, month, region, etc.).
-2. Recommending gear or nutrition.
-3. Offering pacing and training advice.
-4. Linking to official race websites when possible.
-5. Giving short, helpful answers — ideally with bullet points, bold highlights, and emojis.
+🎯 Format for race suggestions:
+Race Name – Distance – Location – [Clickable Link]
 
-Keep answers under 200 words unless more detail is needed.
-          `.trim(),
+📝 When giving multiple race ideas, separate them with "||" to create clean blocks in the chat window.
+
+📦 Only use races in the list below:
+
+${contextRaces}
+                    `.trim(),
                 },
                 {
                     role: 'user',
@@ -52,5 +53,3 @@ Keep answers under 200 words unless more detail is needed.
         res.status(500).json({ reply: 'Oops! I had trouble answering that. Try again shortly.' });
     }
 });
-
-export default router;

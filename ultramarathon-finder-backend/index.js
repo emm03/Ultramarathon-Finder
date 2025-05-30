@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-dotenv.config(); // Load environment variables from .env file
+dotenv.config();
 
 import express from 'express';
 import mongoose from 'mongoose';
@@ -12,8 +12,9 @@ import forumRoutes from './routes/forum.js';
 import contactRoutes from './routes/contact.js';
 import alanRoute from './routes/alan.js';
 import User from './models/User.js';
+import loadRaceData from './utils/loadRaceData.js'; // ✅ Load CSV utility
 
-const app = express(); // ✅ Initialize app BEFORE using app.use()
+const app = express();
 
 console.log('Loaded Environment Variables:');
 console.log({
@@ -24,8 +25,19 @@ console.log({
   AWS_SECRET_KEY: process.env.AWS_SECRET_KEY ? 'Loaded' : 'Not Set',
   AWS_REGION: process.env.AWS_REGION ? 'Loaded' : 'Not Set',
   S3_BUCKET_NAME: process.env.S3_BUCKET_NAME ? 'Loaded' : 'Not Set',
-  OPENAI_API_KEY: process.env.OPENAI_API_KEY ? 'Loaded' : 'Not Set'  // ✅ Added this line
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY ? 'Loaded' : 'Not Set',
 });
+
+// ✅ Load race data at startup
+loadRaceData()
+  .then(raceData => {
+    app.locals.raceData = raceData;
+    console.log(`✅ Loaded ${raceData.length} races from CSV`);
+  })
+  .catch(err => {
+    console.error('❌ Failed to load race data:', err.message);
+    process.exit(1);
+  });
 
 // Middleware
 app.use(express.json());
@@ -34,7 +46,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// CORS config
 app.use(cors({
   origin: 'https://ultramarathonconnect.com',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -42,7 +53,6 @@ app.use(cors({
   credentials: true,
 }));
 
-// MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -52,22 +62,18 @@ mongoose.connect(process.env.MONGO_URI, {
     process.exit(1);
   });
 
-// Static files
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 app.use('/static', express.static(path.join(process.cwd(), 'public')));
 
-// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/forum', forumRoutes);
 app.use('/api/contact', contactRoutes);
-app.use('/api/alan', alanRoute); // ✅ Alan AI route
+app.use('/api/alan', alanRoute);
 
-// Health check
 app.get('/', (req, res) => {
   res.send('Ultramarathon Finder Backend is running!');
 });
 
-// Env check
 app.get('/api/env-check', (req, res) => {
   res.json({
     PORT: process.env.PORT,
@@ -77,11 +83,10 @@ app.get('/api/env-check', (req, res) => {
     AWS_SECRET_KEY: process.env.AWS_SECRET_KEY ? 'Loaded' : 'Not Set',
     AWS_REGION: process.env.AWS_REGION ? 'Loaded' : 'Not Set',
     S3_BUCKET_NAME: process.env.S3_BUCKET_NAME ? 'Loaded' : 'Not Set',
-    OPENAI_API_KEY: process.env.OPENAI_API_KEY ? 'Loaded' : 'Not Set',  // ✅ Included here too
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY ? 'Loaded' : 'Not Set',
   });
 });
 
-// S3 Upload Test
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY,
   secretAccessKey: process.env.AWS_SECRET_KEY,
@@ -103,7 +108,6 @@ app.get('/api/s3-test', async (req, res) => {
   }
 });
 
-// User info
 app.get('/api/user/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select('username email profilePicture');
@@ -115,18 +119,15 @@ app.get('/api/user/:id', async (req, res) => {
   }
 });
 
-// Global Error Handler
 app.use((err, req, res, next) => {
   console.error('Error middleware:', err.message);
   res.status(500).json({ message: 'Unexpected error', error: err.message });
 });
 
-// 404 Fallback
 app.use((req, res) => {
   res.status(404).json({ message: 'Endpoint not found' });
 });
 
-// Start server
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
