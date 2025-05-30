@@ -28,17 +28,6 @@ console.log({
   OPENAI_API_KEY: process.env.OPENAI_API_KEY ? 'Loaded' : 'Not Set',
 });
 
-// ✅ Load race data at startup
-loadRaceData()
-  .then(raceData => {
-    app.locals.raceData = raceData;
-    console.log(`✅ Loaded ${raceData.length} races from CSV`);
-  })
-  .catch(err => {
-    console.error('❌ Failed to load race data:', err.message);
-    process.exit(1);
-  });
-
 // Middleware
 app.use(express.json());
 app.use((req, res, next) => {
@@ -128,7 +117,18 @@ app.use((req, res) => {
   res.status(404).json({ message: 'Endpoint not found' });
 });
 
+// ✅ Load race data and start server AFTER it's ready
 const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
+
+loadRaceData()
+  .then((raceData) => {
+    app.locals.raceData = raceData;
+    console.log(`✅ Loaded ${raceData.length} races from CSV`);
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running at http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('❌ Failed to load race data:', err.message);
+    process.exit(1); // Or allow server to run with fallback empty list if you prefer
+  });
