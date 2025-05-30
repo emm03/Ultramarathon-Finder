@@ -26,8 +26,8 @@ router.post('/', async (req, res) => {
 
         const contextRaces = raceData
             .slice(0, 30)
-            .map(race => `${race.name} – ${race.distance} – ${race.location} – ${race.website}`)
-            .join('\n');
+            .map(race => `${race.name} – ${race.distance} – ${race.location} – Link: ${race.website}`)
+            .join(' ||\n');
 
         const completion = await openai.chat.completions.create({
             model: 'gpt-4',
@@ -43,7 +43,7 @@ You help runners by:
 3. Linking to official race websites if available.
 
 🎯 Format for race suggestions:
-Race Name – Distance – Location – [Clickable Link]
+Race Name – Distance – Location – Link: https://...
 
 📝 When giving multiple race ideas, separate them with "||" to create clean blocks in the chat window.
 
