@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <p><strong>Hi, I’m Alan! 🏃‍♂️</strong></p>
                 <p>You can ask me things like:</p>
                 <ul class="alan-starters">
-                    ${starterPrompts.map(p => `<li>✦ ${p}</li>`).join("")}
+                    ${starterPrompts.map(p => `<li>${p}</li>`).join("")}
                 </ul>
             </div>
         `;
@@ -92,4 +92,3 @@ document.addEventListener("DOMContentLoaded", () => {
         return div.innerHTML;
     }
 });
-
