@@ -5,6 +5,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import path from 'path';
+import fs from 'fs';
 import AWS from 'aws-sdk';
 
 import authRoutes from './routes/auth.js';
@@ -12,7 +13,7 @@ import forumRoutes from './routes/forum.js';
 import contactRoutes from './routes/contact.js';
 import alanRoute from './routes/alan.js';
 import User from './models/User.js';
-import loadRaceData from './utils/loadRaceData.js'; // ✅ Load CSV utility
+import loadRaceData from './utils/loadRaceData.js';
 
 const app = express();
 
@@ -37,7 +38,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// ✅ Updated CORS configuration
+// ✅ CORS configuration
 const allowedOrigins = [
   'https://ultramarathonconnect.com',
   'http://localhost:3000'
@@ -56,7 +57,6 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
-// ✅ Handle preflight requests
 app.options('*', cors());
 
 mongoose.connect(process.env.MONGO_URI, {
@@ -138,8 +138,18 @@ const PORT = process.env.PORT || 5001;
 
 loadRaceData()
   .then((raceData) => {
+    if (!raceData || raceData.length === 0) {
+      console.warn('⚠️ Warning: CSV loaded but contains 0 races.');
+      const csvPath = './data/duv_ultramarathons.csv';
+      if (!fs.existsSync(csvPath)) {
+        console.error(`❌ CSV file not found at: ${csvPath}`);
+      }
+    } else {
+      console.log(`✅ Loaded ${raceData.length} races from CSV`);
+      console.log('🔍 Sample races:', raceData.slice(0, 2));
+    }
+
     app.locals.raceData = raceData;
-    console.log(`✅ Loaded ${raceData.length} races from CSV`);
     app.listen(PORT, () => {
       console.log(`🚀 Server running at http://localhost:${PORT}`);
     });
@@ -148,3 +158,4 @@ loadRaceData()
     console.error('❌ Failed to load race data:', err.message);
     process.exit(1);
   });
+
