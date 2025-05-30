@@ -1,6 +1,11 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import csv from 'csv-parser';
+
+// Fix __dirname for ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default function loadRaceData() {
     const filePath = path.join(__dirname, '..', 'data', 'duv_ultramarathons.csv');
@@ -19,11 +24,7 @@ export default function loadRaceData() {
                     website: data['Website'],
                 });
             })
-            .on('end', () => {
-                resolve(results);
-            })
-            .on('error', (err) => {
-                reject(err);
-            });
+            .on('end', () => resolve(results))
+            .on('error', reject);
     });
 }
