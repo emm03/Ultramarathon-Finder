@@ -16,6 +16,7 @@ import loadRaceData from './utils/loadRaceData.js'; // ✅ Load CSV utility
 
 const app = express();
 
+// Environment debug log
 console.log('Loaded Environment Variables:');
 console.log({
   PORT: process.env.PORT,
@@ -30,17 +31,33 @@ console.log({
 
 // Middleware
 app.use(express.json());
+
 app.use((req, res, next) => {
   console.log("Full Request Headers:", req.headers);
   next();
 });
 
+// ✅ Updated CORS configuration
+const allowedOrigins = [
+  'https://ultramarathonconnect.com',
+  'http://localhost:3000'
+];
+
 app.use(cors({
-  origin: 'https://ultramarathonconnect.com',
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
 }));
+
+// ✅ Handle preflight requests
+app.options('*', cors());
 
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
@@ -117,7 +134,6 @@ app.use((req, res) => {
   res.status(404).json({ message: 'Endpoint not found' });
 });
 
-// ✅ Load race data and start server AFTER it's ready
 const PORT = process.env.PORT || 5001;
 
 loadRaceData()
@@ -130,5 +146,5 @@ loadRaceData()
   })
   .catch((err) => {
     console.error('❌ Failed to load race data:', err.message);
-    process.exit(1); // Or allow server to run with fallback empty list if you prefer
+    process.exit(1);
   });
