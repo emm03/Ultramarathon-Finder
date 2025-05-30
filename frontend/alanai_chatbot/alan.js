@@ -58,9 +58,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 body: JSON.stringify({ message: userMessage }),
             });
             const data = await response.json();
-
             typingEl.remove();
-            messages.innerHTML += `<div class="alan-msg alan-reply"><strong>Alan:</strong> ${data.reply}</div>`;
+
+            const parts = data.reply.split("||");
+
+            parts.forEach(part => {
+                const clean = escapeHtml(part.trim());
+                const linked = convertLinks(clean);
+                messages.innerHTML += `
+                    <div class="alan-msg alan-reply">
+                        <div class="alan-box"><strong>Alan:</strong> ${linked}</div>
+                    </div>`;
+            });
+
             messages.scrollTop = messages.scrollHeight;
         } catch (error) {
             typingEl.remove();
@@ -68,4 +78,16 @@ document.addEventListener("DOMContentLoaded", () => {
             messages.scrollTop = messages.scrollHeight;
         }
     });
+
+    function convertLinks(text) {
+        const urlRegex = /((https?:\/\/)[^\s]+)/g;
+        return text.replace(urlRegex, url => `<a href="${url}" target="_blank">${url}</a>`);
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+    }
 });
+
