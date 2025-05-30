@@ -16,25 +16,17 @@ router.post('/', async (req, res) => {
         const { message } = req.body;
         const raceData = req.app.locals.raceData;
 
-        // ✅ Debug log: sample race data
-        console.log('📦 Sample raceData:', raceData?.slice?.(0, 3));
-
-        // ✅ Guard clause to prevent crashing on bad data
+        // ✅ Confirm raceData is valid
         if (!Array.isArray(raceData) || raceData.length === 0) {
-            console.error('❌ raceData is missing or invalid');
-            return res.status(500).json({ reply: 'Sorry, the race list is currently unavailable. Please try again soon!' });
+            console.error('❌ raceData missing or invalid');
+            return res.status(500).json({ reply: 'Sorry, I can’t access race info right now.' });
         }
 
-        // Format a limited sample of race data for context
+        console.log('📦 Sample raceData:', raceData.slice(0, 3));
+
         const contextRaces = raceData
             .slice(0, 30)
-            .map(race => {
-                const name = race['Race Name'] || 'Unnamed Race';
-                const distance = race['Distance'] || 'Unknown distance';
-                const location = race['Location'] || 'Unknown location';
-                const website = race['Website'] || 'No link';
-                return `${name} – ${distance} – ${location} – ${website}`;
-            })
+            .map(race => `${race.name} – ${race.distance} – ${race.location} – ${race.website}`)
             .join('\n');
 
         const completion = await openai.chat.completions.create({
@@ -58,7 +50,7 @@ Race Name – Distance – Location – [Clickable Link]
 📦 Only use races in the list below:
 
 ${contextRaces}
-          `.trim(),
+                    `.trim(),
                 },
                 {
                     role: 'user',
