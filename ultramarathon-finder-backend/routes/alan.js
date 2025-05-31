@@ -22,14 +22,16 @@ router.post('/', async (req, res) => {
         console.log('📩 User message:', message);
         console.log('📦 Sample raceData:', raceData.slice(0, 3));
 
-        // 🔍 Filter based on user query
-        const userInput = message.toLowerCase();
-        const filtered = raceData.filter(race =>
-            race.distance?.toLowerCase().includes('100k') &&
-            race.location?.toLowerCase().includes('california')
-        );
+        // 🔍 Dynamically filter races based on all terms in user query
+        const userInput = message.toLowerCase().trim();
+        const inputTerms = userInput.split(/\s+/);
 
-        const racesToUse = (filtered.length > 0 ? filtered : raceData.slice(0, 30));
+        const filtered = raceData.filter(race => {
+            const combined = `${race.name} ${race.distance} ${race.location}`.toLowerCase();
+            return inputTerms.every(term => combined.includes(term));
+        });
+
+        const racesToUse = filtered.length > 0 ? filtered : raceData.slice(0, 30);
 
         const contextRaces = racesToUse
             .map(race => `${race.name} – ${race.distance} – ${race.location} – Link: ${race.website}`)
