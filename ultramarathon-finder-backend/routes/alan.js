@@ -9,6 +9,12 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
+// Helper to check if a race matches all keywords
+const matchesAllKeywords = (race, keywords) => {
+    const combined = `${race.name} ${race.distance} ${race.location} ${race.formatted || ''}`.toLowerCase();
+    return keywords.every(kw => combined.includes(kw));
+};
+
 router.post('/', async (req, res) => {
     try {
         const { message } = req.body;
@@ -20,61 +26,21 @@ router.post('/', async (req, res) => {
         }
 
         console.log('📩 User message:', message);
-        console.log('📦 Sample raceData:', raceData.slice(0, 3));
+        const keywords = message.toLowerCase().split(/\s+/).filter(w => w.length > 2);
 
-        // 🔍 Dynamically filter races based on all terms in user query
-        const userInput = message.toLowerCase().trim();
-        const inputTerms = userInput.split(/\s+/);
+        const matchingRaces = raceData.filter(race => matchesAllKeywords(race, keywords)).slice(0, 10);
 
-        const filtered = raceData.filter(race => {
-            const combined = `${race.name} ${race.distance} ${race.location}`.toLowerCase();
-            return inputTerms.every(term => combined.includes(term));
-        });
-
-        const racesToUse = filtered.length > 0 ? filtered : raceData.slice(0, 30);
-
-        const contextRaces = racesToUse
-            .map(race => `${race.name} – ${race.distance} – ${race.location} – Link: ${race.website}`)
-            .join(' ||\n');
-
-        const completion = await openai.chat.completions.create({
-            model: 'gpt-4',
-            messages: [
-                {
-                    role: 'system',
-                    content: `
-You are Alan, an ultramarathon expert assistant on Ultramarathon Connect.
-
-Use ONLY the races listed below. Do NOT invent races or regions.
-
-📝 If no matches seem to fit the user's request, say:
-"I'm sorry, I couldn’t find any matching races for that request."
-
-🎯 Format each result like this:
-Race Name – Distance – Location – Link: https://...
-
-Separate each race with "||"
-
-📦 Race list:
-${contextRaces}
-                    `.trim(),
-                },
-                {
-                    role: 'user',
-                    content: message,
-                },
-            ],
-            temperature: 0.7,
-        });
-
-        const reply = completion?.choices?.[0]?.message?.content;
-
-        if (!reply) {
-            console.error('OpenAI response had no content:', completion);
-            return res.json({ reply: "Hmm, I didn’t quite catch that. Can you rephrase?" });
+        if (matchingRaces.length === 0) {
+            return res.json({ reply: "I'm sorry, I couldn’t find any matching races for that request." });
         }
 
-        res.json({ reply });
+        const formatted = matchingRaces.map(race => {
+            const linkText = race.website ? `[${race.name}](${race.website})` : race.name;
+            return `${race.name} – ${race.distance} – ${race.location} – ${linkText}`;
+        });
+
+        res.json({ reply: formatted.join("||") });
+
     } catch (err) {
         console.error('❌ Alan error:', err.message);
         console.error('🔍 Full stack trace:', err.stack);

@@ -22,6 +22,7 @@ export default function loadRaceData() {
                     location: data['Location'],
                     distance: data['Distance'],
                     website: data['Website'],
+                    formatted: data['Formatted'] || '', // Add this for location context
                 });
             })
             .on('end', () => resolve(results))
