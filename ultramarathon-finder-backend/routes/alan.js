@@ -20,30 +20,31 @@ router.post('/', async (req, res) => {
         }
 
         const userInput = message.toLowerCase().trim();
+        console.log('📩 User query:', userInput);
+        console.log('🔍 Sample race:', raceData[0]);
 
-        // Extract possible distances from input
-        const distanceKeywords = ['50k', '50km', '50 mi', '50 miles', '100k', '100km', '100 mi', '100 miles', '55k', '24h', '6h', '12h', '72h'];
-        const matchedDistances = distanceKeywords.filter(d => userInput.includes(d));
+        // Keyword extraction
+        const keywords = userInput.split(/\s+/).filter(w => w.length > 2);
 
-        // Extract all race locations and regions from dataset
-        const allLocations = raceData.map(r => `${r.location} ${r.formatted}`.toLowerCase());
-        const matchedLocations = allLocations.filter(loc => userInput.split(' ').some(word => loc.includes(word)));
-
-        // Filter races based on those distance and location matches
         const filtered = raceData.filter(race => {
-            const raceText = `${race.name} ${race.distance} ${race.location} ${race.formatted}`.toLowerCase();
-
-            const distanceOk = matchedDistances.length === 0 || matchedDistances.some(d => raceText.includes(d));
-            const locationOk = matchedLocations.length === 0 || matchedLocations.some(loc => raceText.includes(loc));
-
-            return distanceOk && locationOk;
+            const combined = `${race.name || ''} ${race.distance || ''} ${race.location || ''} ${race.formatted || ''}`.toLowerCase();
+            return keywords.every(kw => combined.includes(kw));
         });
 
-        const racesToUse = filtered.length > 0 ? filtered : raceData.slice(0, 30);
+        console.log(`✅ Matches found: ${filtered.length}`);
 
-        const contextRaces = racesToUse
-            .map(race => `${race.name} – ${race.distance} – ${race.location} – Link: ${race.website}`)
+        // Limit output to avoid OpenAI token limit
+        const maxResults = 10;
+        const racesToUse = (filtered.length > 0 ? filtered : raceData).slice(0, maxResults);
+
+        let contextRaces = racesToUse
+            .map(race => `${race.name} – ${race.distance} – ${race.location} – Link: ${race.website || 'N/A'}`)
             .join(' ||\n');
+
+        if (contextRaces.length > 12000) {
+            console.warn('⚠️ Context too long. Trimming...');
+            contextRaces = contextRaces.substring(0, 11000);
+        }
 
         const completion = await openai.chat.completions.create({
             model: 'gpt-4',
@@ -78,7 +79,7 @@ ${contextRaces}
         const reply = completion?.choices?.[0]?.message?.content;
 
         if (!reply) {
-            console.error('OpenAI response had no content:', completion);
+            console.error('OpenAI response had no content');
             return res.json({ reply: "Hmm, I didn’t quite catch that. Can you rephrase?" });
         }
 

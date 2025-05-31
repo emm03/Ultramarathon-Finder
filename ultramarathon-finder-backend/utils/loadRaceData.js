@@ -3,7 +3,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import csv from 'csv-parser';
 
-// Fix __dirname for ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -21,8 +20,8 @@ export default function loadRaceData() {
                     date: data['Date'],
                     location: data['Location'],
                     distance: data['Distance'],
-                    website: data['Website'],
-                    formatted: data['Formatted'] || '', // Add this for location context
+                    website: data['Website'] || '',
+                    formatted: data['Formatted'] || '',
                 });
             })
             .on('end', () => resolve(results))
