@@ -1,3 +1,5 @@
+// routes/alan.js
+
 import express from 'express';
 import dotenv from 'dotenv';
 import OpenAI from 'openai';
@@ -19,67 +21,60 @@ router.post('/', async (req, res) => {
             return res.status(500).json({ reply: 'Sorry, I can’t access race info right now.' });
         }
 
-        const userInput = message.toLowerCase().trim();
-        console.log('📩 User query:', userInput);
+        console.log('📩 User query:', message);
         console.log('🔍 Sample race:', raceData[0]);
 
-        // Keyword extraction
-        const keywords = userInput.split(/\s+/).filter(w => w.length > 2);
+        // Normalize and clean input
+        const inputTerms = message
+            .toLowerCase()
+            .split(/\s+/)
+            .filter(term => !['find', 'me', 'a', 'an', 'the', 'any', 'please'].includes(term));
 
+        // Filter across full dataset
         const filtered = raceData.filter(race => {
-            const combined = `${race.name || ''} ${race.distance || ''} ${race.location || ''} ${race.formatted || ''}`.toLowerCase();
-            return keywords.every(kw => combined.includes(kw));
+            const combined = `${race.name} ${race.distance} ${race.location} ${race.formatted}`.toLowerCase();
+            return inputTerms.every(term => combined.includes(term));
         });
 
         console.log(`✅ Matches found: ${filtered.length}`);
 
-        // Limit output to avoid OpenAI token limit
-        const maxResults = 10;
-        const racesToUse = (filtered.length > 0 ? filtered : raceData).slice(0, maxResults);
+        const maxRacesToSend = 10;
+        const racesToSend = filtered.length > 0 ? filtered.slice(0, maxRacesToSend) : [];
 
-        let contextRaces = racesToUse
-            .map(race => `${race.name} – ${race.distance} – ${race.location} – Link: ${race.website || 'N/A'}`)
+        // If nothing matched, GPT will show fallback message
+        const contextRaces = racesToSend
+            .map(r => `${r.name} – ${r.distance} – ${r.location} – Link: ${r.website}`)
             .join(' ||\n');
 
-        if (contextRaces.length > 12000) {
-            console.warn('⚠️ Context too long. Trimming...');
-            contextRaces = contextRaces.substring(0, 11000);
-        }
+        const baseSystemPrompt = `
+You are Alan, an expert ultramarathon assistant on Ultramarathon Connect.
+
+ONLY use the races listed below. NEVER invent races or regions.
+
+🎯 Format each result:
+Race Name – Distance – Location – Link: https://...
+
+Separate each race with "||".
+
+If no races match, say:
+"I'm sorry, I couldn’t find any matching races for that request."
+
+📦 Races:
+${contextRaces}
+    `.trim();
 
         const completion = await openai.chat.completions.create({
             model: 'gpt-4',
             messages: [
-                {
-                    role: 'system',
-                    content: `
-You are Alan, an ultramarathon expert assistant on Ultramarathon Connect.
-
-Use ONLY the races listed below. Do NOT invent races or regions.
-
-📝 If no matches seem to fit the user's request, say:
-"I'm sorry, I couldn’t find any matching races for that request."
-
-🎯 Format each result like this:
-Race Name – Distance – Location – Link: https://...
-
-Separate each race with "||"
-
-📦 Race list:
-${contextRaces}
-          `.trim(),
-                },
-                {
-                    role: 'user',
-                    content: message,
-                },
+                { role: 'system', content: baseSystemPrompt },
+                { role: 'user', content: message },
             ],
             temperature: 0.7,
         });
 
         const reply = completion?.choices?.[0]?.message?.content;
-
         if (!reply) {
-            console.error('OpenAI response had no content');
+            console.error('OpenAI reply was empty');
             return res.json({ reply: "Hmm, I didn’t quite catch that. Can you rephrase?" });
         }
 
