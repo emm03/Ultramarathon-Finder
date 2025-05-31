@@ -1,5 +1,3 @@
-// routes/alan.js
-
 import express from 'express';
 import dotenv from 'dotenv';
 import OpenAI from 'openai';
@@ -16,16 +14,24 @@ router.post('/', async (req, res) => {
         const { message } = req.body;
         const raceData = req.app.locals.raceData;
 
-        // ✅ Confirm raceData is valid
         if (!Array.isArray(raceData) || raceData.length === 0) {
             console.error('❌ raceData missing or invalid');
             return res.status(500).json({ reply: 'Sorry, I can’t access race info right now.' });
         }
 
+        console.log('📩 User message:', message);
         console.log('📦 Sample raceData:', raceData.slice(0, 3));
 
-        const contextRaces = raceData
-            .slice(0, 30)
+        // 🔍 Filter based on user query
+        const userInput = message.toLowerCase();
+        const filtered = raceData.filter(race =>
+            race.distance?.toLowerCase().includes('100k') &&
+            race.location?.toLowerCase().includes('california')
+        );
+
+        const racesToUse = (filtered.length > 0 ? filtered : raceData.slice(0, 30));
+
+        const contextRaces = racesToUse
             .map(race => `${race.name} – ${race.distance} – ${race.location} – Link: ${race.website}`)
             .join(' ||\n');
 
@@ -35,20 +41,19 @@ router.post('/', async (req, res) => {
                 {
                     role: 'system',
                     content: `
-You are Alan, a friendly and expert ultramarathon assistant on the Ultramarathon Connect website.
+You are Alan, an ultramarathon expert assistant on Ultramarathon Connect.
 
-You help runners by:
-1. Finding races using the provided list (see below).
-2. Recommending gear, pacing, or training plans.
-3. Linking to official race websites if available.
+Use ONLY the races listed below. Do NOT invent races or regions.
 
-🎯 Format for race suggestions:
+📝 If no matches seem to fit the user's request, say:
+"I'm sorry, I couldn’t find any matching races for that request."
+
+🎯 Format each result like this:
 Race Name – Distance – Location – Link: https://...
 
-📝 When giving multiple race ideas, separate them with "||" to create clean blocks in the chat window.
+Separate each race with "||"
 
-📦 Only use races in the list below:
-
+📦 Race list:
 ${contextRaces}
                     `.trim(),
                 },
