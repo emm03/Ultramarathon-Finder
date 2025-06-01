@@ -158,4 +158,3 @@ loadRaceData()
     console.error('❌ Failed to load race data:', err.message);
     process.exit(1);
   });
-

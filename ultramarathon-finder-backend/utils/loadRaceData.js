@@ -24,7 +24,10 @@ export default function loadRaceData() {
                     formatted: data['Formatted'] || '',
                 });
             })
-            .on('end', () => resolve(results))
+            .on('end', () => {
+                console.log('🔗 First 3 race websites:', results.slice(0, 3).map(r => r.website));
+                resolve(results);
+            })
             .on('error', reject);
     });
 }

@@ -38,10 +38,13 @@ router.post('/', async (req, res) => {
 
         console.log(`✅ Matches found: ${filtered.length}`);
 
-        const maxRacesToSend = 10;
-        const racesToSend = filtered.length > 0 ? filtered.slice(0, maxRacesToSend) : [];
+        if (filtered.length === 0) {
+            return res.json({ reply: "I'm sorry, I couldn’t find any matching races for that request." });
+        }
 
-        // If nothing matched, GPT will show fallback message
+        const maxRacesToSend = 10;
+        const racesToSend = filtered.slice(0, maxRacesToSend);
+
         const contextRaces = racesToSend
             .map(r => `${r.name} – ${r.distance} – ${r.location} – Link: ${r.website}`)
             .join(' ||\n');
@@ -61,7 +64,7 @@ If no races match, say:
 
 📦 Races:
 ${contextRaces}
-    `.trim();
+        `.trim();
 
         const completion = await openai.chat.completions.create({
             model: 'gpt-4',
