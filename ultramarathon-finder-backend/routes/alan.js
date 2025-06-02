@@ -11,12 +11,12 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Simple in-memory store (cleared on server restart)
-const userContextMap = new Map();
+// In-memory user session context
+const userMemory = new Map();
 
 router.post('/', async (req, res) => {
     try {
-        const { message, username = 'guest' } = req.body;
+        const { message, sessionId = 'anon' } = req.body;
         const raceData = req.app.locals.raceData;
 
         if (!Array.isArray(raceData) || raceData.length === 0) {
@@ -24,65 +24,90 @@ router.post('/', async (req, res) => {
             return res.status(500).json({ reply: 'Sorry, I can’t access race info right now.' });
         }
 
-        console.log('📩 User query:', message);
+        // Normalize user message for memory logic
+        const normalizedMsg = message.toLowerCase();
 
-        // Save context
-        if (!userContextMap.has(username)) userContextMap.set(username, []);
-        const pastQueries = userContextMap.get(username);
-        pastQueries.push(message);
-        if (pastQueries.length > 5) pastQueries.shift();
-
-        // Detect goal intent
-        const lowerMsg = message.toLowerCase();
-        const isGoal = lowerMsg.includes('training for') || lowerMsg.includes('qualify for');
-        const isPlan = lowerMsg.includes('make me a') && lowerMsg.includes('plan');
-
-        // Detect if race search
-        const searchTerms = ['race', 'ultramarathon', 'mile', 'mi', 'k', '100k', '50k', 'run'];
-        const inputTerms = lowerMsg.split(/\s+/);
-        const isSearch = inputTerms.some(term => searchTerms.includes(term));
-
-        // Filter races only if it looks like a search
-        let filtered = [];
-        if (isSearch) {
-            filtered = raceData.filter(race => {
-                const combined = `${race.name} ${race.distance} ${race.location} ${race.formatted}`.toLowerCase();
-                return inputTerms.every(term => combined.includes(term));
-            });
-            console.log(`✅ Filtered Matches: ${filtered.length}`);
+        // Track past interests for context memory
+        if (!userMemory.has(sessionId)) userMemory.set(sessionId, []);
+        if (normalizedMsg.includes('colorado') || normalizedMsg.includes('mountain')) {
+            userMemory.get(sessionId).push('mountain_colorado');
         }
 
-        const maxRacesToSend = 8;
+        // Detect training goal intent
+        const goalTriggers = ['training for', 'qualify for', 'trying to qualify', 'my goal is'];
+        const isGoalQuery = goalTriggers.some(trigger => normalizedMsg.includes(trigger));
+
+        const planningTriggers = ['make me a plan', 'build me a plan', 'schedule for', 'create a 6-month'];
+        const isPlanningQuery = planningTriggers.some(trigger => normalizedMsg.includes(trigger));
+
+        // Respond with a casual chat if no race data keywords detected
+        const keywords = ['race', 'run', 'ultramarathon', '50k', '100k', '100mi', 'trail', 'qualify'];
+        const mentionsRacing = keywords.some(k => normalizedMsg.includes(k));
+
+        const inputTerms = normalizedMsg
+            .split(/\s+/)
+            .filter(term => !['find', 'me', 'a', 'an', 'the', 'any', 'please', 'for', 'in'].includes(term));
+
+        const filtered = raceData.filter(race => {
+            const combined = `${race.name} ${race.distance} ${race.location} ${race.formatted}`.toLowerCase();
+            return inputTerms.every(term => combined.includes(term));
+        });
+
+        const maxRacesToSend = 5;
         const racesToSend = filtered.slice(0, maxRacesToSend);
 
-        const contextRaces = racesToSend
-            .map(r => `${r.name} – ${r.distance} – ${r.location} – Link: ${r.website}`)
-            .join(' ||\n');
+        // Compose dynamic system prompt
+        let contextRaces = '';
+        if (racesToSend.length > 0) {
+            contextRaces = racesToSend.map(r => {
+                const linkText = r.website ? `Link: ${r.website}` : 'I don’t have the website link for this race currently.';
+                return `${r.name} – ${r.distance} – ${r.location} – ${linkText}`;
+            }).join(' ||\n');
+        }
+
+        const pastPref = userMemory.get(sessionId).includes('mountain_colorado')
+            ? '\n\n📌 Note: This user has previously shown interest in mountain races in Colorado.'
+            : '';
 
         const baseSystemPrompt = `
-You are Alan, an expert ultramarathon assistant on Ultramarathon Connect.
+You are Alan, a helpful ultramarathon assistant on Ultramarathon Connect.
 
-✅ If the user is looking for races, use ONLY the list below to suggest them. NEVER invent races.
-✅ If the user talks casually (e.g. "I love chocolate cake"), just reply as a friendly assistant.
-✅ If the user is training or qualifying for something, suggest races or ask clarifying questions.
-✅ If the user asks for a 6-month plan, generate a basic monthly schedule with milestone races.
+ONLY recommend races from the provided list if they match.
 
-📦 Matching Races:
-${contextRaces || '[No specific matches, but keep tone friendly]'}
+Format each race as:
+Race Name – Distance – Location – Link: https://...
 
-💬 Past user notes: ${pastQueries.join(' | ')}
-`.trim();
+If a race is missing a link, say:
+"I don’t have the website link for this race currently."
+
+Respond in clear, short segments. Separate each race suggestion with "||".
+
+If the user says something random, respond casually and stay friendly.
+
+If no races match, say:
+"I'm sorry, I couldn’t find any matching races for that request."
+
+${pastPref}
+
+📦 Races:
+${contextRaces}
+        `.trim();
+
+        const promptMessage = isPlanningQuery
+            ? `${message}\n\nPlease respond with a 6-month plan that includes general milestone goals and races if relevant.`
+            : message;
 
         const completion = await openai.chat.completions.create({
             model: 'gpt-4',
             messages: [
                 { role: 'system', content: baseSystemPrompt },
-                { role: 'user', content: message },
+                { role: 'user', content: promptMessage },
             ],
             temperature: 0.7,
         });
 
         const reply = completion?.choices?.[0]?.message?.content;
+
         if (!reply) {
             console.error('OpenAI reply was empty');
             return res.json({ reply: "Hmm, I didn’t quite catch that. Can you rephrase?" });
