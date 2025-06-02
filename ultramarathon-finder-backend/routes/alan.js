@@ -22,15 +22,29 @@ router.post('/', async (req, res) => {
         }
 
         console.log('📩 User query:', message);
-        console.log('🔍 Sample race:', raceData[0]);
 
-        // Normalize and clean input
-        const inputTerms = message
-            .toLowerCase()
+        const input = message.trim().toLowerCase();
+
+        // 💬 Handle casual or non-search messages
+        const casualTriggers = ['hi', 'hello', 'thanks', 'thank you', 'who are you', 'what can you do'];
+        if (casualTriggers.some(t => input.includes(t))) {
+            const casualResponses = {
+                'hi': "Hi there! 👋 I'm Alan, your ultramarathon guide. Need help finding a race?",
+                'hello': "Hello! I'm Alan. Ask me anything about ultramarathons!",
+                'thanks': "You're welcome! Let me know if you'd like help finding another race.",
+                'thank you': "Glad to help! Want to discover another race?",
+                'who are you': "I'm Alan, your AI running buddy. I help you find and plan ultramarathon races.",
+                'what can you do': "I can help you find ultramarathons by location, date, distance, and more!"
+            };
+            const key = casualTriggers.find(t => input.includes(t));
+            return res.json({ reply: casualResponses[key] });
+        }
+
+        // 🏁 Race search flow
+        const inputTerms = input
             .split(/\s+/)
             .filter(term => !['find', 'me', 'a', 'an', 'the', 'any', 'please'].includes(term));
 
-        // Filter across full dataset
         const filtered = raceData.filter(race => {
             const combined = `${race.name} ${race.distance} ${race.location} ${race.formatted}`.toLowerCase();
             return inputTerms.every(term => combined.includes(term));
@@ -46,7 +60,10 @@ router.post('/', async (req, res) => {
         const racesToSend = filtered.slice(0, maxRacesToSend);
 
         const contextRaces = racesToSend
-            .map(r => `${r.name} – ${r.distance} – ${r.location} – Link: ${r.website}`)
+            .map(r => {
+                const reason = `Matches your request for ${inputTerms.join(', ')}`;
+                return `${r.name} – ${r.distance} – ${r.location} – Link: ${r.website} – Why: ${reason}`;
+            })
             .join(' ||\n');
 
         const baseSystemPrompt = `
@@ -55,7 +72,7 @@ You are Alan, an expert ultramarathon assistant on Ultramarathon Connect.
 ONLY use the races listed below. NEVER invent races or regions.
 
 🎯 Format each result:
-Race Name – Distance – Location – Link: https://...
+Race Name – Distance – Location – Link: https://... – Why: short reason why this race matches
 
 Separate each race with "||".
 
