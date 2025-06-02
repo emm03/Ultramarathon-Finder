@@ -15,6 +15,9 @@ import alanRoute from './routes/alan.js';
 import User from './models/User.js';
 import loadRaceData from './utils/loadRaceData.js';
 
+import stravaRoutes from './routes/strava.js';
+app.use('/', stravaRoutes);
+
 const app = express();
 
 // 🧠 In-memory session memory store for Alan AI
