@@ -24,10 +24,53 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
     };
 
-    bubble.addEventListener("click", () => {
+    let hasInteracted = false;
+
+    bubble.addEventListener("click", async () => {
         windowBox.classList.toggle("open");
+
         if (windowBox.classList.contains("open") && messages.innerHTML.trim() === "") {
             showWelcome();
+        }
+
+        if (!hasInteracted && windowBox.classList.contains("open")) {
+            hasInteracted = true;
+
+            const userMessage = "hello";
+            const typingEl = document.createElement("div");
+            typingEl.className = "alan-msg alan-typing";
+            typingEl.innerHTML = `<em>Alan is typing<span class="dots">...</span></em>`;
+            messages.appendChild(typingEl);
+            messages.scrollTop = messages.scrollHeight;
+
+            try {
+                const response = await fetch("https://ultramarathon-finder-backend.onrender.com/api/alan", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: userMessage }),
+                });
+                const data = await response.json();
+                typingEl.remove();
+
+                const replies = data.reply.split("||");
+
+                replies.forEach(reply => {
+                    const clean = escapeHtml(reply.trim());
+                    const linked = convertLinks(clean);
+                    messages.innerHTML += `
+                        <div class="alan-msg alan-reply">
+                            <div class="alan-box">
+                                <strong>Alan:</strong><br>${linked}
+                            </div>
+                        </div>`;
+                });
+
+                messages.scrollTop = messages.scrollHeight;
+            } catch (error) {
+                typingEl.remove();
+                messages.innerHTML += `<div class="alan-msg alan-reply"><strong>Alan:</strong> Sorry, there was an error.</div>`;
+                messages.scrollTop = messages.scrollHeight;
+            }
         }
     });
 
