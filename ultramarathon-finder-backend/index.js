@@ -17,6 +17,10 @@ import loadRaceData from './utils/loadRaceData.js';
 
 const app = express();
 
+// 🧠 In-memory session memory store for Alan AI
+const userSessionMemory = new Map();
+app.locals.userSessionMemory = userSessionMemory;
+
 // Environment debug log
 console.log('Loaded Environment Variables:');
 console.log({
