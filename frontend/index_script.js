@@ -56,6 +56,7 @@ function setupAuthenticatedMenu(menu, token) {
             <button class="dropbtn">My Account</button>
             <div class="dropdown-content">
                 <a href="account.html">Profile</a>
+                <a href="training_log.html">Training Log</a>
                 <a href="#" id="logout-link">Sign Out</a>
             </div>
         </div>

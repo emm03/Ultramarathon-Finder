@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Training Log - Ultramarathon Connect</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <header class="sticky-header">
+        <div class="logo-container">
+            <img src="ultra.png" alt="Ultramarathon Connect Logo" class="logo" />
+        </div>
+        <nav>
+            <ul class="menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="race_directory.html">Race Directory</a></li>
+                <li><a href="forum.html">Runner Community</a></li>
+                <li><a href="account.html">My Account</a></li>
+                <li><a href="training_log.html" class="active">Training Log</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="centered-content">
+        <h1>Connect Your Strava</h1>
+        <p>View your recent training runs and mileage.</p>
+        <a href="#" id="connect-strava" class="button">Connect with Strava</a>
+
+        <div id="activity-section" style="display: none; margin-top: 2rem;">
+            <h2>Recent Activities</h2>
+            <ul id="activity-list" style="text-align: left; padding: 0 1rem;"></ul>
+        </div>
+    </main>
+
+    <style>
+        .centered-content {
+            max-width: 600px;
+            margin: 5rem auto;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .button {
+            background-color: #fc4c02;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1.5rem;
+        }
+
+        .button:hover {
+            background-color: #e54300;
+        }
+    </style>
+
+    <script>
+        const clientId = 162687;
+        const redirectUri = window.location.origin + '/strava-auth';
+
+        document.getElementById("connect-strava").addEventListener("click", () => {
+            const scope = 'activity:read_all';
+            const url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&approval_prompt=force&scope=${scope}`;
+            window.location.href = url;
+        });
+
+        async function fetchActivities() {
+            try {
+                const res = await fetch('/api/strava/activities');
+                const data = await res.json();
+
+                if (Array.isArray(data)) {
+                    document.getElementById('activity-section').style.display = 'block';
+                    const list = document.getElementById('activity-list');
+                    list.innerHTML = '';
+
+                    data.forEach(act => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<strong>${act.name}</strong> – ${act.distance / 1000} km – ${new Date(act.start_date).toLocaleDateString()}`;
+                        list.appendChild(li);
+                    });
+                }
+            } catch (err) {
+                console.error("Error fetching activities:", err);
+            }
+        }
+
+        // Auto-fetch activities after redirect
+        if (window.location.pathname.includes('training_log.html')) {
+            fetchActivities();
+        }
+    </script>
+</body>
+
+</html>
