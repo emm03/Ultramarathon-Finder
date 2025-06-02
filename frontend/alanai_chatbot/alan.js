@@ -12,6 +12,9 @@ document.addEventListener("DOMContentLoaded", () => {
         "What’s a good beginner ultramarathon?",
     ];
 
+    // 🔐 Unique session ID for memory (same per session)
+    const sessionId = crypto.randomUUID();
+
     const showWelcome = () => {
         messages.innerHTML = `
             <div class="alan-welcome">
@@ -35,42 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!hasInteracted && windowBox.classList.contains("open")) {
             hasInteracted = true;
-
-            const userMessage = "hello";
-            const typingEl = document.createElement("div");
-            typingEl.className = "alan-msg alan-typing";
-            typingEl.innerHTML = `<em>Alan is typing<span class="dots">...</span></em>`;
-            messages.appendChild(typingEl);
-            messages.scrollTop = messages.scrollHeight;
-
-            try {
-                const response = await fetch("https://ultramarathon-finder-backend.onrender.com/api/alan", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ message: userMessage }),
-                });
-                const data = await response.json();
-                typingEl.remove();
-
-                const replies = data.reply.split("||");
-
-                replies.forEach(reply => {
-                    const clean = escapeHtml(reply.trim());
-                    const linked = convertLinks(clean);
-                    messages.innerHTML += `
-                        <div class="alan-msg alan-reply">
-                            <div class="alan-box">
-                                <strong>Alan:</strong><br>${linked}
-                            </div>
-                        </div>`;
-                });
-
-                messages.scrollTop = messages.scrollHeight;
-            } catch (error) {
-                typingEl.remove();
-                messages.innerHTML += `<div class="alan-msg alan-reply"><strong>Alan:</strong> Sorry, there was an error.</div>`;
-                messages.scrollTop = messages.scrollHeight;
-            }
+            await sendToAlan("hello");
         }
     });
 
@@ -88,6 +56,10 @@ document.addEventListener("DOMContentLoaded", () => {
         messages.innerHTML += `<div class="alan-msg user-msg"><strong>You:</strong> ${userMessage}</div>`;
         input.value = "";
 
+        await sendToAlan(userMessage);
+    });
+
+    async function sendToAlan(userMessage) {
         const typingEl = document.createElement("div");
         typingEl.className = "alan-msg alan-typing";
         typingEl.innerHTML = `<em>Alan is typing<span class="dots">...</span></em>`;
@@ -97,7 +69,10 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const response = await fetch("https://ultramarathon-finder-backend.onrender.com/api/alan", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-session-id": sessionId
+                },
                 body: JSON.stringify({ message: userMessage }),
             });
             const data = await response.json();
@@ -122,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
             messages.innerHTML += `<div class="alan-msg alan-reply"><strong>Alan:</strong> Sorry, there was an error.</div>`;
             messages.scrollTop = messages.scrollHeight;
         }
-    });
+    }
 
     function convertLinks(text) {
         const urlRegex = /((https?:\/\/)[^\s]+)/g;
