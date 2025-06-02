@@ -18,8 +18,7 @@
                 <li><a href="index.html">Home</a></li>
                 <li><a href="race_directory.html">Race Directory</a></li>
                 <li><a href="forum.html">Runner Community</a></li>
-                <li><a href="account.html">My Account</a></li>
-                <li><a href="training_log.html" class="active">Training Log</a></li>
+                <li id="account-tab" class="auth-tab"></li>
             </ul>
         </nav>
     </header>
@@ -32,6 +31,9 @@
         <div id="activity-section" style="display: none; margin-top: 2rem;">
             <h2>Recent Activities</h2>
             <div id="activity-list" class="activity-grid"></div>
+            <div style="margin-top: 1.5rem;">
+                <button id="refresh-strava" class="button">Refresh Activities</button>
+            </div>
         </div>
     </main>
 
@@ -53,6 +55,7 @@
             text-decoration: none;
             display: inline-block;
             margin-top: 1.5rem;
+            cursor: pointer;
         }
 
         .button:hover {
@@ -97,58 +100,8 @@
         }
     </style>
 
-    <script>
-        const clientId = 162687;
-        const redirectUri = 'https://ultramarathon-finder-backend.onrender.com/strava-auth';
-
-        document.getElementById("connect-strava").addEventListener("click", () => {
-            const scope = 'activity:read_all';
-            const url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&approval_prompt=force&scope=${scope}`;
-            window.location.href = url;
-        });
-
-        async function fetchActivities() {
-            try {
-                const res = await fetch('https://ultramarathon-finder-backend.onrender.com/api/strava/activities');
-                const data = await res.json();
-
-                if (Array.isArray(data)) {
-                    document.getElementById('activity-section').style.display = 'block';
-                    const list = document.getElementById('activity-list');
-                    list.innerHTML = '';
-
-                    data.forEach(act => {
-                        const card = document.createElement('div');
-                        card.className = 'activity-card';
-
-                        const distanceKm = (act.distance / 1000).toFixed(2);
-                        const movingTimeMin = Math.floor(act.moving_time / 60);
-                        const pace = distanceKm > 0 ? (movingTimeMin / distanceKm).toFixed(2) : 'N/A';
-                        const date = new Date(act.start_date).toLocaleDateString();
-
-                        card.innerHTML = `
-              <h3>${act.name || 'Untitled Activity'}</h3>
-              <div class="activity-meta">${date}${act.location_city ? ' – ' + act.location_city : ''}</div>
-              <div class="activity-description">${act.description || ''}</div>
-              <div class="activity-stats">
-                <strong>Distance:</strong> ${distanceKm} km<br>
-                <strong>Time:</strong> ${movingTimeMin} min<br>
-                <strong>Pace:</strong> ${pace} min/km
-              </div>
-            `;
-
-                        list.appendChild(card);
-                    });
-                }
-            } catch (err) {
-                console.error("Error fetching activities:", err);
-            }
-        }
-
-        if (window.location.pathname.includes('training_log.html')) {
-            fetchActivities();
-        }
-    </script>
+    <script src="index_script.js"></script>
+    <script src="training_log_script.js"></script>
 </body>
 
 </html>
