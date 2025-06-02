@@ -1,93 +1,90 @@
-// routes/alan.js
-
 import express from 'express';
 import dotenv from 'dotenv';
 import OpenAI from 'openai';
-import UserChat from '../models/UserChat.js';
+import fs from 'fs';
 
 dotenv.config();
 const router = express.Router();
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+const memory = new Map(); // 🧠 Temporary session memory (sessionId → [history])
 
 router.post('/', async (req, res) => {
     try {
-        const { message } = req.body;
-        const sessionId = req.headers['x-session-id'] || 'anonymous';
-        const raceData = req.app.locals.raceData;
+        const { message, sessionId } = req.body;
+        const raceData = req.app.locals.raceData || [];
+        const userMemory = memory.get(sessionId) || [];
 
-        if (!Array.isArray(raceData) || raceData.length === 0) {
-            return res.status(500).json({ reply: 'Sorry, I can’t access race info right now.' });
+        if (!message || !sessionId) {
+            return res.status(400).json({ reply: "Missing session or message." });
         }
 
-        console.log('📩 User query:', message);
+        // Store message in memory
+        userMemory.push({ role: 'user', content: message });
+        if (userMemory.length > 10) userMemory.shift();
+        memory.set(sessionId, userMemory);
 
-        // Input parsing
-        const inputTerms = message.toLowerCase().split(/\s+/).filter(term =>
-            !['find', 'me', 'a', 'an', 'the', 'any', 'please'].includes(term)
-        );
+        // Analyze user intent for Western States qualifier
+        const wantsQualifier = /western states/i.test(message) && /qualify|qualifier/.test(message);
+        const planningIntent = /plan|schedule|month|training|prepare/.test(message) && /race|ultra|event/.test(message);
 
-        const wantsQualifier = /qualify|qualifier|western states|wser/.test(message.toLowerCase());
-        const wantsPlan = /make.*plan|build.*plan|training plan|month.*plan/.test(message.toLowerCase());
+        let matchedRaces = [];
 
-        // Try matching actual races
-        const filtered = raceData.filter(race => {
-            const combined = `${race.name} ${race.distance} ${race.location} ${race.formatted}`.toLowerCase();
-            return inputTerms.every(term => combined.includes(term));
-        });
-
-        let reply = '';
-        if (filtered.length > 0) {
-            const topMatches = filtered.slice(0, 10);
-            reply = topMatches.map(race => {
-                const link = race.website ? race.website : '(Website not available yet)';
-                return `${race.name} – ${race.distance} – ${race.location} – Link: ${link}`;
-            }).join(' ||\n');
-        }
-
-        // No matches or general message fallback
-        if (!reply) {
-            const fallbackPrompt = `
-You are Alan, a helpful ultramarathon assistant on Ultramarathon Connect.
-
-User Message: "${message}"
-
-Rules:
-- If they talk about qualifying for Western States, list popular known races like Rio Del Lago, Canyons, Javelina, San Diego 100, etc.
-- If you can’t find a race, give a thoughtful, friendly reply and suggest they refine or try again.
-- If they say something fun like "I love chocolate", respond warmly.
-- Always be conversational and enthusiastic.
-
-You do not have access to race data in this context. Just reply as Alan would in natural conversation.
-      `.trim();
-
-            const completion = await openai.chat.completions.create({
-                model: 'gpt-4',
-                messages: [
-                    { role: 'system', content: fallbackPrompt },
-                    { role: 'user', content: message },
-                ],
-                temperature: 0.7,
+        if (wantsQualifier) {
+            matchedRaces = raceData.filter(r =>
+                /rio del lago|canyons|san diego 100|angeles crest|vermont|old dominion|western states|cascade crest|run rabbit|high lonesome|eastern states|black canyon|javelina/i.test(r.name)
+            );
+        } else {
+            // Match by keywords
+            const terms = message.toLowerCase().split(/\s+/);
+            matchedRaces = raceData.filter(r => {
+                const text = `${r.name} ${r.distance} ${r.location} ${r.formatted}`.toLowerCase();
+                return terms.every(term => text.includes(term));
             });
-
-            reply = completion?.choices?.[0]?.message?.content || "Hmm, I didn’t quite catch that. Can you rephrase?";
         }
 
-        // Save to memory
-        await UserChat.create({
-            sessionId,
-            message,
-            reply,
-            preferences: inputTerms,
-            goal: wantsQualifier ? 'Qualify for WSER' : (wantsPlan ? 'Wants race plan' : '')
+        const summarizedMemory = userMemory
+            .filter(m => m.role === 'user')
+            .slice(-5)
+            .map(m => `User said: "${m.content}"`)
+            .join("\n");
+
+        const systemPrompt = `
+You are Alan, an expert ultramarathon assistant on Ultramarathon Connect.
+Respond conversationally and reference recent user input when helpful.
+
+${summarizedMemory}
+
+Here are the matching races:
+${matchedRaces.map(r => {
+            const link = r.website ? `Link: ${r.website}` : `Link: (Website not available yet)`;
+            return `${r.name} – ${r.distance} – ${r.location} – ${link}`;
+        }).join("\n")}
+        `.trim();
+
+        const openaiRes = await openai.chat.completions.create({
+            model: 'gpt-4',
+            messages: [
+                { role: 'system', content: systemPrompt },
+                ...userMemory,
+                { role: 'user', content: message }
+            ],
+            temperature: 0.75
         });
 
-        res.json({ reply });
+        const replyText = openaiRes.choices?.[0]?.message?.content || "I'm not sure how to respond right now.";
+
+        // Save AI reply in memory too
+        userMemory.push({ role: 'assistant', content: replyText });
+        memory.set(sessionId, userMemory);
+
+        const replyChunks = replyText.split(/(?:\n{2,}|\\n\\n|\\n)/).filter(Boolean);
+        const formattedReply = replyChunks.join('||');
+
+        res.json({ reply: formattedReply });
     } catch (err) {
-        console.error('❌ Alan error:', err.message);
-        res.status(500).json({ reply: 'Oops! I had trouble answering that. Try again shortly.' });
+        console.error("Alan Error:", err);
+        res.status(500).json({ reply: "Oops! Alan had trouble responding. Try again shortly." });
     }
 });
 
