@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
         if (userMemory.length > 10) userMemory.shift();
         memory.set(sessionId, userMemory);
 
-        // Analyze user intent for Western States qualifier
+        // Analyze user intent
         const wantsQualifier = /western states/i.test(message) && /qualify|qualifier/.test(message);
         const planningIntent = /plan|schedule|month|training|prepare/.test(message) && /race|ultra|event/.test(message);
 
@@ -35,7 +35,6 @@ router.post('/', async (req, res) => {
                 /rio del lago|canyons|san diego 100|angeles crest|vermont|old dominion|western states|cascade crest|run rabbit|high lonesome|eastern states|black canyon|javelina/i.test(r.name)
             );
         } else {
-            // Match by keywords
             const terms = message.toLowerCase().split(/\s+/);
             matchedRaces = raceData.filter(r => {
                 const text = `${r.name} ${r.distance} ${r.location} ${r.formatted}`.toLowerCase();
@@ -57,8 +56,8 @@ ${summarizedMemory}
 
 Here are the matching races:
 ${matchedRaces.map(r => {
-            const link = r.website ? `Link: ${r.website}` : `Link: (Website not available yet)`;
-            return `${r.name} – ${r.distance} – ${r.location} – ${link}`;
+            const link = r.website && r.website.trim() ? ` – Link: ${r.website}` : '';
+            return `${r.name} – ${r.distance} – ${r.location}${link}`;
         }).join("\n")}
         `.trim();
 
@@ -74,7 +73,6 @@ ${matchedRaces.map(r => {
 
         const replyText = openaiRes.choices?.[0]?.message?.content || "I'm not sure how to respond right now.";
 
-        // Save AI reply in memory too
         userMemory.push({ role: 'assistant', content: replyText });
         memory.set(sessionId, userMemory);
 
