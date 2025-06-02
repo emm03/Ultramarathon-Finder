@@ -72,7 +72,7 @@
 
         async function fetchActivities() {
             try {
-                const res = await fetch('/api/strava/activities');
+                const res = await fetch('https://ultramarathon-finder-backend.onrender.com/api/strava/activities');
                 const data = await res.json();
 
                 if (Array.isArray(data)) {
