@@ -5,7 +5,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 const router = express.Router();
 
-// 🔒 Temporarily store the Strava token (in memory)
+// ✅ Confirm the file loaded on Render startup
+console.log("✅ strava.js routes loaded");
+
 let stravaToken = null;
 
 // ✅ Step 1: Handle Strava OAuth Redirect
@@ -29,15 +31,15 @@ router.get('/strava-auth', async (req, res) => {
         stravaToken = tokenRes.data.access_token;
         console.log("✅ Access Token Stored:", stravaToken);
 
-        // Redirect back to the training log
-        res.redirect('/training_log.html');
+        // Redirect back to the frontend dashboard
+        res.redirect('https://ultramarathonconnect.com/training_log.html');
     } catch (err) {
         console.error("❌ Error exchanging token:", err.response?.data || err.message);
         res.status(500).send("Failed to connect to Strava.");
     }
 });
 
-// ✅ Step 2: Fetch Recent Strava Activities
+// ✅ Step 2: Fetch Activities
 router.get('/api/strava/activities', async (req, res) => {
     if (!stravaToken) {
         return res.status(401).json({ error: "Strava not connected." });
@@ -58,6 +60,11 @@ router.get('/api/strava/activities', async (req, res) => {
         console.error("❌ Error fetching Strava activities:", err.response?.data || err.message);
         res.status(500).json({ error: "Failed to fetch activities." });
     }
+});
+
+// ✅ Step 3: Add a test route
+router.get('/test-strava', (req, res) => {
+    res.send("Strava route is active ✅");
 });
 
 export default router;
