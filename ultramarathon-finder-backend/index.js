@@ -14,31 +14,11 @@ import contactRoutes from './routes/contact.js';
 import alanRoute from './routes/alan.js';
 import User from './models/User.js';
 import loadRaceData from './utils/loadRaceData.js';
-
 import stravaRoutes from './routes/strava.js';
 
 const app = express();
 
-app.use('/', stravaRoutes);
-
-// 🧠 In-memory session memory store for Alan AI
-const userSessionMemory = new Map();
-app.locals.userSessionMemory = userSessionMemory;
-
-// Environment debug log
-console.log('Loaded Environment Variables:');
-console.log({
-  PORT: process.env.PORT,
-  MONGO_URI: process.env.MONGO_URI ? 'Loaded' : 'Not Set',
-  JWT_SECRET: process.env.JWT_SECRET ? 'Loaded' : 'Not Set',
-  AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY ? 'Loaded' : 'Not Set',
-  AWS_SECRET_KEY: process.env.AWS_SECRET_KEY ? 'Loaded' : 'Not Set',
-  AWS_REGION: process.env.AWS_REGION ? 'Loaded' : 'Not Set',
-  S3_BUCKET_NAME: process.env.S3_BUCKET_NAME ? 'Loaded' : 'Not Set',
-  OPENAI_API_KEY: process.env.OPENAI_API_KEY ? 'Loaded' : 'Not Set',
-});
-
-// Middleware
+// ✅ Middleware comes BEFORE routes
 app.use(express.json());
 
 app.use((req, res, next) => {
@@ -46,7 +26,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// ✅ CORS configuration
+// ✅ Correct order: CORS before all routes
 const allowedOrigins = [
   'https://ultramarathonconnect.com',
   'http://localhost:3000'
@@ -67,6 +47,26 @@ app.use(cors({
 
 app.options('*', cors());
 
+// ✅ Routes now come AFTER middleware
+app.use('/', stravaRoutes);
+
+// 🧠 In-memory session memory store for Alan AI
+const userSessionMemory = new Map();
+app.locals.userSessionMemory = userSessionMemory;
+
+// Debug environment variables
+console.log('Loaded Environment Variables:', {
+  PORT: process.env.PORT,
+  MONGO_URI: process.env.MONGO_URI ? 'Loaded' : 'Not Set',
+  JWT_SECRET: process.env.JWT_SECRET ? 'Loaded' : 'Not Set',
+  AWS_ACCESS_KEY: process.env.AWS_ACCESS_KEY ? 'Loaded' : 'Not Set',
+  AWS_SECRET_KEY: process.env.AWS_SECRET_KEY ? 'Loaded' : 'Not Set',
+  AWS_REGION: process.env.AWS_REGION ? 'Loaded' : 'Not Set',
+  S3_BUCKET_NAME: process.env.S3_BUCKET_NAME ? 'Loaded' : 'Not Set',
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY ? 'Loaded' : 'Not Set',
+});
+
+// MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -76,14 +76,17 @@ mongoose.connect(process.env.MONGO_URI, {
     process.exit(1);
   });
 
+// Static file routes
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 app.use('/static', express.static(path.join(process.cwd(), 'public')));
 
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/forum', forumRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/alan', alanRoute);
 
+// Base route
 app.get('/', (req, res) => {
   res.send('Ultramarathon Finder Backend is running!');
 });
@@ -101,6 +104,7 @@ app.get('/api/env-check', (req, res) => {
   });
 });
 
+// S3 test route
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY,
   secretAccessKey: process.env.AWS_SECRET_KEY,
@@ -122,6 +126,7 @@ app.get('/api/s3-test', async (req, res) => {
   }
 });
 
+// Get user profile route
 app.get('/api/user/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select('username email profilePicture');
@@ -133,15 +138,18 @@ app.get('/api/user/:id', async (req, res) => {
   }
 });
 
+// Error middleware
 app.use((err, req, res, next) => {
   console.error('Error middleware:', err.message);
   res.status(500).json({ message: 'Unexpected error', error: err.message });
 });
 
+// Catch-all for 404
 app.use((req, res) => {
   res.status(404).json({ message: 'Endpoint not found' });
 });
 
+// Launch app
 const PORT = process.env.PORT || 5001;
 
 loadRaceData()
