@@ -31,13 +31,13 @@
 
         <div id="activity-section" style="display: none; margin-top: 2rem;">
             <h2>Recent Activities</h2>
-            <ul id="activity-list" style="text-align: left; padding: 0 1rem;"></ul>
+            <div id="activity-list" class="activity-grid"></div>
         </div>
     </main>
 
     <style>
         .centered-content {
-            max-width: 600px;
+            max-width: 700px;
             margin: 5rem auto;
             padding: 2rem;
             text-align: center;
@@ -57,6 +57,43 @@
 
         .button:hover {
             background-color: #e54300;
+        }
+
+        .activity-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .activity-card {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+            text-align: left;
+        }
+
+        .activity-card h3 {
+            margin: 0 0 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        .activity-meta {
+            color: #555;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .activity-description {
+            font-style: italic;
+            color: #444;
+        }
+
+        .activity-stats {
+            margin-top: 0.75rem;
+            font-size: 0.95rem;
+            line-height: 1.4;
         }
     </style>
 
@@ -81,9 +118,26 @@
                     list.innerHTML = '';
 
                     data.forEach(act => {
-                        const li = document.createElement('li');
-                        li.innerHTML = `<strong>${act.name}</strong> – ${act.distance / 1000} km – ${new Date(act.start_date).toLocaleDateString()}`;
-                        list.appendChild(li);
+                        const card = document.createElement('div');
+                        card.className = 'activity-card';
+
+                        const distanceKm = (act.distance / 1000).toFixed(2);
+                        const movingTimeMin = Math.floor(act.moving_time / 60);
+                        const pace = distanceKm > 0 ? (movingTimeMin / distanceKm).toFixed(2) : 'N/A';
+                        const date = new Date(act.start_date).toLocaleDateString();
+
+                        card.innerHTML = `
+              <h3>${act.name || 'Untitled Activity'}</h3>
+              <div class="activity-meta">${date}${act.location_city ? ' – ' + act.location_city : ''}</div>
+              <div class="activity-description">${act.description || ''}</div>
+              <div class="activity-stats">
+                <strong>Distance:</strong> ${distanceKm} km<br>
+                <strong>Time:</strong> ${movingTimeMin} min<br>
+                <strong>Pace:</strong> ${pace} min/km
+              </div>
+            `;
+
+                        list.appendChild(card);
                     });
                 }
             } catch (err) {
@@ -91,7 +145,6 @@
             }
         }
 
-        // Auto-fetch activities after redirect
         if (window.location.pathname.includes('training_log.html')) {
             fetchActivities();
         }
