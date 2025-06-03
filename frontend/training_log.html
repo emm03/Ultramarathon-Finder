@@ -23,26 +23,61 @@
         </nav>
     </header>
 
-    <main class="centered-content">
-        <h1>Connect Your Strava</h1>
-        <p>View your recent training runs and mileage.</p>
-        <a href="#" id="connect-strava" class="button">Connect with Strava</a>
+    <main class="training-container">
+        <div id="profile-card" class="profile-card" style="display: none;"></div>
 
-        <div id="activity-section" style="display: none; margin-top: 2rem;">
-            <h2>Recent Activities</h2>
-            <div id="activity-list" class="activity-grid"></div>
-            <div style="margin-top: 1.5rem;">
-                <button id="refresh-strava" class="button">Refresh Activities</button>
-            </div>
+        <div class="button-bar">
+            <a href="#" id="connect-strava" class="button">Connect with Strava</a>
+            <button id="refresh-strava" class="button">Refresh Activities</button>
         </div>
+
+        <section id="activity-section" style="display: none;">
+            <h2 class="section-title">Recent Activities</h2>
+            <div id="activity-list" class="activity-grid"></div>
+        </section>
     </main>
 
     <style>
-        .centered-content {
-            max-width: 700px;
+        .training-container {
+            max-width: 900px;
             margin: 5rem auto;
             padding: 2rem;
-            text-align: center;
+        }
+
+        .profile-card {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+        }
+
+        .profile-card img {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-info h2 {
+            margin: 0 0 0.5rem;
+            font-size: 1.5rem;
+        }
+
+        .profile-info p {
+            margin: 0;
+            color: #444;
+            font-size: 0.95rem;
+        }
+
+        .button-bar {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
         }
 
         .button {
@@ -53,8 +88,6 @@
             border: none;
             border-radius: 8px;
             text-decoration: none;
-            display: inline-block;
-            margin-top: 1.5rem;
             cursor: pointer;
         }
 
@@ -62,11 +95,14 @@
             background-color: #e54300;
         }
 
+        .section-title {
+            margin-bottom: 1rem;
+        }
+
         .activity-grid {
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
-            margin-top: 2rem;
         }
 
         .activity-card {

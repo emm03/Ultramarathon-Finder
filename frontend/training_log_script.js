@@ -8,8 +8,30 @@ document.getElementById("connect-strava").addEventListener("click", () => {
 });
 
 document.getElementById("refresh-strava").addEventListener("click", () => {
+    fetchProfile();
     fetchActivities();
 });
+
+async function fetchProfile() {
+    try {
+        const res = await fetch('https://ultramarathon-finder-backend.onrender.com/api/strava/profile');
+        const athlete = await res.json();
+
+        const card = document.getElementById('profile-card');
+        card.innerHTML = `
+      <img src="${athlete.profile_medium || 'default-profile.png'}" alt="Profile Photo">
+      <div class="profile-info">
+        <h2>${athlete.firstname || ''} ${athlete.lastname || ''}</h2>
+        <p>${athlete.city || ''}, ${athlete.state || ''}</p>
+        <p>${athlete.bio || 'Ultrarunner'}</p>
+      </div>
+    `;
+        card.style.display = 'flex';
+        document.getElementById('connect-strava').style.display = 'none';
+    } catch (err) {
+        console.error("Error fetching profile:", err);
+    }
+}
 
 async function fetchActivities() {
     try {
@@ -18,8 +40,6 @@ async function fetchActivities() {
 
         if (Array.isArray(data)) {
             document.getElementById('activity-section').style.display = 'block';
-            document.getElementById('connect-strava').style.display = 'none';
-
             const list = document.getElementById('activity-list');
             list.innerHTML = '';
 
@@ -51,7 +71,7 @@ async function fetchActivities() {
     }
 }
 
-// Auto-load if redirected back
 if (window.location.pathname.includes('training_log.html')) {
+    fetchProfile();
     fetchActivities();
 }
