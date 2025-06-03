@@ -12,7 +12,7 @@ fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/status', {
 
         if (data.loggedIn) {
             userToken = data.token;
-            localStorage.setItem("token", userToken);  // ✅ Save token
+            localStorage.setItem("token", userToken);  // ✅ Save token to localStorage
 
             accountTab.innerHTML = `
         <div class="dropdown">
@@ -26,7 +26,6 @@ fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/status', {
 
             fetchActivities();
         } else {
-            // ✅ Fallback: Try to use stored token if available
             const tokenFromStorage = localStorage.getItem("token");
             if (tokenFromStorage) {
                 userToken = tokenFromStorage;
@@ -38,7 +37,7 @@ fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/status', {
     });
 
 function logout() {
-    localStorage.removeItem("token");  // ✅ Clear local token
+    localStorage.removeItem("token");
     fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/logout', {
         credentials: 'include'
     }).then(() => window.location.reload());
@@ -95,6 +94,7 @@ async function fetchActivities() {
             Time: ${(act.elapsed_time / 60).toFixed(1)} mins<br>
             Pace: ${(act.elapsed_time / 60 / (act.distance / 1000)).toFixed(1)} min/km
           </div>
+          ${act.photos && act.photos.length > 0 ? act.photos.map(url => `<img src="${url}" style="max-width: 100%; border-radius: 8px; margin-top: 0.5rem;" />`).join('') : ''}
         `;
                 list.appendChild(div);
             });
