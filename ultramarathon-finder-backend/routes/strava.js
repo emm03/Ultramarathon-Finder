@@ -26,7 +26,7 @@ router.get('/strava-auth', async (req, res) => {
         });
         stravaToken = tokenRes.data.access_token;
         console.log("✅ Access Token Stored:", stravaToken);
-        res.redirect('/training_log.html');
+        res.redirect('https://ultramarathonconnect.com/training_log.html');
     } catch (err) {
         console.error("❌ Error exchanging token:", err.response?.data || err.message);
         res.status(500).send("Failed to connect to Strava.");
