@@ -138,13 +138,13 @@ app.get('/api/user/:id', async (req, res) => {
   }
 });
 
-// Error middleware
+// ✅ Error middleware (before 404)
 app.use((err, req, res, next) => {
   console.error('Error middleware:', err.message);
   res.status(500).json({ message: 'Unexpected error', error: err.message });
 });
 
-// Catch-all for 404
+// ✅ Catch-all 404 moved to bottom
 app.use((req, res) => {
   res.status(404).json({ message: 'Endpoint not found' });
 });
