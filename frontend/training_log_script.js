@@ -9,8 +9,10 @@ fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/status', {
     .then(res => res.json())
     .then(data => {
         const accountTab = document.getElementById('account-tab');
+
         if (data.loggedIn) {
             userToken = data.token;
+            localStorage.setItem("token", userToken);  // ✅ Save token
 
             accountTab.innerHTML = `
         <div class="dropdown">
@@ -24,11 +26,19 @@ fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/status', {
 
             fetchActivities();
         } else {
-            accountTab.innerHTML = `<a href="account.html">My Account</a>`;
+            // ✅ Fallback: Try to use stored token if available
+            const tokenFromStorage = localStorage.getItem("token");
+            if (tokenFromStorage) {
+                userToken = tokenFromStorage;
+                fetchActivities();
+            } else {
+                accountTab.innerHTML = `<a href="account.html">My Account</a>`;
+            }
         }
     });
 
 function logout() {
+    localStorage.removeItem("token");  // ✅ Clear local token
     fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/logout', {
         credentials: 'include'
     }).then(() => window.location.reload());
