@@ -27,9 +27,13 @@ const requireUser = async (req, res, next) => {
 
 // 🌐 Step 1: OAuth Redirect Handler
 router.get('/strava-auth', async (req, res) => {
-    const { code, error, state } = req.query;
+    const { code, error } = req.query;
+    const cookie = req.headers.cookie || '';
+    const match = cookie.match(/strava_user_id=([^;]+)/);
+    const userId = match ? match[1] : null;
+
     if (error) return res.status(400).send("Access to Strava denied.");
-    if (!state) return res.status(400).send("Missing user session.");
+    if (!userId) return res.status(400).send("Missing user session");
 
     try {
         const tokenRes = await axios.post('https://www.strava.com/oauth/token', null, {
@@ -42,11 +46,9 @@ router.get('/strava-auth', async (req, res) => {
         });
 
         const accessToken = tokenRes.data.access_token;
+        await User.findByIdAndUpdate(userId, { stravaAccessToken: accessToken });
 
-        // ✅ Store access token in user's document
-        await User.findByIdAndUpdate(state, { stravaAccessToken: accessToken });
-        console.log(`✅ Stored Strava token for user ${state}`);
-
+        console.log(`✅ Saved Strava token for user ${userId}`);
         res.redirect('https://ultramarathonconnect.com/training_log.html');
     } catch (err) {
         console.error("❌ Error exchanging token:", err.response?.data || err.message);
