@@ -12,7 +12,7 @@ fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/status', {
 
         if (data.loggedIn) {
             userToken = data.token;
-            localStorage.setItem("token", userToken);  // ✅ Save token to localStorage
+            localStorage.setItem("token", userToken);
 
             accountTab.innerHTML = `
         <div class="dropdown">
@@ -23,6 +23,12 @@ fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/status', {
             <a href="#" onclick="logout()">Sign Out</a>
           </div>
         </div>`;
+
+            // If user already connected Strava, skip connect button
+            if (data.user.stravaAccessToken) {
+                document.getElementById('connect-strava').style.display = 'none';
+                document.getElementById('refresh-strava').style.display = 'inline-block';
+            }
 
             fetchActivities();
         } else {
