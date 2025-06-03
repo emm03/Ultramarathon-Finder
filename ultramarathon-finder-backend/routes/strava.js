@@ -7,36 +7,18 @@ import User from '../models/User.js';
 dotenv.config();
 const router = express.Router();
 
-// Middleware to extract user from token
-const requireUser = async (req, res, next) => {
-    const auth = req.headers.authorization;
-    if (!auth) return res.status(401).json({ error: 'Unauthorized' });
-
-    try {
-        const token = auth.split(' ')[1];
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.userId);
-        if (!user) return res.status(401).json({ error: 'User not found' });
-
-        req.user = user;
-        next();
-    } catch (err) {
-        return res.status(401).json({ error: 'Invalid token' });
-    }
-};
-
-// 🔁 Strava OAuth Redirect Handler
+// Strava OAuth Redirect Handler
 router.get('/strava-auth', async (req, res) => {
-    const { code, error } = req.query;
-
-    const cookie = req.headers.cookie || '';
-    const match = cookie.match(/strava_user_id=([^;]+)/);
-    const userId = match ? match[1] : null;
-
+    const { code, error, token } = req.query;
     if (error) return res.status(400).send("Access to Strava denied.");
-    if (!userId) return res.status(400).send("Missing user session");
+    if (!token) return res.status(400).send("Missing token");
 
     try {
+        // Decode user from JWT
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decoded.userId;
+        if (!userId) return res.status(401).send("Invalid token");
+
         const tokenRes = await axios.post('https://www.strava.com/oauth/token', null, {
             params: {
                 client_id: process.env.STRAVA_CLIENT_ID,
@@ -49,28 +31,46 @@ router.get('/strava-auth', async (req, res) => {
         const accessToken = tokenRes.data.access_token;
         await User.findByIdAndUpdate(userId, { stravaAccessToken: accessToken });
 
-        console.log(`✅ Strava token stored for user ${userId}`);
+        console.log(`✅ Stored Strava token for user ${userId}`);
         res.redirect('https://ultramarathonconnect.com/training_log.html');
     } catch (err) {
-        console.error("❌ Token exchange failed:", err.response?.data || err.message);
-        res.status(500).send("Strava token exchange failed.");
+        console.error("❌ Error during Strava OAuth:", err.message);
+        res.status(500).send("Failed to connect to Strava.");
     }
 });
 
-// 🏃 Fetch Activities
+// Middleware to require auth
+const requireUser = async (req, res, next) => {
+    const auth = req.headers.authorization;
+    if (!auth) return res.status(401).json({ error: 'Unauthorized' });
+
+    try {
+        const token = auth.split(' ')[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.userId);
+        if (!user) return res.status(404).json({ error: 'User not found' });
+
+        req.user = user;
+        next();
+    } catch (err) {
+        return res.status(401).json({ error: 'Invalid token' });
+    }
+};
+
+// Get activities
 router.get('/api/strava/activities', requireUser, async (req, res) => {
     const accessToken = req.user.stravaAccessToken;
     if (!accessToken) return res.status(401).json({ error: "Strava not connected." });
 
     try {
-        const result = await axios.get('https://www.strava.com/api/v3/athlete/activities', {
+        const activityRes = await axios.get('https://www.strava.com/api/v3/athlete/activities', {
             headers: { Authorization: `Bearer ${accessToken}` },
             params: { per_page: 10 }
         });
 
-        res.json(result.data);
+        res.json(activityRes.data);
     } catch (err) {
-        console.error("❌ Fetch error:", err.response?.data || err.message);
+        console.error("❌ Error fetching Strava activities:", err.message);
         res.status(500).json({ error: "Failed to fetch activities." });
     }
 });
