@@ -40,25 +40,20 @@ router.get('/strava-auth', async (req, res) => {
 });
 
 // ✅ Step 2: Fetch Activities
-router.get('/api/strava/activities', async (req, res) => {
+router.get('/api/strava/profile', async (req, res) => {
     if (!stravaToken) {
         return res.status(401).json({ error: "Strava not connected." });
     }
 
     try {
-        const activityRes = await axios.get('https://www.strava.com/api/v3/athlete/activities', {
-            headers: {
-                Authorization: `Bearer ${stravaToken}`
-            },
-            params: {
-                per_page: 5
-            }
+        const profileRes = await axios.get('https://www.strava.com/api/v3/athlete', {
+            headers: { Authorization: `Bearer ${stravaToken}` }
         });
 
-        res.json(activityRes.data);
+        res.json(profileRes.data);
     } catch (err) {
-        console.error("❌ Error fetching Strava activities:", err.response?.data || err.message);
-        res.status(500).json({ error: "Failed to fetch activities." });
+        console.error("❌ Error fetching profile:", err.response?.data || err.message);
+        res.status(500).json({ error: "Failed to fetch profile." });
     }
 });
 
