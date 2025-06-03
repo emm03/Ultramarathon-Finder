@@ -7,7 +7,7 @@ import User from '../models/User.js';
 dotenv.config();
 const router = express.Router();
 
-// 🔐 Middleware to get the user from the token
+// 🔐 Middleware to extract user from JWT
 const requireUser = async (req, res, next) => {
     const auth = req.headers.authorization;
     if (!auth) return res.status(401).json({ error: 'Unauthorized' });
@@ -25,10 +25,11 @@ const requireUser = async (req, res, next) => {
     }
 };
 
-// 🌐 Step 1: OAuth Redirect
+// 🌐 Step 1: OAuth Redirect Handler
 router.get('/strava-auth', async (req, res) => {
-    const { code, error } = req.query;
+    const { code, error, state } = req.query;
     if (error) return res.status(400).send("Access to Strava denied.");
+    if (!state) return res.status(400).send("Missing user session.");
 
     try {
         const tokenRes = await axios.post('https://www.strava.com/oauth/token', null, {
@@ -42,24 +43,13 @@ router.get('/strava-auth', async (req, res) => {
 
         const accessToken = tokenRes.data.access_token;
 
-        // 🧠 Decode token from cookie if available
-        const cookie = req.headers.cookie || '';
-        const match = cookie.match(/token=([^;]+)/);
-        const token = match ? match[1] : null;
+        // ✅ Store access token in user's document
+        await User.findByIdAndUpdate(state, { stravaAccessToken: accessToken });
+        console.log(`✅ Stored Strava token for user ${state}`);
 
-        if (!token) return res.status(401).send("Missing user session");
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.userId);
-        if (!user) return res.status(404).send("User not found");
-
-        user.stravaAccessToken = accessToken;
-        await user.save();
-
-        console.log(`✅ Saved Strava token for user ${user.username}`);
         res.redirect('https://ultramarathonconnect.com/training_log.html');
     } catch (err) {
-        console.error("❌ Strava auth error:", err.response?.data || err.message);
+        console.error("❌ Error exchanging token:", err.response?.data || err.message);
         res.status(500).send("Failed to connect to Strava.");
     }
 });
@@ -84,7 +74,7 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                         params: { size: 600 }
                     });
                     photos = photoRes.data.map(p => p.urls["600"] || p.urls["100"]);
-                } catch (err) {
+                } catch {
                     console.warn(`⚠️ No photos for activity ${activity.id}`);
                 }
 
