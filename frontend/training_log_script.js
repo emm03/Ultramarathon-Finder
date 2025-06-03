@@ -34,9 +34,20 @@ function logout() {
 
 const connectBtn = document.getElementById("connect-strava");
 connectBtn?.addEventListener("click", () => {
-    const scope = 'activity:read_all';
-    const url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&approval_prompt=force&scope=${scope}`;
-    window.location.href = url;
+    fetch('/api/auth/status')
+        .then(res => res.json())
+        .then(data => {
+            if (data.loggedIn) {
+                const scope = 'activity:read_all';
+                const userId = data.user._id;
+
+                // ✅ Pass userId in state, not redirect_uri
+                const url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&approval_prompt=force&scope=${scope}&state=${userId}`;
+                window.location.href = url;
+            } else {
+                alert("You must be logged in to connect with Strava.");
+            }
+        });
 });
 
 // Fetch and render activities
