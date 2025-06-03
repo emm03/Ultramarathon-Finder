@@ -56,7 +56,7 @@ const requireUser = async (req, res, next) => {
     }
 };
 
-// Get activities with photo support
+// Get activities with optional photos and descriptions
 router.get('/api/strava/activities', requireUser, async (req, res) => {
     const accessToken = req.user.stravaAccessToken;
     if (!accessToken) return res.status(401).json({ error: "Strava not connected." });
@@ -71,32 +71,30 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
 
         const enrichedActivities = await Promise.all(activities.map(async (activity) => {
             try {
-                // Fetch full details (for description)
-                const fullActivity = await axios.get(`https://www.strava.com/api/v3/activities/${activity.id}`, {
-                    headers: { Authorization: `Bearer ${accessToken}` }
-                });
-
-                // Fetch photos
-                const photoRes = await axios.get(`https://www.strava.com/api/v3/activities/${activity.id}/photos`, {
-                    headers: { Authorization: `Bearer ${accessToken}` }
-                });
-
-                const photos = photoRes.data
-                    .map(p => {
-                        if (p.urls && (p.urls['600'] || p.urls['100'])) {
-                            return p.urls['600'] || p.urls['100'];
-                        }
-                        return null;
+                const [fullActivityRes, photoRes] = await Promise.all([
+                    axios.get(`https://www.strava.com/api/v3/activities/${activity.id}`, {
+                        headers: { Authorization: `Bearer ${accessToken}` }
+                    }),
+                    axios.get(`https://www.strava.com/api/v3/activities/${activity.id}/photos`, {
+                        headers: { Authorization: `Bearer ${accessToken}` }
                     })
-                    .filter(url => url);
+                ]);
+
+                const description = fullActivityRes.data.description || '';
+
+                const photos = Array.isArray(photoRes.data)
+                    ? photoRes.data
+                        .map(p => p?.urls?.['600'] || p?.urls?.['100'])
+                        .filter(Boolean)
+                    : [];
 
                 return {
                     ...activity,
-                    description: fullActivity.data.description || '',
+                    description,
                     photos
                 };
             } catch (err) {
-                console.error(`❌ Error enriching activity ${activity.id}:`, err.message);
+                console.error(`⚠️ Error enriching activity ${activity.id}:`, err.message);
                 return { ...activity, description: '', photos: [] };
             }
         }));
@@ -107,6 +105,5 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
         res.status(500).json({ error: "Failed to fetch activities." });
     }
 });
-
 
 export default router;
