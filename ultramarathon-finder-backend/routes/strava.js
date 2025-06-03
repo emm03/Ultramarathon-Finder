@@ -64,7 +64,7 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
     try {
         const activityRes = await axios.get('https://www.strava.com/api/v3/athlete/activities', {
             headers: { Authorization: `Bearer ${accessToken}` },
-            params: { per_page: 10 }
+            params: { per_page: 5 }
         });
 
         const activities = activityRes.data;
