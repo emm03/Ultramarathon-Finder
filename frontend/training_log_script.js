@@ -1,77 +1,87 @@
+// training_log_script.js
 const clientId = 162687;
 const redirectUri = 'https://ultramarathon-finder-backend.onrender.com/strava-auth';
 
-document.getElementById("connect-strava").addEventListener("click", () => {
+// Load user profile info and dropdown
+fetch('/api/auth/status')
+    .then(res => res.json())
+    .then(data => {
+        const accountTab = document.getElementById('account-tab');
+        if (data.loggedIn) {
+            accountTab.innerHTML = `
+        <div class="dropdown">
+          <img src="${data.user.profilePicture || 'default_profile.png'}" class="profile-pic" />
+          <div class="dropdown-content">
+            <a href="account.html">Profile</a>
+            <a href="training_log.html" class="active">Training Log</a>
+            <a href="#" onclick="logout()">Sign Out</a>
+          </div>
+        </div>`;
+        } else {
+            accountTab.innerHTML = `<a href="account.html">My Account</a>`;
+        }
+    });
+
+function logout() {
+    fetch('/api/auth/logout').then(() => window.location.reload());
+}
+
+// Handle Strava connect button
+const connectBtn = document.getElementById("connect-strava");
+connectBtn?.addEventListener("click", () => {
     const scope = 'activity:read_all';
     const url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&approval_prompt=force&scope=${scope}`;
     window.location.href = url;
 });
 
-document.getElementById("refresh-strava").addEventListener("click", () => {
-    fetchProfile();
-    fetchActivities();
-});
-
-async function fetchProfile() {
-    try {
-        const res = await fetch('https://ultramarathon-finder-backend.onrender.com/api/strava/profile');
-        const athlete = await res.json();
-
-        const card = document.getElementById('profile-card');
-        card.innerHTML = `
-      <img src="${athlete.profile_medium || 'default-profile.png'}" alt="Profile Photo">
-      <div class="profile-info">
-        <h2>${athlete.firstname || ''} ${athlete.lastname || ''}</h2>
-        <p>${athlete.city || ''}, ${athlete.state || ''}</p>
-        <p>${athlete.bio || 'Ultrarunner'}</p>
-      </div>
-    `;
-        card.style.display = 'flex';
-        document.getElementById('connect-strava').style.display = 'none';
-    } catch (err) {
-        console.error("Error fetching profile:", err);
-    }
-}
-
+// Fetch and render activities
 async function fetchActivities() {
     try {
         const res = await fetch('https://ultramarathon-finder-backend.onrender.com/api/strava/activities');
         const data = await res.json();
 
-        if (Array.isArray(data)) {
+        if (Array.isArray(data) && data.length > 0) {
             document.getElementById('activity-section').style.display = 'block';
+            document.getElementById('refresh-strava').style.display = 'inline-block';
+            document.getElementById('connect-strava').style.display = 'none';
+
             const list = document.getElementById('activity-list');
             list.innerHTML = '';
 
+            let totalDistance = 0;
+            let totalTime = 0;
+
             data.forEach(act => {
-                const card = document.createElement('div');
-                card.className = 'activity-card';
+                totalDistance += act.distance;
+                totalTime += act.elapsed_time;
 
-                const distanceKm = (act.distance / 1000).toFixed(2);
-                const movingTimeMin = Math.floor(act.moving_time / 60);
-                const pace = distanceKm > 0 ? (movingTimeMin / distanceKm).toFixed(2) : 'N/A';
-                const date = new Date(act.start_date).toLocaleDateString();
-
-                card.innerHTML = `
-          <h3>${act.name || 'Untitled Activity'}</h3>
-          <div class="activity-meta">${date}${act.location_city ? ' – ' + act.location_city : ''}</div>
-          <div class="activity-description">${act.description || ''}</div>
+                const div = document.createElement('div');
+                div.className = 'activity-card';
+                div.innerHTML = `
+          <h3>${act.name}</h3>
+          <div class="activity-meta">${new Date(act.start_date).toLocaleString()} | ${act.type}</div>
+          <div class="activity-description">${act.description || 'No description provided.'}</div>
           <div class="activity-stats">
-            <strong>Distance:</strong> ${distanceKm} km<br>
-            <strong>Time:</strong> ${movingTimeMin} min<br>
-            <strong>Pace:</strong> ${pace} min/km
+            Distance: ${(act.distance / 1000).toFixed(2)} km<br>
+            Time: ${(act.elapsed_time / 60).toFixed(1)} mins<br>
+            Pace: ${(act.elapsed_time / 60 / (act.distance / 1000)).toFixed(1)} min/km
           </div>
         `;
-
-                list.appendChild(card);
+                list.appendChild(div);
             });
+
+            const summary = document.getElementById('weekly-summary');
+            summary.innerHTML = `✅ Total distance this week: <strong>${(totalDistance / 1000).toFixed(1)} km</strong> | Time: <strong>${(totalTime / 3600).toFixed(2)} hrs</strong>`;
+            summary.style.display = 'block';
         }
     } catch (err) {
         console.error("Error fetching activities:", err);
     }
 }
 
+document.getElementById('refresh-strava')?.addEventListener('click', fetchActivities);
+
+// Auto-fetch on page load if redirected
 if (window.location.pathname.includes('training_log.html')) {
-    fetchProfile();
     fetchActivities();
 }

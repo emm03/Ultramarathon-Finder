@@ -28,8 +28,10 @@
 
         <div class="button-bar">
             <a href="#" id="connect-strava" class="button">Connect with Strava</a>
-            <button id="refresh-strava" class="button">Refresh Activities</button>
+            <button id="refresh-strava" class="button" style="display:none;">Refresh Activities</button>
         </div>
+
+        <div id="weekly-summary" class="summary-card" style="display: none;"></div>
 
         <section id="activity-section" style="display: none;">
             <h2 class="section-title">Recent Activities</h2>
@@ -95,6 +97,15 @@
             background-color: #e54300;
         }
 
+        .summary-card {
+            background-color: #f9f9f9;
+            border-left: 6px solid #fc4c02;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
         .section-title {
             margin-bottom: 1rem;
         }
@@ -120,17 +131,17 @@
 
         .activity-meta {
             color: #555;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
             font-size: 0.95rem;
         }
 
         .activity-description {
             font-style: italic;
             color: #444;
+            margin-bottom: 0.5rem;
         }
 
         .activity-stats {
-            margin-top: 0.75rem;
             font-size: 0.95rem;
             line-height: 1.4;
         }
