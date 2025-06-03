@@ -51,9 +51,6 @@ app.options('*', cors());
 const userSessionMemory = new Map();
 app.locals.userSessionMemory = userSessionMemory;
 
-// ✅ Routes now come AFTER middleware
-app.use('/', stravaRoutes);
-
 // Debug environment variables
 console.log('Loaded Environment Variables:', {
   PORT: process.env.PORT,
@@ -76,15 +73,21 @@ mongoose.connect(process.env.MONGO_URI, {
     process.exit(1);
   });
 
-// Static file routes
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
-app.use('/static', express.static(path.join(process.cwd(), 'public')));
-
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/forum', forumRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/alan', alanRoute);
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+app.use('/static', express.static(path.join(process.cwd(), 'public')));
+
+// ✅ Routes now come AFTER middleware
+app.use('/', stravaRoutes);
+
+// ✅ Catch-all 404 moved to bottom
+app.use((req, res) => {
+  res.status(404).json({ message: 'Endpoint not found' });
+});
 
 // Base route
 app.get('/', (req, res) => {
@@ -142,11 +145,6 @@ app.get('/api/user/:id', async (req, res) => {
 app.use((err, req, res, next) => {
   console.error('Error middleware:', err.message);
   res.status(500).json({ message: 'Unexpected error', error: err.message });
-});
-
-// ✅ Catch-all 404 moved to bottom
-app.use((req, res) => {
-  res.status(404).json({ message: 'Endpoint not found' });
 });
 
 // Launch app
