@@ -33,7 +33,7 @@ router.get('/strava-auth', async (req, res) => {
         console.log(`✅ Stored Strava token for user ${userId}`);
         res.redirect('https://ultramarathonconnect.com/training_log.html');
     } catch (err) {
-        console.error("❌ Error during Strava OAuth:", err.message);
+        console.error("❌ Error during Strava OAuth:", err);
         res.status(500).send("Failed to connect to Strava.");
     }
 });
@@ -82,11 +82,15 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
 
                 const description = fullActivityRes.data.description || '';
 
+                console.log(`📸 Raw photo data for activity ${activity.id}:`, photoRes.data);
+
                 const photos = Array.isArray(photoRes.data)
                     ? photoRes.data
                         .map(p => p?.urls?.['600'] || p?.urls?.['100'])
                         .filter(Boolean)
                     : [];
+
+                console.log(`✅ Activity ${activity.id} - ${photos.length} photo(s) found.`);
 
                 return {
                     ...activity,
