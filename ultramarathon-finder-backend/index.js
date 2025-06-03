@@ -47,12 +47,12 @@ app.use(cors({
 
 app.options('*', cors());
 
-// ✅ Routes now come AFTER middleware
-app.use('/', stravaRoutes);
-
 // 🧠 In-memory session memory store for Alan AI
 const userSessionMemory = new Map();
 app.locals.userSessionMemory = userSessionMemory;
+
+// ✅ Routes now come AFTER middleware
+app.use('/', stravaRoutes);
 
 // Debug environment variables
 console.log('Loaded Environment Variables:', {
