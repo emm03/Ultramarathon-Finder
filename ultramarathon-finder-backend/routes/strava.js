@@ -1,16 +1,31 @@
-// Step 1: Update strava.js (backend route)
-// This new version will request photos, maps, elevation, and stats for each activity
-
 import express from 'express';
 import axios from 'axios';
 import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
 
 dotenv.config();
 const router = express.Router();
 
-let stravaToken = null;
+// 🔐 Middleware to get the user from the token
+const requireUser = async (req, res, next) => {
+    const auth = req.headers.authorization;
+    if (!auth) return res.status(401).json({ error: 'Unauthorized' });
 
-// OAuth Redirect
+    try {
+        const token = auth.split(' ')[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.userId);
+        if (!user) return res.status(401).json({ error: 'User not found' });
+
+        req.user = user;
+        next();
+    } catch (err) {
+        return res.status(401).json({ error: 'Invalid token' });
+    }
+};
+
+// 🌐 Step 1: OAuth Redirect
 router.get('/strava-auth', async (req, res) => {
     const { code, error } = req.query;
     if (error) return res.status(400).send("Access to Strava denied.");
@@ -24,22 +39,39 @@ router.get('/strava-auth', async (req, res) => {
                 grant_type: 'authorization_code'
             }
         });
-        stravaToken = tokenRes.data.access_token;
-        console.log("✅ Access Token Stored:", stravaToken);
+
+        const accessToken = tokenRes.data.access_token;
+
+        // 🧠 Decode token from cookie if available
+        const cookie = req.headers.cookie || '';
+        const match = cookie.match(/token=([^;]+)/);
+        const token = match ? match[1] : null;
+
+        if (!token) return res.status(401).send("Missing user session");
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.userId);
+        if (!user) return res.status(404).send("User not found");
+
+        user.stravaAccessToken = accessToken;
+        await user.save();
+
+        console.log(`✅ Saved Strava token for user ${user.username}`);
         res.redirect('https://ultramarathonconnect.com/training_log.html');
     } catch (err) {
-        console.error("❌ Error exchanging token:", err.response?.data || err.message);
+        console.error("❌ Strava auth error:", err.response?.data || err.message);
         res.status(500).send("Failed to connect to Strava.");
     }
 });
 
-// Activities route with rich data
-router.get('/api/strava/activities', async (req, res) => {
-    if (!stravaToken) return res.status(401).json({ error: "Strava not connected." });
+// 🚴‍♀️ Step 2: Get Activities
+router.get('/api/strava/activities', requireUser, async (req, res) => {
+    const accessToken = req.user.stravaAccessToken;
+    if (!accessToken) return res.status(401).json({ error: "Strava not connected." });
 
     try {
         const activityRes = await axios.get('https://www.strava.com/api/v3/athlete/activities', {
-            headers: { Authorization: `Bearer ${stravaToken}` },
+            headers: { Authorization: `Bearer ${accessToken}` },
             params: { per_page: 10 }
         });
 
@@ -48,12 +80,12 @@ router.get('/api/strava/activities', async (req, res) => {
                 let photos = [];
                 try {
                     const photoRes = await axios.get(`https://www.strava.com/api/v3/activities/${activity.id}/photos`, {
-                        headers: { Authorization: `Bearer ${stravaToken}` },
+                        headers: { Authorization: `Bearer ${accessToken}` },
                         params: { size: 600 }
                     });
                     photos = photoRes.data.map(p => p.urls["600"] || p.urls["100"]);
                 } catch (err) {
-                    console.warn(`No photos for activity ${activity.id}`);
+                    console.warn(`⚠️ No photos for activity ${activity.id}`);
                 }
 
                 return {
@@ -76,25 +108,22 @@ router.get('/api/strava/activities', async (req, res) => {
 
         res.json(enriched);
     } catch (err) {
-        console.error("❌ Error fetching Strava activities:", err.response?.data || err.message);
+        console.error("❌ Activity fetch failed:", err.response?.data || err.message);
         res.status(500).json({ error: "Failed to fetch activities." });
     }
 });
 
-export default router;
-
-// ✅ GET Weekly Summary Stats
-router.get('/api/strava/summary', async (req, res) => {
-    if (!stravaToken) {
-        return res.status(401).json({ error: 'Strava not connected.' });
-    }
+// 📊 Step 3: Weekly Summary
+router.get('/api/strava/summary', requireUser, async (req, res) => {
+    const accessToken = req.user.stravaAccessToken;
+    if (!accessToken) return res.status(401).json({ error: "Strava not connected." });
 
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
     try {
         const response = await axios.get('https://www.strava.com/api/v3/athlete/activities', {
-            headers: { Authorization: `Bearer ${stravaToken}` },
+            headers: { Authorization: `Bearer ${accessToken}` },
             params: { per_page: 100 }
         });
 
@@ -108,7 +137,9 @@ router.get('/api/strava/summary', async (req, res) => {
 
         res.json(summary);
     } catch (err) {
-        console.error('❌ Error fetching weekly summary:', err.message);
-        res.status(500).json({ error: 'Failed to get summary.' });
+        console.error("❌ Summary error:", err.message);
+        res.status(500).json({ error: "Failed to fetch weekly summary." });
     }
 });
+
+export default router;
