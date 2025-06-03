@@ -96,15 +96,23 @@ router.post('/login', async (req, res) => {
         { expiresIn: '1h' }
     );
 
-    res.status(200).json({
-        message: 'Login successful',
-        token,
-        user: {
-            username: user.username,
-            email: user.email,
-            profilePicture: user.profilePicture || ''
-        }
-    });
+    res
+        .cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Lax',
+            maxAge: 60 * 60 * 1000  // 1 hour
+        })
+        .status(200)
+        .json({
+            message: 'Login successful',
+            user: {
+                username: user.username,
+                email: user.email,
+                profilePicture: user.profilePicture || ''
+            }
+        });
+
 });
 
 // -------------------- ACCOUNT --------------------
@@ -192,8 +200,6 @@ router.post('/manual-hash-debug', async (req, res) => {
     res.json({ hash, match });
 });
 
-export default router;
-
 // ✅ GET /api/auth/status — check if user is logged in
 router.get('/status', async (req, res) => {
     const cookie = req.headers.cookie || '';
@@ -221,3 +227,5 @@ router.get('/status', async (req, res) => {
         res.json({ loggedIn: false });
     }
 });
+
+export default router;
