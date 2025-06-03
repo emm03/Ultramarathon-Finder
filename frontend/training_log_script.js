@@ -4,7 +4,9 @@ const redirectUri = 'https://ultramarathon-finder-backend.onrender.com/strava-au
 let userToken = null;
 
 // Load user profile info and dropdown
-fetch('/api/auth/status')
+fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/status', {
+    credentials: 'include'
+})
     .then(res => res.json())
     .then(data => {
         const accountTab = document.getElementById('account-tab');
@@ -21,7 +23,6 @@ fetch('/api/auth/status')
                 </div>
               </div>`;
 
-            // Try fetching activities immediately (only if logged in)
             fetchActivities();
         } else {
             accountTab.innerHTML = `<a href="account.html">My Account</a>`;
@@ -29,16 +30,19 @@ fetch('/api/auth/status')
     });
 
 function logout() {
-    fetch('/api/auth/logout').then(() => window.location.reload());
+    fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/logout', {
+        credentials: 'include'
+    }).then(() => window.location.reload());
 }
 
 const connectBtn = document.getElementById("connect-strava");
 connectBtn?.addEventListener("click", async () => {
-    const res = await fetch('/api/auth/status');
+    const res = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/status', {
+        credentials: 'include'
+    });
     const data = await res.json();
 
     if (data.loggedIn) {
-        // Store user ID in a cookie (server will read it on /strava-auth)
         document.cookie = `strava_user_id=${data.user._id}; path=/`;
 
         const scope = 'activity:read_all';
@@ -49,13 +53,13 @@ connectBtn?.addEventListener("click", async () => {
     }
 });
 
-// Fetch and render activities
 async function fetchActivities() {
     try {
         const res = await fetch('https://ultramarathon-finder-backend.onrender.com/api/strava/activities', {
             headers: {
                 'Authorization': `Bearer ${userToken}`
-            }
+            },
+            credentials: 'include'
         });
 
         const data = await res.json();
@@ -97,7 +101,6 @@ async function fetchActivities() {
             summary.innerHTML = `✅ Total distance this week: <strong>${(totalDistance / 1000).toFixed(1)} km</strong> | Time: <strong>${(totalTime / 3600).toFixed(2)} hrs</strong>`;
             summary.style.display = 'block';
         } else {
-            // If user has no activities or token is missing
             section.style.display = 'none';
             refresh.style.display = 'none';
             connect.style.display = 'inline-block';
@@ -109,5 +112,3 @@ async function fetchActivities() {
 }
 
 document.getElementById('refresh-strava')?.addEventListener('click', fetchActivities);
-
-// 🔄 Removed auto-fetch from window load — it's now gated behind login/token check
