@@ -7,7 +7,7 @@ import User from '../models/User.js';
 dotenv.config();
 const router = express.Router();
 
-// ✅ Middleware to authenticate and attach the user
+// Middleware to extract user from token
 const requireUser = async (req, res, next) => {
     const auth = req.headers.authorization;
     if (!auth) return res.status(401).json({ error: 'Unauthorized' });
@@ -25,9 +25,10 @@ const requireUser = async (req, res, next) => {
     }
 };
 
-// 🌐 Step 1: Handle Strava OAuth Redirect and store token
+// 🔁 Strava OAuth Redirect Handler
 router.get('/strava-auth', async (req, res) => {
     const { code, error } = req.query;
+
     const cookie = req.headers.cookie || '';
     const match = cookie.match(/strava_user_id=([^;]+)/);
     const userId = match ? match[1] : null;
@@ -48,28 +49,28 @@ router.get('/strava-auth', async (req, res) => {
         const accessToken = tokenRes.data.access_token;
         await User.findByIdAndUpdate(userId, { stravaAccessToken: accessToken });
 
-        console.log(`✅ Saved Strava token for user ${userId}`);
+        console.log(`✅ Strava token stored for user ${userId}`);
         res.redirect('https://ultramarathonconnect.com/training_log.html');
     } catch (err) {
-        console.error("❌ Error exchanging token:", err.response?.data || err.message);
-        res.status(500).send("Failed to connect to Strava.");
+        console.error("❌ Token exchange failed:", err.response?.data || err.message);
+        res.status(500).send("Strava token exchange failed.");
     }
 });
 
-// 🚴 Step 2: Fetch Strava activities for logged-in user
+// 🏃 Fetch Activities
 router.get('/api/strava/activities', requireUser, async (req, res) => {
     const accessToken = req.user.stravaAccessToken;
     if (!accessToken) return res.status(401).json({ error: "Strava not connected." });
 
     try {
-        const activityRes = await axios.get('https://www.strava.com/api/v3/athlete/activities', {
+        const result = await axios.get('https://www.strava.com/api/v3/athlete/activities', {
             headers: { Authorization: `Bearer ${accessToken}` },
             params: { per_page: 10 }
         });
 
-        res.json(activityRes.data);
+        res.json(result.data);
     } catch (err) {
-        console.error("❌ Failed to fetch activities:", err.response?.data || err.message);
+        console.error("❌ Fetch error:", err.response?.data || err.message);
         res.status(500).json({ error: "Failed to fetch activities." });
     }
 });
