@@ -3,57 +3,84 @@ const redirectUri = 'https://ultramarathon-finder-backend.onrender.com/strava-au
 
 let userToken = null;
 
-// 1️⃣ Check login status and set up Strava connection
+// Load user info and UI dropdown
 fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/status', {
     credentials: 'include'
 })
     .then(res => res.json())
     .then(data => {
+        const accountTab = document.getElementById('account-tab');
         if (data.loggedIn) {
             userToken = data.token;
 
-            // Set user ID as a cookie so /strava-auth can read it
-            document.cookie = `strava_user_id=${data.user._id}; path=/`;
+            accountTab.innerHTML = `
+        <div class="dropdown">
+          <img src="${data.user.profilePicture || 'default_profile.png'}" class="profile-pic" />
+          <div class="dropdown-content">
+            <a href="account.html">Profile</a>
+            <a href="training_log.html" class="active">Training Log</a>
+            <a href="#" onclick="logout()">Sign Out</a>
+          </div>
+        </div>`;
 
-            fetchActivities(); // Load activities on page load
+            fetchActivities(); // ✅ Only fetch if logged in
         } else {
-            document.getElementById('connect-strava').style.display = 'inline-block';
+            accountTab.innerHTML = `<a href="account.html">My Account</a>`;
         }
+    })
+    .catch(err => {
+        console.error("Auth check failed:", err);
     });
 
-// 2️⃣ Connect with Strava button
-const connectBtn = document.getElementById("connect-strava");
-connectBtn?.addEventListener("click", () => {
-    if (!userToken) {
-        alert("You must be logged in to connect with Strava.");
-        return;
-    }
+function logout() {
+    fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/logout', {
+        credentials: 'include'
+    }).then(() => window.location.reload());
+}
 
-    const scope = 'activity:read_all';
-    const url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&approval_prompt=force&scope=${scope}`;
-    window.location.href = url;
+// Handle Strava connect button
+const connectBtn = document.getElementById("connect-strava");
+connectBtn?.addEventListener("click", async () => {
+    const res = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/status', {
+        credentials: 'include'
+    });
+    const data = await res.json();
+
+    if (data.loggedIn) {
+        document.cookie = `strava_user_id=${data.user._id}; path=/`;
+
+        const scope = 'activity:read_all';
+        const url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&approval_prompt=force&scope=${scope}`;
+        window.location.href = url;
+    } else {
+        alert("You must be logged in to connect with Strava.");
+    }
 });
 
-// 3️⃣ Fetch user-specific activities
+// Fetch and render activities
 async function fetchActivities() {
     try {
         const res = await fetch('https://ultramarathon-finder-backend.onrender.com/api/strava/activities', {
             headers: {
-                Authorization: `Bearer ${userToken}`
+                'Authorization': `Bearer ${userToken}`
             },
             credentials: 'include'
         });
 
         const data = await res.json();
 
+        const list = document.getElementById('activity-list');
+        const summary = document.getElementById('weekly-summary');
+        const section = document.getElementById('activity-section');
+        const refresh = document.getElementById('refresh-strava');
+        const connect = document.getElementById('connect-strava');
+
         if (Array.isArray(data) && data.length > 0) {
-            document.getElementById('activity-section').style.display = 'block';
-            document.getElementById('refresh-strava').style.display = 'inline-block';
-            document.getElementById('connect-strava').style.display = 'none';
+            section.style.display = 'block';
+            refresh.style.display = 'inline-block';
+            connect.style.display = 'none';
 
-            const list = document.getElementById('activity-list');
             list.innerHTML = '';
-
             let totalDistance = 0;
             let totalTime = 0;
 
@@ -76,11 +103,12 @@ async function fetchActivities() {
                 list.appendChild(div);
             });
 
-            const summary = document.getElementById('weekly-summary');
             summary.innerHTML = `✅ Total distance this week: <strong>${(totalDistance / 1000).toFixed(1)} km</strong> | Time: <strong>${(totalTime / 3600).toFixed(2)} hrs</strong>`;
             summary.style.display = 'block';
         } else {
-            document.getElementById('connect-strava').style.display = 'inline-block';
+            section.style.display = 'none';
+            refresh.style.display = 'none';
+            connect.style.display = 'inline-block';
         }
     } catch (err) {
         console.error("Error fetching activities:", err);
