@@ -14,7 +14,6 @@ router.get('/strava-auth', async (req, res) => {
     if (!token) return res.status(400).send("Missing token");
 
     try {
-        // Decode user from JWT
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const userId = decoded.userId;
         if (!userId) return res.status(401).send("Invalid token");
@@ -57,7 +56,7 @@ const requireUser = async (req, res, next) => {
     }
 };
 
-// Get activities
+// Updated route: Get activities with photo enrichment
 router.get('/api/strava/activities', requireUser, async (req, res) => {
     const accessToken = req.user.stravaAccessToken;
     if (!accessToken) return res.status(401).json({ error: "Strava not connected." });
@@ -68,7 +67,24 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
             params: { per_page: 10 }
         });
 
-        res.json(activityRes.data);
+        const activities = activityRes.data;
+
+        // Enrich each activity with its photos
+        const enrichedActivities = await Promise.all(activities.map(async (activity) => {
+            try {
+                const photoRes = await axios.get(`https://www.strava.com/api/v3/activities/${activity.id}/photos`, {
+                    headers: { Authorization: `Bearer ${accessToken}` }
+                });
+
+                const photos = photoRes.data.map(p => p.urls?.['600'] || p.urls?.['100']);
+                return { ...activity, photos };
+            } catch (err) {
+                console.error(`❌ Error fetching photos for activity ${activity.id}:`, err.message);
+                return { ...activity, photos: [] };
+            }
+        }));
+
+        res.json(enrichedActivities);
     } catch (err) {
         console.error("❌ Error fetching Strava activities:", err.message);
         res.status(500).json({ error: "Failed to fetch activities." });
