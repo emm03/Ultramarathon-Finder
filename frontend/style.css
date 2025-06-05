@@ -2449,17 +2449,24 @@ body {
 }
 
 .training-log-teaser {
-    background-color: #f9f9f9;
+    background-color: #fff7ed;
     text-align: center;
     padding: 2rem;
-    margin: 2rem auto;
+    margin: 3rem auto 2rem;
     border-radius: 12px;
     max-width: 800px;
+    border-left: 6px solid #ff7a00;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .training-log-teaser .teaser-box h2 {
     font-size: 1.8rem;
     margin-bottom: 0.5rem;
+}
+
+.training-log-teaser .teaser-box p {
+    font-size: 1rem;
+    margin: 0.5rem 0;
 }
 
 .training-log-teaser .teaser-actions {
