@@ -55,6 +55,23 @@ header .logo {
     /* Maintain aspect ratio */
 }
 
+.logo {
+    height: 40px;
+    margin-right: 0.6rem;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.header-right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    overflow-x: auto;
+}
+
 .logo-title-container {
     display: flex;
     align-items: center;
@@ -65,6 +82,7 @@ header .logo {
     font-size: 1.4rem;
     font-weight: bold;
     color: white;
+    white-space: nowrap;
 }
 
 /* Navigation Styles */
@@ -510,30 +528,29 @@ footer .footer-links a:hover {
 
 /* Navigation Menu Styles */
 .menu {
-    list-style: none;
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 0;
-    margin: 0;
     gap: 1rem;
-    flex: 1;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    align-items: center;
 }
 
 .menu li {
     position: relative;
 }
 
-.menu a {
+.menu li a {
+    color: white;
     text-decoration: none;
-    color: #fff;
+    font-weight: 500;
     padding: 10px 15px;
     font-size: 1rem;
+    white-space: nowrap;
 }
 
-.menu a:hover {
-    background-color: #555;
-    border-radius: 5px;
+.menu li a:hover {
+    text-decoration: underline;
 }
 
 /* Dropdown Menu Styles */
@@ -1766,10 +1783,24 @@ button:hover {
 /* === Mobile Fixes for Header, Nav, and Forum Cards === */
 @media (max-width: 768px) {
 
-    /* Scrollable top nav */
+    .sticky-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .header-right {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
     .menu {
+        flex-wrap: nowrap;
         overflow-x: auto;
         white-space: nowrap;
+        gap: 10px;
+        width: 100%;
+        padding: 0 10px;
         scrollbar-width: none;
     }
 
@@ -1777,7 +1808,12 @@ button:hover {
         display: none;
     }
 
-    /* Stack forum categories */
+    .menu li a {
+        font-size: 0.9rem;
+        padding: 10px;
+        white-space: nowrap;
+    }
+
     .forum-categories {
         flex-direction: column;
         align-items: center;
@@ -1790,32 +1826,8 @@ button:hover {
         margin-bottom: 20px;
     }
 
-    header {
-        flex-wrap: wrap;
-        height: auto;
-        padding-bottom: 10px;
-    }
-
     header .logo {
         width: 70px;
-    }
-
-    header nav {
-        width: 100%;
-        overflow-x: auto;
-        white-space: nowrap;
-    }
-
-    header nav .menu {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        padding: 0 10px;
-        gap: 10px;
-    }
-
-    header nav a {
-        font-size: 0.9rem;
-        flex: 0 0 auto;
     }
 }
 
@@ -2308,15 +2320,16 @@ body {
 
 .sticky-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     background-color: #2d2d2d;
     padding: 0.8rem 1.5rem;
     color: white;
-    width: 100%;
     position: fixed;
     top: 0;
+    width: 100%;
     z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .leaflet-top,
