@@ -55,6 +55,17 @@ header .logo {
     /* Maintain aspect ratio */
 }
 
+.logo-title-container {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.site-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: white;
+}
 
 /* Navigation Styles */
 header nav {

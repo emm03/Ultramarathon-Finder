@@ -1,51 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Logout - Ultramarathon Connect</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logout - Ultramarathon Connect</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <header class="sticky-header">
-    <div class="logo-container">
-      <img src="ultra.png" alt="Ultramarathon Finder Logo" class="logo">
-    </div>
-    <nav>
-      <ul class="menu">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="race_directory.html">Race Directory</a></li>
-        <li><a href="forum.html">Runner Community</a></li>
-        <li><a href="login.html">Login</a></li>
-      </ul>
-    </nav>
-  </header>
+    <header class="sticky-header">
+        <div class="logo-title-container">
+            <img src="ultra.png" alt="Ultramarathon Finder Logo" class="logo" />
+            <span class="site-title">Ultramarathon Connect</span>
+        </div>
+        <nav>
+            <ul class="menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="race_directory.html">Race Directory</a></li>
+                <li><a href="forum.html">Runner Community</a></li>
+                <li id="account-tab" class="auth-tab"></li>
+            </ul>
+        </nav>
+    </header>
 
-  <main class="container">
-    <h2>You have successfully logged out.</h2>
-    <p>Thank you for using Ultramarathon Connect!</p>
-    <a href="index.html" class="btn">Return to Homepage</a>
-    <a href="login.html" class="btn">Login Again</a>
-  </main>
+    <main class="container">
+        <h2>You have successfully logged out.</h2>
+        <p>Thank you for using Ultramarathon Connect!</p>
+        <a href="index.html" class="btn">Return to Homepage</a>
+        <a href="login.html" class="btn">Login Again</a>
+    </main>
 
-  <footer class="site-footer">
-    <div class="footer-links">
-      <a href="contact.html">Contact Us</a> |
-      <a href="privacy.html">Privacy Policy</a> |
-      <a href="termsofservice.html">Terms of Service</a> |
-      <a href="faq.html">FAQ</a> |
-      <span>Email: <a href="mailto:ultramarathonconnect@gmail.com">ultramarathonconnect@gmail.com</a></span>
-    </div>
-    <p class="footer-copy">&copy; 2025 Ultramarathon Connect. All rights reserved.</p>
-  </footer>
+    <footer class="site-footer">
+        <div class="footer-links">
+            <a href="contact.html">Contact Us</a> |
+            <a href="privacy.html">Privacy Policy</a> |
+            <a href="termsofservice.html">Terms of Service</a> |
+            <a href="faq.html">FAQ</a> |
+            <span>Email: <a href="mailto:ultramarathonconnect@gmail.com">ultramarathonconnect@gmail.com</a></span>
+        </div>
+        <p class="footer-copy">&copy; 2025 Ultramarathon Connect. All rights reserved.</p>
+    </footer>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      localStorage.removeItem('token');
-      localStorage.removeItem('profilePicture');
-      sessionStorage.clear();
-      console.log('User logged out: token and profile picture cleared');
-    });
-  </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('profilePicture');
+            sessionStorage.clear();
+            console.log('User logged out: token and profile picture cleared');
+        });
+    </script>
 </body>
+
 </html>
