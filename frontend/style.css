@@ -2450,19 +2450,22 @@ body {
     display: none;
 }
 
-/* === HEADER LAYOUT FIX === */
+/* ================= HEADER FINAL FIX (Desktop + Mobile) ================= */
+
+/* Desktop Header */
 .sticky-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: nowrap;
+    padding: 0.8rem 1.5rem;
     background-color: #333;
-    padding: 0.75rem 1.5rem;
+    color: white;
     position: fixed;
     top: 0;
     width: 100%;
     z-index: 1000;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    height: 70px;
 }
 
 .header-left {
@@ -2482,7 +2485,7 @@ body {
     white-space: nowrap;
 }
 
-/* Desktop Navigation */
+/* Desktop menu */
 .menu {
     display: flex;
     align-items: center;
@@ -2503,12 +2506,12 @@ body {
     text-decoration: underline;
 }
 
-/* Hide hamburger by default (desktop) */
+/* Hamburger icon (hidden on desktop) */
 .menu-toggle {
     display: none;
 }
 
-/* === MOBILE HEADER STYLES === */
+/* ================= MOBILE NAVIGATION ================= */
 @media (max-width: 768px) {
     .menu-toggle {
         display: block;
@@ -2527,7 +2530,6 @@ body {
         display: none;
         flex-direction: column;
         align-items: center;
-        gap: 1rem;
         background-color: #333;
         position: absolute;
         top: 70px;
