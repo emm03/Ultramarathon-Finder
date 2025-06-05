@@ -57,7 +57,7 @@ document.getElementById("connect-strava")?.addEventListener("click", () => {
 
     localStorage.setItem("strava_state_token", userToken);  // Save token securely
     const scope = 'activity:read_all';
-    const url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&approval_prompt=force&scope=${scope}&state=strava_state_token`;
+    const url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&approval_prompt=force&scope=${scope}&state=${userToken}`;
     window.location.href = url;
 
 });
