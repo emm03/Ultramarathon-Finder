@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     initializeCarousel();
+
     const token = localStorage.getItem("token")?.trim();
     const menu = document.querySelector("ul.menu");
     menu.querySelectorAll(".auth-link").forEach(link => link.remove());
@@ -27,6 +28,16 @@ document.addEventListener("DOMContentLoaded", () => {
     redirectIfUnauthorized(token, ["account.html", "profile_edit.html"]);
     loadLatestPosts();
     setupMap();
+
+    // Hamburger toggle – only active on mobile
+    const toggle = document.querySelector('.menu-toggle');
+    const menuList = document.querySelector('.menu');
+
+    if (toggle && menuList) {
+        toggle.addEventListener('click', () => {
+            menuList.classList.toggle('show');
+        });
+    }
 });
 
 function initializeCarousel() {
