@@ -537,9 +537,9 @@ footer .footer-links a:hover {
     margin: 0;
     gap: 1rem;
     flex: 1;
-    padding-right: 2rem;
+    padding-right: 1.25rem;
+    /* ⬅️ Previously 2rem */
 }
-
 
 .menu li {
     position: relative;
@@ -2511,4 +2511,64 @@ body {
     margin-top: 0.8rem;
     color: #666;
     font-size: 0.9rem;
+}
+
+/* === Mobile Nav Toggle Button === */
+.menu-toggle {
+    display: none;
+    font-size: 1.8rem;
+    color: white;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+        position: absolute;
+        right: 1rem;
+        top: 1rem;
+        z-index: 1001;
+    }
+
+    .sticky-header {
+        flex-direction: column;
+        align-items: center;
+        padding-bottom: 1rem;
+    }
+
+    .header-left {
+        width: 100%;
+        justify-content: center;
+        position: relative;
+    }
+
+    .site-title {
+        text-align: center;
+    }
+
+    .header-right {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .menu {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1rem;
+        width: 100%;
+    }
+
+    .menu.show {
+        display: flex;
+    }
+
+    .menu li a {
+        font-size: 1rem;
+        padding: 10px 15px;
+    }
 }
