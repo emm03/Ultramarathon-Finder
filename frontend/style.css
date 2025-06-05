@@ -126,9 +126,6 @@ header nav a:hover {
     border-radius: 5px;
 }
 
-/* Add to style.css */
-
-
 /* Responsive Adjustments */
 @media (max-width: 768px) {
     header {
@@ -1784,32 +1781,6 @@ button:hover {
     vertical-align: middle;
 }
 
-/* === Mobile Fixes for Header, Nav, and Forum Cards === */
-@media (max-width: 768px) {
-    .sticky-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .header-left {
-        width: 100%;
-        justify-content: center;
-        margin-bottom: 0.5rem;
-    }
-
-    .header-right {
-        width: 100%;
-        justify-content: center;
-        /* Center tabs */
-        flex-wrap: wrap;
-    }
-
-    .menu li a {
-        font-size: 0.95rem;
-        padding: 10px;
-    }
-}
-
 @media (max-width: 900px) {
     .filter-layout {
         grid-template-columns: 1fr;
@@ -2503,17 +2474,6 @@ body {
     font-size: 0.9rem;
 }
 
-/* === Mobile Nav Toggle Button === */
-.menu-toggle {
-    display: none;
-    font-size: 1.8rem;
-    color: white;
-    background: none;
-    border: none;
-    cursor: pointer;
-    margin-left: auto;
-}
-
 @media (max-width: 768px) {
     .menu-toggle {
         display: block;
@@ -2523,34 +2483,18 @@ body {
         z-index: 1001;
     }
 
-    .sticky-header {
-        flex-direction: column;
-        align-items: center;
-        padding-bottom: 1rem;
-    }
-
-    .header-left {
-        width: 100%;
-        justify-content: center;
-        position: relative;
-    }
-
-    .site-title {
-        text-align: center;
-    }
-
-    .header-right {
-        width: 100%;
-        justify-content: center;
-    }
-
     .menu {
         display: none;
         flex-direction: column;
         align-items: center;
         gap: 1rem;
-        margin-top: 1rem;
+        background-color: #333;
+        position: absolute;
+        top: 70px;
+        left: 0;
         width: 100%;
+        padding: 1rem 0;
+        z-index: 999;
     }
 
     .menu.show {
@@ -2560,5 +2504,21 @@ body {
     .menu li a {
         font-size: 1rem;
         padding: 10px 15px;
+    }
+
+    .sticky-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 1rem;
+    }
+
+    .header-left {
+        justify-content: flex-start;
+        width: auto;
+    }
+
+    .header-right {
+        display: none;
     }
 }
