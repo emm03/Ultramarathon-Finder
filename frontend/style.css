@@ -13,170 +13,6 @@ main {
     padding-top: 100px;
 }
 
-/* Header Styles */
-header {
-    display: flex;
-    /* Use flexbox for layout */
-    align-items: center;
-    /* Center items vertically */
-    justify-content: flex-start;
-    /* Align all items to the left */
-    padding: 10px 20px;
-    /* Balanced spacing */
-    background-color: #333;
-    color: #fff;
-    position: fixed;
-    /* Keep the header fixed at the top */
-    top: 0;
-    width: 100%;
-    /* Full width */
-    z-index: 1000;
-    height: 70px;
-    /* Set header height */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    /* Subtle shadow for depth */
-    gap: 20px;
-    /* Add spacing between the logo and navigation */
-}
-
-/* Logo Styling */
-header .logo-container {
-    display: flex;
-    align-items: center;
-    /* Vertically align */
-    justify-content: flex-start;
-    /* Keep the logo aligned to the left */
-}
-
-header .logo {
-    width: 100px;
-    /* Adjust the width to make it proportional */
-    height: auto;
-    /* Maintain aspect ratio */
-}
-
-.logo {
-    height: 40px;
-    margin-right: 0.6rem;
-}
-
-.header-left {
-    display: flex;
-    align-items: center;
-}
-
-.header-right {
-    display: flex;
-    justify-content: flex-end;
-    flex: 1;
-    overflow-x: auto;
-    padding-right: 1rem;
-}
-
-.logo-title-container {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-}
-
-.site-title {
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: white;
-    white-space: nowrap;
-}
-
-/* Navigation Styles */
-header nav {
-    display: flex;
-    /* Align navigation items horizontally */
-    align-items: center;
-    /* Center vertically */
-    flex-grow: 0;
-    /* Prevent menu from stretching across the header */
-}
-
-header nav .menu {
-    list-style: none;
-    /* Remove default list styles */
-    display: flex;
-    /* Align navigation items horizontally */
-    gap: 15px;
-    /* Add space between navigation items */
-    padding: 0;
-    margin: 0;
-}
-
-header nav a {
-    color: #fff;
-    text-decoration: none;
-    padding: 10px 15px;
-    /* Padding for better clickability */
-    font-weight: bold;
-    font-size: 1rem;
-    /* Maintain readability */
-    white-space: nowrap;
-    /* Prevent text wrapping */
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-header nav a:hover {
-    background-color: #555;
-    /* Subtle hover effect */
-    border-radius: 5px;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    header {
-        flex-direction: row;
-        flex-wrap: nowrap;
-        align-items: center;
-        justify-content: space-between;
-        height: auto;
-        padding: 10px 15px;
-    }
-
-    header .logo-container {
-        width: auto;
-        margin-bottom: 0;
-        display: flex;
-        align-items: center;
-    }
-
-    header .logo {
-        width: 70px;
-    }
-
-    header nav a {
-        font-size: 0.95rem;
-        flex: 0 0 auto;
-        padding: 10px;
-        white-space: nowrap;
-    }
-
-    .directory-section,
-    .forum-section {
-        padding-top: 30px;
-        /* Ensure no overlap with sticky header */
-    }
-
-    .filters {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 10px;
-        padding: 0 10px;
-    }
-
-    .filters input,
-    .filters select,
-    .filters button {
-        flex: 1 1 150px;
-        min-width: 140px;
-    }
-}
-
 /* Carousel Section */
 .carousel {
     position: relative;
@@ -507,36 +343,6 @@ footer .footer-links a:active {
 }
 
 footer .footer-links a:hover {
-    text-decoration: underline;
-}
-
-/* Navigation Menu Styles */
-.menu {
-    list-style: none;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.75rem;
-    margin: 0;
-    padding-right: 1rem;
-    flex: 0;
-}
-
-.menu li {
-    position: relative;
-}
-
-.menu li a {
-    color: white;
-    text-decoration: none;
-    font-weight: 500;
-    padding: 10px 15px;
-    font-size: 1rem;
-    white-space: nowrap;
-}
-
-.menu li a:hover {
     text-decoration: underline;
 }
 
@@ -2199,7 +2005,6 @@ button:hover {
     justify-content: center;
     align-items: center;
     min-height: calc(100vh - 140px);
-    /* adjusts for header + footer */
     padding: 20px;
 }
 
@@ -2444,10 +2249,6 @@ body {
     margin-top: 0.8rem;
     color: #666;
     font-size: 0.9rem;
-}
-
-.menu-toggle {
-    display: none;
 }
 
 /* ================= HEADER FINAL FIX (Desktop + Mobile) ================= */
