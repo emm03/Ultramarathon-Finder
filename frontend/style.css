@@ -533,12 +533,11 @@ footer .footer-links a:hover {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    padding: 0;
-    margin: 0;
     gap: 1rem;
-    flex: 1;
-    padding-right: 1.25rem;
-    /* ⬅️ Previously 2rem */
+    padding: 0.75rem;
+    margin: 0;
+    padding-right: 1rem;
+    flex: 0;
 }
 
 .menu li {
@@ -1803,15 +1802,6 @@ button:hover {
         justify-content: center;
         /* Center tabs */
         flex-wrap: wrap;
-    }
-
-    .menu {
-        flex-wrap: wrap;
-        gap: 10px;
-        justify-content: center;
-        /* ✅ Avoid scrolling */
-        overflow-x: visible;
-        white-space: normal;
     }
 
     .menu li a {
