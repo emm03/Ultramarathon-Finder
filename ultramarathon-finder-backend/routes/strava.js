@@ -7,9 +7,10 @@ import User from '../models/User.js';
 dotenv.config();
 const router = express.Router();
 
-// Strava OAuth Redirect Handler
+// -------------------- Strava OAuth Redirect Handler --------------------
 router.get('/strava-auth', async (req, res) => {
-    const { code, error, token } = req.query;
+    const { code, error, state } = req.query;
+    const token = req.cookies?.token || state;
     if (error) return res.status(400).send("Access to Strava denied.");
     if (!token) return res.status(400).send("Missing token");
 
@@ -27,10 +28,14 @@ router.get('/strava-auth', async (req, res) => {
             }
         });
 
-        const accessToken = tokenRes.data.access_token;
-        await User.findByIdAndUpdate(userId, { stravaAccessToken: accessToken });
+        const { access_token, refresh_token } = tokenRes.data;
 
-        console.log(`✅ Stored Strava token for user ${userId}`);
+        await User.findByIdAndUpdate(userId, {
+            stravaAccessToken: access_token,
+            stravaRefreshToken: refresh_token
+        });
+
+        console.log(`✅ Stored Strava tokens for user ${userId}`);
         res.redirect('https://ultramarathonconnect.com/training_log.html');
     } catch (err) {
         console.error("❌ Error during Strava OAuth:", err);
@@ -38,7 +43,7 @@ router.get('/strava-auth', async (req, res) => {
     }
 });
 
-// Middleware to require auth
+// -------------------- Middleware to Require Auth --------------------
 const requireUser = async (req, res, next) => {
     const auth = req.headers.authorization;
     if (!auth) return res.status(401).json({ error: 'Unauthorized' });
@@ -56,7 +61,7 @@ const requireUser = async (req, res, next) => {
     }
 };
 
-// Get activities with optional photos and descriptions
+// -------------------- Fetch Strava Activities --------------------
 router.get('/api/strava/activities', requireUser, async (req, res) => {
     const accessToken = req.user.stravaAccessToken;
     if (!accessToken) return res.status(401).json({ error: "Strava not connected." });
