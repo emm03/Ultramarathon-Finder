@@ -148,20 +148,6 @@ header nav a:hover {
         width: 70px;
     }
 
-    header nav {
-        flex: 1;
-        overflow-x: auto;
-        white-space: nowrap;
-    }
-
-    header nav .menu {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        gap: 10px;
-        padding: 0 10px;
-        margin: 0;
-    }
-
     header nav a {
         font-size: 0.95rem;
         flex: 0 0 auto;
@@ -2268,20 +2254,6 @@ body {
     padding: 0;
 }
 
-.sticky-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #2d2d2d;
-    padding: 0.8rem 1.5rem;
-    color: white;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
 .leaflet-top,
 .leaflet-bottom {
     z-index: 0;
@@ -2478,73 +2450,19 @@ body {
     display: none;
 }
 
-@media (max-width: 768px) {
-    .menu-toggle {
-        display: block;
-        font-size: 1.8rem;
-        color: white;
-        background: none;
-        border: none;
-        cursor: pointer;
-        position: absolute;
-        right: 1rem;
-        top: 1rem;
-        z-index: 1001;
-    }
-
-    .menu {
-        display: none;
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
-        background-color: #333;
-        position: absolute;
-        top: 70px;
-        left: 0;
-        width: 100%;
-        padding: 1rem 0;
-        z-index: 999;
-    }
-
-    .menu.show {
-        display: flex;
-    }
-
-    .menu li a {
-        font-size: 1rem;
-        padding: 10px 15px;
-    }
-
-    .sticky-header {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.75rem 1rem;
-    }
-
-    .header-left {
-        justify-content: flex-start;
-        width: auto;
-    }
-
-    .header-right {
-        display: none;
-    }
-}
-
-/* Header Layout Fixes */
+/* === HEADER LAYOUT FIX === */
 .sticky-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
     background-color: #333;
-    color: white;
+    padding: 0.75rem 1.5rem;
     position: fixed;
     top: 0;
     width: 100%;
     z-index: 1000;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    height: 70px;
 }
 
 .header-left {
@@ -2564,14 +2482,14 @@ body {
     white-space: nowrap;
 }
 
-/* Desktop Menu */
+/* Desktop Navigation */
 .menu {
     display: flex;
+    align-items: center;
     gap: 1.5rem;
     list-style: none;
     margin: 0;
     padding: 0;
-    align-items: center;
 }
 
 .menu li a {
@@ -2585,12 +2503,12 @@ body {
     text-decoration: underline;
 }
 
-/* Hide hamburger on desktop */
+/* Hide hamburger by default (desktop) */
 .menu-toggle {
     display: none;
 }
 
-/* --- Mobile Styles --- */
+/* === MOBILE HEADER STYLES === */
 @media (max-width: 768px) {
     .menu-toggle {
         display: block;
@@ -2608,6 +2526,8 @@ body {
     .menu {
         display: none;
         flex-direction: column;
+        align-items: center;
+        gap: 1rem;
         background-color: #333;
         position: absolute;
         top: 70px;
