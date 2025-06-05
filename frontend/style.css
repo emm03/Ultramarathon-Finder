@@ -538,8 +538,7 @@ footer .footer-links a:hover {
     gap: 1rem;
     flex: 1;
     flex-wrap: wrap;
-    max-width: calc(100% - 220px);
-    /* prevent overflow past logo/title */
+    max-width: calc(100% - 260px);
 }
 
 .menu li {
