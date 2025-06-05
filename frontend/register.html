@@ -1,108 +1,112 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Register - Ultramarathon Connect</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - Ultramarathon Connect</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
-  <!-- Header -->
-  <header class="sticky-header">
-    <div class="logo-container">
-      <img src="ultra.png" alt="Ultramarathon Finder Logo" class="logo" />
-    </div>
-    <nav>
-      <ul class="menu">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="race_directory.html">Race Directory</a></li>
-        <li><a href="forum.html">Runner Community</a></li>
-        <li id="account-tab" class="auth-tab"></li>
-      </ul>
-    </nav>
-  </header>
+    <!-- Header -->
+    <header class="sticky-header">
+        <div class="logo-container">
+            <img src="ultra.png" alt="Ultramarathon Finder Logo" class="logo" />
+        </div>
+        <nav>
+            <ul class="menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="race_directory.html">Race Directory</a></li>
+                <li><a href="forum.html">Runner Community</a></li>
+                <li id="account-tab" class="auth-tab"></li>
+            </ul>
+        </nav>
+    </header>
 
-  <!-- Main -->
-  <main>
-    <div class="form-container">
-      <div class="form-card">
-        <h2>Create an Account</h2>
-        <form id="register-form">
-          <div class="form-group">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" placeholder="Choose a username" required />
-          </div>
+    <!-- Main -->
+    <main>
+        <div class="form-container">
+            <div class="form-card">
+                <h2>Create an Account</h2>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" id="username" name="username" placeholder="Choose a username" required />
+                    </div>
 
-          <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" placeholder="Enter your email" required />
-          </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required />
+                    </div>
 
-          <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" placeholder="Create a password" required />
-            <small>Password must be at least 6 characters long and include one uppercase letter, one number, and one special character.</small>
-          </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" placeholder="Create a password" required />
+                        <small>Password must be at least 6 characters long and include one uppercase letter, one number,
+                            and one special character.</small>
+                    </div>
 
-          <button type="submit" class="orange-btn">Register</button>
-        </form>
-        <p id="register-message" class="error-message"></p>
-        <p>Already have an account? <a href="login.html"><strong>Login here</strong></a>.</p>
-      </div>
-    </div>
-  </main>
+                    <button type="submit" class="orange-btn">Register</button>
+                </form>
+                <p id="register-message" class="error-message"></p>
+                <p>Already have an account? <a href="login.html"><strong>Login here</strong></a>.</p>
+            </div>
+        </div>
+    </main>
 
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="footer-links">
-      <a href="contact.html">Contact Us</a> |
-      <a href="privacy.html">Privacy Policy</a> |
-      <a href="termsofservice.html">Terms of Service</a> |
-      <a href="faq.html">FAQ</a> |
-      <span>Email: <a href="mailto:ultramarathonconnect@gmail.com">ultramarathonconnect@gmail.com</a></span>
-    </div>
-    <p class="footer-copy">&copy; 2025 Ultramarathon Connect. All rights reserved.</p>
-  </footer>
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-links">
+            <a href="contact.html">Contact Us</a> |
+            <a href="privacy.html">Privacy Policy</a> |
+            <a href="termsofservice.html">Terms of Service</a> |
+            <a href="faq.html">FAQ</a> |
+            <span>Email: <a href="mailto:ultramarathonconnect@gmail.com">ultramarathonconnect@gmail.com</a></span>
+        </div>
+        <p class="footer-copy">&copy; 2025 Ultramarathon Connect. All rights reserved.</p>
+    </footer>
 
-  <!-- Script -->
-  <script>
-    document.getElementById('register-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const username = document.getElementById('username').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
+    <!-- Script -->
+    <script>
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
 
-      if (!username || !email || !password) {
-        document.getElementById('register-message').textContent = 'Please fill in all fields.';
-        return;
-      }
+            if (!username || !email || !password) {
+                document.getElementById('register-message').textContent = 'Please fill in all fields.';
+                return;
+            }
 
-      const passwordRegex = /^(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{6,}$/;
-      if (!passwordRegex.test(password)) {
-        document.getElementById('register-message').textContent = 'Password does not meet the requirements.';
-        return;
-      }
+            const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=])[A-Za-z\d!@#$%^&*()_\-+=]{6,}$/;
+            if (!passwordRegex.test(password)) {
+                document.getElementById('register-message').textContent = 'Password does not meet the requirements.';
+                return;
+            }
 
-      try {
-        const response = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, email, password })
+            try {
+                const response = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('register-message').textContent = 'Registration successful! Redirecting to login...';
+                    document.getElementById('register-message').classList.add('success-message');
+                    setTimeout(() => window.location.href = 'login.html', 2000);
+                } else {
+                    document.getElementById('register-message').textContent = data.message || 'Error: Registration failed.';
+                }
+            } catch {
+                document.getElementById('register-message').textContent = 'Error: Could not register user.';
+            }
         });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          document.getElementById('register-message').textContent = 'Registration successful! Redirecting to login...';
-          document.getElementById('register-message').classList.add('success-message');
-          setTimeout(() => window.location.href = 'login.html', 2000);
-        } else {
-          document.getElementById('register-message').textContent = data.message || 'Error: Registration failed.';
-        }
-      } catch {
-        document.getElementById('register-message').textContent = 'Error: Could not register user.';
-      }
-    });
-  </script>
+    </script>
 </body>
+
 </html>
