@@ -9,8 +9,7 @@ const router = express.Router();
 
 // -------------------- Strava OAuth Redirect Handler --------------------
 router.get('/strava-auth', async (req, res) => {
-    const { code, error, state } = req.query;
-    const token = req.cookies?.token || state;
+    const { code, error, state: token } = req.query;
     if (error) return res.status(400).send("Access to Strava denied.");
     if (!token) return res.status(400).send("Missing token");
 
