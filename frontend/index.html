@@ -90,6 +90,20 @@
             <button class="orange-btn" onclick="window.location.href='forum.html'">View All Posts</button>
         </section>
 
+        <!-- Training Log Teaser (for guests only) -->
+        <section class="training-log-teaser" id="trainingLogTeaser" style="display: none;">
+            <div class="teaser-box">
+                <h2>🏃‍♀️ Personal Training Log</h2>
+                <p>Track your weekly runs and visualize your ultramarathon journey.</p>
+                <p><strong>Connect your Strava account to unlock your personal log.</strong></p>
+                <div class="teaser-actions">
+                    <a href="login.html" class="orange-btn">Login</a>
+                    <a href="register.html" class="gray-btn">Create Account</a>
+                </div>
+                <p class="lock-note">🔒 Training Log is available only to logged-in users.</p>
+            </div>
+        </section>
+
         <!-- Article Carousel -->
         <section class="articles-section">
             <h2>Recent Articles</h2>
@@ -251,12 +265,21 @@
         </div>
         <p class="footer-copy">&copy; 2025 Ultramarathon Connect. All rights reserved.</p>
     </footer>
-    
+
     <!-- Scripts -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script src="index_script.js"></script>
     <script src="alanai_chatbot/alan.js"></script>
+
+    <script>
+        // Show teaser only if not logged in
+        const token = localStorage.getItem("token");
+        if (!token) {
+            document.getElementById('trainingLogTeaser').style.display = 'block';
+        }
+    </script>
+
 </body>
 
 </html>

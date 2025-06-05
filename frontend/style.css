@@ -2447,3 +2447,40 @@ body {
 .scroll-btn:hover {
     color: #ff8000;
 }
+
+.training-log-teaser {
+    background-color: #f9f9f9;
+    text-align: center;
+    padding: 2rem;
+    margin: 2rem auto;
+    border-radius: 12px;
+    max-width: 800px;
+}
+
+.training-log-teaser .teaser-box h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.training-log-teaser .teaser-actions {
+    margin-top: 1rem;
+}
+
+.training-log-teaser .teaser-actions a {
+    margin: 0 0.5rem;
+}
+
+.gray-btn {
+    background-color: #ddd;
+    color: #333;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.lock-note {
+    margin-top: 0.8rem;
+    color: #666;
+    font-size: 0.9rem;
+}
