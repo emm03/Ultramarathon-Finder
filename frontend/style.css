@@ -537,9 +537,9 @@ footer .footer-links a:hover {
     margin: 0;
     gap: 1rem;
     flex: 1;
-    flex-wrap: wrap;
-    max-width: calc(100% - 260px);
+    padding-right: 2rem;
 }
+
 
 .menu li {
     position: relative;
@@ -1787,52 +1787,36 @@ button:hover {
 
 /* === Mobile Fixes for Header, Nav, and Forum Cards === */
 @media (max-width: 768px) {
-
     .sticky-header {
         flex-direction: column;
         align-items: flex-start;
     }
 
+    .header-left {
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 0.5rem;
+    }
+
     .header-right {
         width: 100%;
-        justify-content: flex-start;
+        justify-content: center;
+        /* Center tabs */
         flex-wrap: wrap;
     }
 
     .menu {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        white-space: nowrap;
+        flex-wrap: wrap;
         gap: 10px;
-        width: 100%;
-        padding: 0 10px;
-        scrollbar-width: none;
-    }
-
-    .menu::-webkit-scrollbar {
-        display: none;
+        justify-content: center;
+        /* ✅ Avoid scrolling */
+        overflow-x: visible;
+        white-space: normal;
     }
 
     .menu li a {
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         padding: 10px;
-        white-space: nowrap;
-    }
-
-    .forum-categories {
-        flex-direction: column;
-        align-items: center;
-        flex-wrap: wrap;
-    }
-
-    .forum-category {
-        max-width: 90%;
-        width: 100%;
-        margin-bottom: 20px;
-    }
-
-    header .logo {
-        width: 70px;
     }
 }
 
