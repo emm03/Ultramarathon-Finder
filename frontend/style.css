@@ -66,10 +66,11 @@ header .logo {
 }
 
 .header-right {
-    flex: 1;
     display: flex;
     justify-content: flex-end;
+    flex: 1;
     overflow-x: auto;
+    padding-right: 1rem;
 }
 
 .logo-title-container {
@@ -528,12 +529,17 @@ footer .footer-links a:hover {
 
 /* Navigation Menu Styles */
 .menu {
-    display: flex;
-    gap: 1rem;
     list-style: none;
-    margin: 0;
-    padding: 0;
+    display: flex;
+    justify-content: flex-end;
     align-items: center;
+    padding: 0;
+    margin: 0;
+    gap: 1rem;
+    flex: 1;
+    flex-wrap: wrap;
+    max-width: calc(100% - 220px);
+    /* prevent overflow past logo/title */
 }
 
 .menu li {
