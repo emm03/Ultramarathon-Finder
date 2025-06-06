@@ -2255,9 +2255,6 @@ body {
 
 /* Desktop Header */
 .sticky-header {
-    display: flex;
-    justify-content: center;
-    /* Center the inner wrapper */
     background-color: #333;
     color: white;
     position: fixed;
@@ -2265,18 +2262,15 @@ body {
     width: 100%;
     z-index: 1000;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    height: 90px;
-    /* Make it taller */
+    padding: 0;
 }
 
-/* Inner container keeps max-width layout */
 .header-inner {
-    max-width: 1300px;
-    width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 30px;
+    padding: 0.8rem 1.25rem;
+    height: 70px;
 }
 
 /* Left side (logo and site title) */
