@@ -32,7 +32,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Hamburger toggle – only active on mobile
     const toggle = document.querySelector('.menu-toggle');
     const menuList = document.querySelector('.menu');
-
     if (toggle && menuList) {
         toggle.addEventListener('click', () => {
             menuList.classList.toggle('show');
@@ -104,16 +103,18 @@ async function setupMap() {
 
     const zoomHint = document.createElement("div");
     zoomHint.textContent = "Use ⌘ + scroll to zoom the map";
-    zoomHint.style.position = "absolute";
-    zoomHint.style.top = "10px";
-    zoomHint.style.left = "10px";
-    zoomHint.style.padding = "6px 12px";
-    zoomHint.style.background = "rgba(0, 0, 0, 0.7)";
-    zoomHint.style.color = "white";
-    zoomHint.style.borderRadius = "5px";
-    zoomHint.style.fontSize = "0.85rem";
-    zoomHint.style.zIndex = "1000";
-    zoomHint.style.display = "none";
+    Object.assign(zoomHint.style, {
+        position: "absolute",
+        top: "10px",
+        left: "10px",
+        padding: "6px 12px",
+        background: "rgba(0, 0, 0, 0.7)",
+        color: "white",
+        borderRadius: "5px",
+        fontSize: "0.85rem",
+        zIndex: "1000",
+        display: "none"
+    });
     mapContainer.appendChild(zoomHint);
 
     map.getContainer().addEventListener("wheel", function (e) {
@@ -311,20 +312,9 @@ function scrollCarousel(direction) {
     const carousel = document.getElementById('articleCarousel');
     if (!carousel) return;
 
-    const scrollAmount = 300; // Adjust this if your cards are wider/narrower
+    const scrollAmount = 300;
     carousel.scrollBy({
         left: scrollAmount * direction,
         behavior: 'smooth'
     });
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-    const toggle = document.querySelector(".menu-toggle");
-    const menu = document.querySelector(".menu");
-
-    if (toggle && menu) {
-        toggle.addEventListener("click", () => {
-            menu.classList.toggle("show");
-        });
-    }
-});

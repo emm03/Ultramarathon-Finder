@@ -2272,7 +2272,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.8rem 1.5rem;
+    padding-left: 0;
+    padding-right: 0;
 }
 
 /* Left side (logo and site title) */
@@ -2319,7 +2320,6 @@ body {
     display: none;
 }
 
-/* ================= MOBILE NAVIGATION ================= */
 @media (max-width: 768px) {
     .menu-toggle {
         display: block;
@@ -2328,9 +2328,7 @@ body {
         background: none;
         border: none;
         cursor: pointer;
-        position: relative;
-        margin-left: auto;
-        z-index: 1001;
+        margin-left: 12px;
     }
 
     .menu {
@@ -2348,17 +2346,5 @@ body {
 
     .menu.show {
         display: flex;
-    }
-
-    .menu li {
-        width: 100%;
-        text-align: center;
-    }
-
-    .menu li a {
-        display: block;
-        width: 100%;
-        padding: 12px 0;
-        font-size: 1.1rem;
     }
 }
