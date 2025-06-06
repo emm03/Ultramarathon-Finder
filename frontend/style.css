@@ -2255,11 +2255,6 @@ body {
 
 /* Desktop Header */
 .sticky-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: nowrap;
-    padding: 0.8rem 1.5rem;
     background-color: #333;
     color: white;
     position: fixed;
@@ -2269,6 +2264,18 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
+/* Inner container to center content and limit width */
+.header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1.5rem;
+}
+
+/* Left side (logo and site title) */
 .header-left {
     display: flex;
     align-items: center;
@@ -2321,9 +2328,8 @@ body {
         background: none;
         border: none;
         cursor: pointer;
-        position: absolute;
-        right: 1rem;
-        top: 1rem;
+        position: relative;
+        margin-left: auto;
         z-index: 1001;
     }
 

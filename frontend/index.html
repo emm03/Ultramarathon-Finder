@@ -14,21 +14,21 @@
 
 <body>
     <header class="sticky-header">
-        <div class="header-left">
-            <img src="ultra.png" alt="Ultramarathon Connect Logo" class="logo" />
-            <span class="site-title">UltramarathonConnect</span>
+        <div class="header-inner">
+            <div class="header-left">
+                <img src="ultra.png" alt="Ultramarathon Connect Logo" class="logo" />
+                <span class="site-title">UltramarathonConnect</span>
+            </div>
+            <button class="menu-toggle">☰</button>
+            <nav class="header-right">
+                <ul class="menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="race_directory.html">Race Directory</a></li>
+                    <li><a href="forum.html">Runner Community</a></li>
+                    <li id="account-tab" class="auth-tab"><a href="login.html">Login</a></li>
+                </ul>
+            </nav>
         </div>
-
-        <button class="menu-toggle" aria-label="Toggle menu">☰</button>
-
-        <nav>
-            <ul class="menu">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="race_directory.html">Race Directory</a></li>
-                <li><a href="forum.html">Runner Community</a></li>
-                <li id="account-tab" class="auth-tab"></li>
-            </ul>
-        </nav>
     </header>
 
     <main>
@@ -79,7 +79,7 @@
         </div>
 
         <!-- Training Log Teaser -->
-        <section class="training-log-teaser">
+        <section class="training-log-teaser" id="trainingLogTeaser">
             <h2>🏃 Personal Training Log</h2>
             <p>Track your weekly runs and visualize your ultramarathon journey.</p>
             <p><strong>Connect your Strava account to unlock your personal log.</strong></p>
