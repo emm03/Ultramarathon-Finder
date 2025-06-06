@@ -1466,6 +1466,17 @@ button:hover {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+/* Profile Image specifically for profile_edit.html */
+.profile-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #d96100;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-bottom: 1rem;
+}
+
 /* User Info Section */
 .info-section h3 {
     font-size: 1.5em;
