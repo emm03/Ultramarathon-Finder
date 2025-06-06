@@ -2263,8 +2263,7 @@ body {
     z-index: 1000;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     padding: 0;
-    height: 90px;
-    /* slightly taller to reach carousel */
+    height: 110px;
 }
 
 .header-inner {
