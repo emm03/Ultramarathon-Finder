@@ -68,7 +68,6 @@
                 if (token) {
                     accountTab.innerHTML = `
                     <a href="account.html">My Account</a>
-                    <a id="logout-link" href="#">Logout</a>
                 `;
                     document.getElementById("logout-link").addEventListener("click", () => {
                         localStorage.removeItem("token");
