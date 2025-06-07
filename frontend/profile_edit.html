@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Edit Profile - Ultramarathon Connect</title>
+    <title>Edit Profile - Ultramarathon Finder</title>
     <link rel="stylesheet" href="style.css" />
 </head>
 
@@ -21,7 +21,7 @@
                     <li><a href="index.html">Home</a></li>
                     <li><a href="race_directory.html">Race Directory</a></li>
                     <li><a href="forum.html">Runner Community</a></li>
-                    <li id="account-tab" class="auth-tab"></li>
+                    <li id="account-tab" class="auth-tab"><a href="login.html">Login</a></li>
                 </ul>
             </nav>
         </div>
@@ -30,19 +30,16 @@
     <main>
         <div class="profile-edit-wrapper">
             <h2>Edit Your Profile</h2>
-            <img id="profile-pic" src="images/default-profile.png" alt="Profile Picture" class="profile-img">
-
+            <img id="profile-pic" src="images/default-profile.png" alt="Profile Picture" class="profile-img" />
             <form id="upload-form">
-                <input type="file" id="profile-picture" name="profilePicture" accept="image/*">
+                <input type="file" id="profile-picture" name="profilePicture" accept="image/*" />
                 <button type="button" id="upload-button">Upload Picture</button>
             </form>
-
             <form id="profile-form">
-                <input type="text" id="username" name="username" placeholder="Username" required>
-                <input type="email" id="email" name="email" placeholder="Email" required>
+                <input type="text" id="username" name="username" placeholder="Username" required />
+                <input type="email" id="email" name="email" placeholder="Email" required />
                 <button type="submit" class="orange-btn">Save Changes</button>
             </form>
-
             <p id="success-message" class="success-message" style="display: none;">Profile updated successfully!</p>
             <p id="error-message" class="error-message" style="display: none;">Error updating profile.</p>
         </div>
@@ -68,7 +65,7 @@
                 const profilePic = localStorage.getItem("profilePicture");
                 accountTab.innerHTML = `
           <div class="profile-dropdown">
-            <img src="${profilePic || 'images/default-profile.png'}" class="profile-picture-nav" alt="Profile Picture">
+            <img src="${profilePic || 'images/default-profile.png'}" class="profile-picture-nav" alt="Profile Picture" />
             <div class="dropdown-menu">
               <a href="account.html">Profile</a>
               <a href="training_log.html">Training Log</a>
@@ -77,12 +74,18 @@
           </div>
         `;
 
-                document.getElementById("logout-link").addEventListener("click", () => {
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("profilePicture");
-                    alert("You have been logged out.");
-                    window.location.href = "login.html";
-                });
+                // Delay to ensure the element exists before attaching the event
+                setTimeout(() => {
+                    const logoutBtn = document.getElementById("logout-link");
+                    if (logoutBtn) {
+                        logoutBtn.addEventListener("click", () => {
+                            localStorage.removeItem("token");
+                            localStorage.removeItem("profilePicture");
+                            alert("You have been logged out.");
+                            window.location.href = "login.html";
+                        });
+                    }
+                }, 100);
             } else {
                 accountTab.innerHTML = `<a href="login.html">Login</a><a href="register.html">Register</a>`;
             }
