@@ -6,11 +6,112 @@ body {
     background: #fafafa;
 }
 
-/* Ensure No Unnecessary Margins or Gaps */
+/* Header spacing fix */
 main {
     margin: 0;
     padding: 0;
-    padding-top: 120px;
+    padding-top: 133px;
+}
+
+/* On the homepage only, remove top padding so header touches carousel */
+body.index main {
+    padding-top: 0;
+}
+
+/* ================= HEADER FINAL FIX (Desktop + Mobile) ================= */
+
+/* Desktop Header */
+.sticky-header {
+    background-color: #333;
+    color: white;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    padding: 0;
+    height: 133px;
+}
+
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1.25rem;
+    height: 100%;
+}
+
+/* Left side (logo and site title) */
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo {
+    height: 40px;
+}
+
+.site-title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: white;
+    white-space: nowrap;
+}
+
+/* Desktop menu */
+.menu {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.menu li a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 10px 0;
+}
+
+.menu li a:hover {
+    text-decoration: underline;
+}
+
+/* Hamburger icon (hidden on desktop) */
+.menu-toggle {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+        font-size: 1.8rem;
+        color: white;
+        background: none;
+        border: none;
+        cursor: pointer;
+        margin-left: 12px;
+    }
+
+    .menu {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        background-color: #333;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        width: 100%;
+        padding: 1rem 0;
+        z-index: 999;
+    }
+
+    .menu.show {
+        display: flex;
+    }
 }
 
 /* Carousel Section */
@@ -2333,100 +2434,4 @@ body {
     margin-top: 0.8rem;
     color: #666;
     font-size: 0.9rem;
-}
-
-/* ================= HEADER FINAL FIX (Desktop + Mobile) ================= */
-
-/* Desktop Header */
-.sticky-header {
-    background-color: #333;
-    color: white;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    z-index: 1000;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    padding: 0;
-    height: 133px;
-}
-
-.header-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.8rem 1.25rem;
-    height: 100%;
-}
-
-/* Left side (logo and site title) */
-.header-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.logo {
-    height: 40px;
-}
-
-.site-title {
-    font-size: 1.4rem;
-    font-weight: bold;
-    color: white;
-    white-space: nowrap;
-}
-
-/* Desktop menu */
-.menu {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.menu li a {
-    color: white;
-    text-decoration: none;
-    font-weight: 500;
-    padding: 10px 0;
-}
-
-.menu li a:hover {
-    text-decoration: underline;
-}
-
-/* Hamburger icon (hidden on desktop) */
-.menu-toggle {
-    display: none;
-}
-
-@media (max-width: 768px) {
-    .menu-toggle {
-        display: block;
-        font-size: 1.8rem;
-        color: white;
-        background: none;
-        border: none;
-        cursor: pointer;
-        margin-left: 12px;
-    }
-
-    .menu {
-        display: none;
-        flex-direction: column;
-        align-items: center;
-        background-color: #333;
-        position: absolute;
-        top: 70px;
-        left: 0;
-        width: 100%;
-        padding: 1rem 0;
-        z-index: 999;
-    }
-
-    .menu.show {
-        display: flex;
-    }
 }
