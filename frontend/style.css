@@ -6,12 +6,17 @@ body {
     background: #fafafa;
 }
 
-body.comments-page main {
-    padding-top: 80px;
+body.comments-page main,
+body.forum-page main {
+    padding-top: 110px;
 }
 
-body.forum-page main {
-    padding-top: 150px;
+.forum-heading,
+.comments-heading {
+    margin-top: 0;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-size: 2rem;
 }
 
 /* Header spacing fix */
