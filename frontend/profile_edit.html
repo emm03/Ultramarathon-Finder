@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="auth-page">
     <header class="sticky-header">
         <div class="header-inner">
             <div class="header-left">
@@ -21,7 +21,7 @@
                     <li><a href="index.html">Home</a></li>
                     <li><a href="race_directory.html">Race Directory</a></li>
                     <li><a href="forum.html">Runner Community</a></li>
-                    <li id="account-tab" class="auth-tab"><a href="login.html">Login</a></li>
+                    <li id="account-tab" class="auth-tab"></li>
                 </ul>
             </nav>
         </div>
@@ -65,7 +65,24 @@
             const accountTab = document.getElementById("account-tab");
 
             if (token) {
-                accountTab.innerHTML = `<a href="account.html">My Account</a>`;
+                const profilePic = localStorage.getItem("profilePicture");
+                accountTab.innerHTML = `
+                    <div class="profile-dropdown">
+                        <img src="${profilePic || 'images/default-profile.png'}" class="profile-picture-nav" alt="Profile Picture">
+                        <div class="dropdown-menu">
+                            <a href="account.html">Profile</a>
+                            <a href="training_log.html">Training Log</a>
+                            <a id="logout-link" href="#">Sign Out</a>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById("logout-link").addEventListener("click", () => {
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("profilePicture");
+                    alert("You have been logged out.");
+                    window.location.href = "login.html";
+                });
             } else {
                 accountTab.innerHTML = `<a href="login.html">Login</a><a href="register.html">Register</a>`;
             }
