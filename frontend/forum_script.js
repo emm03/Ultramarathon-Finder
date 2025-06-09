@@ -158,18 +158,65 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     fetchPosts();
-});
 
-document.addEventListener("DOMContentLoaded", () => {
+    // JOIN GROUP LOGIC
     const joinButtons = document.querySelectorAll(".join-btn");
 
     joinButtons.forEach((btn) => {
-        btn.addEventListener("click", () => {
-            btn.textContent = "Joined ✅";
-            btn.disabled = true;
-            btn.classList.add("joined");
+        btn.addEventListener("click", async () => {
+            const groupName = btn.closest(".training-group").querySelector("h4")?.textContent;
+            if (!token) return alert("Please log in to join a group.");
 
-            alert("You've successfully joined the training group!");
+            try {
+                const res = await fetch("https://ultramarathon-finder-backend.onrender.com/api/auth/join-group", {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ groupName })
+                });
+
+                if (res.ok) {
+                    btn.textContent = "Joined ✅";
+                    btn.disabled = true;
+                    btn.classList.add("joined");
+                } else {
+                    const err = await res.json();
+                    alert(err.message || "Failed to join group.");
+                }
+            } catch (err) {
+                console.error("Error joining group:", err);
+                alert("Network error while joining group.");
+            }
         });
     });
+
+    // PRE-MARK JOINED GROUPS
+    (async function markJoinedGroups() {
+        if (!token) return;
+
+        try {
+            const res = await fetch("https://ultramarathon-finder-backend.onrender.com/api/auth/account", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            const data = await res.json();
+            const joined = data?.user?.joinedGroups || [];
+
+            document.querySelectorAll(".training-group").forEach(group => {
+                const title = group.querySelector("h4")?.textContent;
+                const button = group.querySelector(".join-btn");
+
+                if (joined.includes(title)) {
+                    button.textContent = "Joined ✅";
+                    button.disabled = true;
+                    button.classList.add("joined");
+                }
+            });
+        } catch (err) {
+            console.error("Failed to fetch joined groups:", err);
+        }
+    })();
 });
