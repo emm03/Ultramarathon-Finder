@@ -289,4 +289,27 @@ router.patch('/join-group', authenticateToken, async (req, res) => {
     }
 });
 
+// PATCH /api/auth/leave-group
+router.patch('/leave-group', authenticateToken, async (req, res) => {
+    const { groupName } = req.body;
+    const userId = req.user.userId;
+
+    if (!groupName) {
+        return res.status(400).json({ message: 'Group name is required.' });
+    }
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: 'User not found.' });
+
+        user.joinedGroups = user.joinedGroups.filter(g => g.trim() !== groupName.trim());
+        await user.save();
+
+        res.status(200).json({ joinedGroups: user.joinedGroups });
+    } catch (err) {
+        console.error('Leave group error:', err);
+        res.status(500).json({ message: 'Server error while leaving group.' });
+    }
+});
+
 export default router;
