@@ -160,34 +160,59 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchPosts();
 
     // JOIN GROUP LOGIC
-    const joinButtons = document.querySelectorAll(".join-btn");
-
-    joinButtons.forEach((btn) => {
+    document.querySelectorAll(".join-btn").forEach((btn) => {
         btn.addEventListener("click", async () => {
-            const groupName = btn.closest(".training-group").querySelector("h4")?.textContent;
+            const groupName = btn.closest(".training-group").querySelector("h4")?.textContent.trim();
             if (!token) return alert("Please log in to join a group.");
 
-            try {
-                const res = await fetch("https://ultramarathon-finder-backend.onrender.com/api/auth/join-group", {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ groupName })
-                });
+            if (btn.classList.contains("joined")) {
+                // Leave group
+                try {
+                    const res = await fetch("https://ultramarathon-finder-backend.onrender.com/api/auth/leave-group", {
+                        method: "PATCH",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ groupName })
+                    });
 
-                if (res.ok) {
-                    btn.textContent = "Joined ✅";
-                    btn.disabled = true;
-                    btn.classList.add("joined");
-                } else {
-                    const err = await res.json();
-                    alert(err.message || "Failed to join group.");
+                    if (res.ok) {
+                        btn.textContent = "Join Group";
+                        btn.classList.remove("joined");
+                        btn.disabled = false;
+                    } else {
+                        const err = await res.json();
+                        alert(err.message || "Failed to leave group.");
+                    }
+                } catch (err) {
+                    console.error("Error leaving group:", err);
+                    alert("Network error.");
                 }
-            } catch (err) {
-                console.error("Error joining group:", err);
-                alert("Network error while joining group.");
+
+            } else {
+                // Join group
+                try {
+                    const res = await fetch("https://ultramarathon-finder-backend.onrender.com/api/auth/join-group", {
+                        method: "PATCH",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ groupName })
+                    });
+
+                    if (res.ok) {
+                        btn.textContent = "Leave Group";
+                        btn.classList.add("joined");
+                    } else {
+                        const err = await res.json();
+                        alert(err.message || "Failed to join group.");
+                    }
+                } catch (err) {
+                    console.error("Error joining group:", err);
+                    alert("Network error.");
+                }
             }
         });
     });
