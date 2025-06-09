@@ -80,6 +80,7 @@ app.use('/api/forum', forumRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/alan', alanRoute);
 app.use('/api/groups', groupRoutes);
+console.log('✅ Groups route registered at /api/groups');
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 app.use('/static', express.static(path.join(process.cwd(), 'public')));
 
