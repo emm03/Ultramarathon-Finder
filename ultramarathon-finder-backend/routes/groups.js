@@ -9,6 +9,10 @@ const router = express.Router();
 
 // -------------------- CREATE GROUP --------------------
 router.post('/create-group', authenticateToken, async (req, res) => {
+    console.log("🚀 [create-group] Route hit");
+    console.log("📝 Request body:", req.body);
+    console.log("🔐 Authenticated user ID:", req.user?.userId);
+
     const { raceName, description, website } = req.body;
 
     if (!raceName || !description) {
@@ -18,6 +22,7 @@ router.post('/create-group', authenticateToken, async (req, res) => {
     try {
         const formattedGroupName = raceName.trim();
         const existing = await Group.findOne({ raceName: formattedGroupName });
+
         if (existing) {
             return res.status(409).json({ message: 'A group for this race already exists.' });
         }
@@ -32,7 +37,7 @@ router.post('/create-group', authenticateToken, async (req, res) => {
         await newGroup.save();
         res.status(201).json({ message: 'Group created successfully', group: newGroup });
     } catch (err) {
-        console.error('Error creating group:', err);
+        console.error('❌ Error creating group:', err);
         res.status(500).json({ message: 'Server error while creating group.' });
     }
 });
