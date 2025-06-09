@@ -203,10 +203,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
             const data = await res.json();
-            const joined = data?.user?.joinedGroups || [];
+            const joined = (data?.user?.joinedGroups || []).map(name =>
+                name.trim().toLowerCase()
+            );
 
             document.querySelectorAll(".training-group").forEach(group => {
-                const title = group.querySelector("h4")?.textContent.trim();
+                const title = group.querySelector("h4")?.textContent.trim().toLowerCase();
                 const button = group.querySelector(".join-btn");
 
                 if (joined.includes(title)) {
@@ -219,4 +221,5 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Failed to fetch joined groups:", err);
         }
     })();
+
 });
