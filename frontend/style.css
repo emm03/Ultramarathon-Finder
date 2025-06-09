@@ -2505,6 +2505,11 @@ body {
 }
 
 .join-btn.joined {
-    background-color: #ccc;
-    cursor: default;
+    background-color: #ff6600;
+    color: #fff;
+    cursor: pointer;
+}
+
+.join-btn.joined:hover {
+    background-color: #e55a00;
 }
