@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchPosts();
 
-    // === GROUP BUTTON LOGIC (UPDATED & CLEANED) ===
+    // === GROUP BUTTON LOGIC ===
     const setupGroupButtons = async () => {
         if (!token) return;
 
@@ -213,5 +213,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    setupGroupButtons();
+    // === LOAD DYNAMIC TRAINING GROUPS ===
+    async function fetchTrainingGroups() {
+        try {
+            const res = await fetch("https://ultramarathon-finder-backend.onrender.com/api/groups/all-groups");
+            const data = await res.json();
+            const section = document.querySelector(".training-groups-section");
+
+            data.groups.forEach(group => {
+                const div = document.createElement("div");
+                div.className = "training-group";
+
+                const encodedGroupName = encodeURIComponent(group.raceName);
+                div.innerHTML = `
+                <h4><a href="group_forum.html?group=${encodedGroupName}">${group.raceName}</a></h4>
+                <p>${group.description}</p>
+                <button class="join-btn">Join Group</button>
+            `;
+
+                section.insertBefore(div, section.querySelector(".create-group-btn"));
+            });
+
+            setupGroupButtons();
+        } catch (err) {
+            console.error("Failed to fetch training groups:", err);
+        }
+    }
+
+    fetchTrainingGroups();
 });
