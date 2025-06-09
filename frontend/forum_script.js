@@ -1,5 +1,3 @@
-// forum_script.js
-
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('token');
     const form = document.getElementById('post-form');
@@ -14,19 +12,14 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const categoryCards = document.querySelectorAll('.category-card');
-
-    // Scroll to section on category click
     categoryCards.forEach(card => {
         card.addEventListener('click', () => {
             const topic = card.dataset.topic;
             const section = topicSections[topic];
-            if (section) {
-                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+            if (section) section.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
     });
 
-    // Highlight active category card on scroll
     const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -159,66 +152,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchPosts();
 
-    // JOIN GROUP LOGIC
-    document.querySelectorAll(".join-btn").forEach((btn) => {
-        btn.addEventListener("click", async () => {
-            const groupName = btn.closest(".training-group").querySelector("h4")?.textContent.trim();
-            if (!token) return alert("Please log in to join a group.");
-
-            if (btn.classList.contains("joined")) {
-                // Leave group
-                try {
-                    const res = await fetch("https://ultramarathon-finder-backend.onrender.com/api/auth/leave-group", {
-                        method: "PATCH",
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: `Bearer ${token}`
-                        },
-                        body: JSON.stringify({ groupName })
-                    });
-
-                    if (res.ok) {
-                        btn.textContent = "Join Group";
-                        btn.classList.remove("joined");
-                        btn.disabled = false;
-                    } else {
-                        const err = await res.json();
-                        alert(err.message || "Failed to leave group.");
-                    }
-                } catch (err) {
-                    console.error("Error leaving group:", err);
-                    alert("Network error.");
-                }
-
-            } else {
-                // Join group
-                try {
-                    const res = await fetch("https://ultramarathon-finder-backend.onrender.com/api/auth/join-group", {
-                        method: "PATCH",
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: `Bearer ${token}`
-                        },
-                        body: JSON.stringify({ groupName })
-                    });
-
-                    if (res.ok) {
-                        btn.textContent = "Leave Group";
-                        btn.classList.add("joined");
-                    } else {
-                        const err = await res.json();
-                        alert(err.message || "Failed to join group.");
-                    }
-                } catch (err) {
-                    console.error("Error joining group:", err);
-                    alert("Network error.");
-                }
-            }
-        });
-    });
-
-    // PRE-MARK JOINED GROUPS
-    (async function markJoinedGroups() {
+    // === GROUP BUTTON LOGIC ===
+    const setupGroupButtons = async () => {
         if (!token) return;
 
         try {
@@ -227,31 +162,59 @@ document.addEventListener('DOMContentLoaded', () => {
                     Authorization: `Bearer ${token}`
                 }
             });
-
             const data = await res.json();
             const joinedGroups = data?.user?.joinedGroups || [];
 
             document.querySelectorAll(".training-group").forEach(group => {
                 const h4 = group.querySelector("h4");
                 const btn = group.querySelector(".join-btn");
-
                 if (!h4 || !btn) return;
 
                 const groupName = h4.textContent.trim();
 
-                for (const saved of joinedGroups) {
-                    if (saved.trim() === groupName) {
-                        btn.textContent = "Joined ✅";
-                        btn.disabled = true;
-                        btn.classList.add("joined");
+                const isJoined = joinedGroups.includes(groupName);
+                updateButtonState(btn, isJoined);
 
-                        // Optional: Change to "Leave Group" button in future
-                        return;
+                btn.onclick = async () => {
+                    const endpoint = isJoined ? 'leave-group' : 'join-group';
+                    const newLabel = isJoined ? 'Join Group' : 'Leave Group';
+
+                    try {
+                        const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/auth/${endpoint}`, {
+                            method: "PATCH",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ groupName })
+                        });
+
+                        if (res.ok) {
+                            updateButtonState(btn, !isJoined);
+                        } else {
+                            const err = await res.json();
+                            alert(err.message || 'Action failed.');
+                        }
+                    } catch (err) {
+                        console.error(`Group toggle error:`, err);
+                        alert("Network error.");
                     }
-                }
+                };
             });
         } catch (err) {
-            console.error("❌ Error loading joined groups:", err);
+            console.error("Failed to load joined group status:", err);
         }
-    })();
+    };
+
+    function updateButtonState(button, joined) {
+        if (joined) {
+            button.textContent = "Leave Group";
+            button.classList.add("joined");
+        } else {
+            button.textContent = "Join Group";
+            button.classList.remove("joined");
+        }
+    }
+
+    setupGroupButtons();
 });
