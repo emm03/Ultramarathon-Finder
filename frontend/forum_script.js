@@ -152,15 +152,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchPosts();
 
-    // === GROUP BUTTON LOGIC ===
+    // === GROUP BUTTON LOGIC (UPDATED & CLEANED) ===
     const setupGroupButtons = async () => {
         if (!token) return;
 
         try {
             const res = await fetch("https://ultramarathon-finder-backend.onrender.com/api/auth/account", {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                headers: { Authorization: `Bearer ${token}` }
             });
             const data = await res.json();
             const joinedGroups = data?.user?.joinedGroups || [];
@@ -171,16 +169,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!h4 || !btn) return;
 
                 const groupName = h4.textContent.trim();
-
                 const isJoined = joinedGroups.includes(groupName);
                 updateButtonState(btn, isJoined);
 
                 btn.onclick = async () => {
-                    const endpoint = isJoined ? 'leave-group' : 'join-group';
-                    const newLabel = isJoined ? 'Join Group' : 'Leave Group';
+                    const endpoint = btn.classList.contains("joined") ? "leave-group" : "join-group";
 
                     try {
-                        const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/auth/${endpoint}`, {
+                        const response = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/auth/${endpoint}`, {
                             method: "PATCH",
                             headers: {
                                 "Content-Type": "application/json",
@@ -189,20 +185,21 @@ document.addEventListener('DOMContentLoaded', () => {
                             body: JSON.stringify({ groupName })
                         });
 
-                        if (res.ok) {
-                            updateButtonState(btn, !isJoined);
+                        if (response.ok) {
+                            const updatedJoined = endpoint === "join-group";
+                            updateButtonState(btn, updatedJoined);
                         } else {
-                            const err = await res.json();
-                            alert(err.message || 'Action failed.');
+                            const err = await response.json();
+                            alert(err.message || "Failed to update group status.");
                         }
-                    } catch (err) {
-                        console.error(`Group toggle error:`, err);
+                    } catch (error) {
+                        console.error("Error toggling group status:", error);
                         alert("Network error.");
                     }
                 };
             });
         } catch (err) {
-            console.error("Failed to load joined group status:", err);
+            console.error("❌ Failed to load joined groups:", err);
         }
     };
 
