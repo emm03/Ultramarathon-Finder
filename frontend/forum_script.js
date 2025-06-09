@@ -202,24 +202,31 @@ document.addEventListener('DOMContentLoaded', () => {
                     Authorization: `Bearer ${token}`
                 }
             });
+
             const data = await res.json();
-            const joined = (data?.user?.joinedGroups || []).map(name =>
-                name.trim().toLowerCase()
-            );
+            const joinedGroups = data?.user?.joinedGroups || [];
 
             document.querySelectorAll(".training-group").forEach(group => {
-                const title = group.querySelector("h4")?.textContent.trim().toLowerCase();
-                const button = group.querySelector(".join-btn");
+                const h4 = group.querySelector("h4");
+                const btn = group.querySelector(".join-btn");
 
-                if (joined.includes(title)) {
-                    button.textContent = "Joined ✅";
-                    button.disabled = true;
-                    button.classList.add("joined");
+                if (!h4 || !btn) return;
+
+                const groupName = h4.textContent.trim();
+
+                for (const saved of joinedGroups) {
+                    if (saved.trim() === groupName) {
+                        btn.textContent = "Joined ✅";
+                        btn.disabled = true;
+                        btn.classList.add("joined");
+
+                        // Optional: Change to "Leave Group" button in future
+                        return;
+                    }
                 }
             });
         } catch (err) {
-            console.error("Failed to fetch joined groups:", err);
+            console.error("❌ Error loading joined groups:", err);
         }
     })();
-
 });
