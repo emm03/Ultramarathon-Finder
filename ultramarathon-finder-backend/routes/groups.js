@@ -17,16 +17,16 @@ router.post('/create-group', authenticateToken, async (req, res) => {
 
     try {
         const formattedGroupName = raceName.trim();
-        const existing = await Group.findOne({ name: formattedGroupName });
+        const existing = await Group.findOne({ raceName: formattedGroupName });
         if (existing) {
             return res.status(409).json({ message: 'A group for this race already exists.' });
         }
 
         const newGroup = new Group({
-            name: formattedGroupName,
+            raceName: formattedGroupName,
             description,
             website: website || '',
-            createdBy: req.user.userId
+            creator: req.user.userId
         });
 
         await newGroup.save();
@@ -84,6 +84,17 @@ router.patch('/leave-group', authenticateToken, async (req, res) => {
     } catch (err) {
         console.error('Leave group error:', err);
         res.status(500).json({ message: 'Server error while leaving group.' });
+    }
+});
+
+// -------------------- GET ALL GROUPS --------------------
+router.get('/all-groups', async (req, res) => {
+    try {
+        const groups = await Group.find().sort({ createdAt: -1 });
+        res.status(200).json({ groups });
+    } catch (err) {
+        console.error('Fetch all groups error:', err);
+        res.status(500).json({ message: 'Server error fetching groups.' });
     }
 });
 
