@@ -8,6 +8,7 @@ import multerS3 from 'multer-s3';
 import aws from 'aws-sdk';
 import nodemailer from 'nodemailer';
 import User from '../models/User.js';
+import Group from '../models/Group.js';
 
 const router = express.Router();
 
@@ -83,6 +84,36 @@ router.post('/register', async (req, res) => {
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Internal server error during registration' });
+    }
+});
+
+// -------------------- CREATE GROUP --------------------
+router.post('/create-group', authenticateToken, async (req, res) => {
+    const { raceName, description, website } = req.body;
+
+    if (!raceName || !description) {
+        return res.status(400).json({ message: 'Race name and description are required.' });
+    }
+
+    try {
+        const formattedGroupName = raceName.trim();
+        const existing = await Group.findOne({ raceName: formattedGroupName });
+        if (existing) {
+            return res.status(409).json({ message: 'A group for this race already exists.' });
+        }
+
+        const newGroup = new Group({
+            raceName: formattedGroupName,
+            description,
+            website: website || '',
+            creator: req.user.userId
+        });
+
+        await newGroup.save();
+        res.status(201).json({ message: 'Group created successfully', group: newGroup });
+    } catch (err) {
+        console.error('Error creating group:', err);
+        res.status(500).json({ message: 'Server error while creating group.' });
     }
 });
 
