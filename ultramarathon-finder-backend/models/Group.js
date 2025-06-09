@@ -3,10 +3,10 @@
 import mongoose from 'mongoose';
 
 const groupSchema = new mongoose.Schema({
-    name: {
+    raceName: {
         type: String,
         required: true,
-        unique: true, // Prevent duplicates like two "Western States 100 (CA)"
+        unique: true, // Prevents duplicate group names
         trim: true
     },
     description: {
@@ -17,7 +17,7 @@ const groupSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
-    createdBy: {
+    creator: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
