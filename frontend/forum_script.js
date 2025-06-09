@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const joined = data?.user?.joinedGroups || [];
 
             document.querySelectorAll(".training-group").forEach(group => {
-                const title = group.querySelector("h4")?.textContent;
+                const title = group.querySelector("h4")?.textContent.trim();
                 const button = group.querySelector(".join-btn");
 
                 if (joined.includes(title)) {
