@@ -37,12 +37,14 @@ const userSchema = new mongoose.Schema({
     },
     lastLogin: {
         type: Date // Tracks the last login timestamp
-    }
-
-    ,
+    },
     stravaAccessToken: {
         type: String,
         default: null // Stores the user's Strava token if connected
+    },
+    joinedGroups: {
+        type: [String],
+        default: []
     }
 
 });
