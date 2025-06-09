@@ -159,3 +159,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetchPosts();
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const joinButtons = document.querySelectorAll(".join-btn");
+
+    joinButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+            btn.textContent = "Joined ✅";
+            btn.disabled = true;
+            btn.classList.add("joined");
+
+            alert("You've successfully joined the training group!");
+        });
+    });
+});
