@@ -137,6 +137,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             ? "https://ultramarathon-finder-backend.onrender.com/api/groups/leave"
                             : "https://ultramarathon-finder-backend.onrender.com/api/groups/join";
 
+                        console.log(`Sending ${method} to ${endpoint} with groupName:`, decodedGroup);
+
                         const response = await fetch(endpoint, {
                             method,
                             headers: {
@@ -146,12 +148,14 @@ document.addEventListener("DOMContentLoaded", () => {
                             body: JSON.stringify({ groupName: decodedGroup }),
                         });
 
+                        const result = await response.json();
+                        console.log("Join/Leave response:", result);
+
                         if (!response.ok) {
-                            alert("Error updating group membership.");
+                            alert(result.message || "Error updating group membership.");
                             return;
                         }
 
-                        // Reload page to refresh UI
                         location.reload();
                     } catch (err) {
                         console.error("Join/Leave failed:", err);
