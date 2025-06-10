@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const posts = result.posts || result;
 
             for (const section of Object.values(topicSections)) {
-                section.innerHTML = '';
+                if (section) section.innerHTML = '';
             }
 
             posts.forEach(post => {
@@ -272,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // === LOAD DYNAMIC TRAINING GROUPS ===
     async function fetchTrainingGroups() {
         try {
-            const res = await fetch("https://ultramarathon-finder-backend.onrender.com/api/groups/all");
+            const res = await fetch("https://ultramarathon-finder-backend.onrender.com/api/groups");
             const data = await res.json();
             const section = document.querySelector(".training-groups-section");
 
