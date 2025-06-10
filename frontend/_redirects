@@ -1,4 +1,5 @@
-http://ultramarathonconnect.com/* https://ultramarathonconnect.com/:splat 301!
+/api/* https://ultramarathonconnect-backend.onrender.com/api/:splat 200
+http://ultramarathonconnect.com/* https://ultramarathonconnect.com/:splat 301
 /forum.html /forum/forum.html 200
 /category.html /forum/category.html 200
 /group_forum.html /forum/group_forum.html 200
