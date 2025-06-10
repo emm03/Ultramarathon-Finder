@@ -137,4 +137,20 @@ router.post('/group-posts', authenticateToken, async (req, res) => {
     }
 });
 
+router.get('/group-posts', async (req, res) => {
+    const { group } = req.query;
+
+    if (!group) {
+        return res.status(400).json({ message: 'Group name is required.' });
+    }
+
+    try {
+        const posts = await ForumPost.find({ topic: group }).sort({ createdAt: -1 });
+        res.status(200).json({ posts });
+    } catch (err) {
+        console.error('❌ Error fetching group posts:', err);
+        res.status(500).json({ message: 'Server error fetching posts.' });
+    }
+});
+
 export default router;
