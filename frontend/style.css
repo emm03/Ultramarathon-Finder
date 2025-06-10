@@ -31,6 +31,10 @@ body.index main {
     padding-top: 0;
 }
 
+main.category-container {
+    margin-top: 80px;
+}
+
 /* ================= HEADER FINAL FIX (Desktop + Mobile) ================= */
 
 /* Desktop Header */
