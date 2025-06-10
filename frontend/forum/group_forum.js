@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Optional: restrict posting unless user has joined the group
+    // Show or hide post form based on group membership + add Join/Leave button
     if (token && decodedGroup) {
         fetch("https://ultramarathon-finder-backend.onrender.com/api/auth/account", {
             headers: { Authorization: `Bearer ${token}` },
@@ -120,6 +120,46 @@ document.addEventListener("DOMContentLoaded", () => {
                 const hasJoined = joined.some(
                     (g) => g.trim().toLowerCase() === decodedGroup.trim().toLowerCase()
                 );
+
+                const controlDiv = document.createElement("div");
+                controlDiv.className = "group-control";
+                controlDiv.style.textAlign = "center";
+                controlDiv.style.marginBottom = "20px";
+
+                const joinBtn = document.createElement("button");
+                joinBtn.className = "green-btn";
+                joinBtn.textContent = hasJoined ? "Leave Group" : "Join Group";
+
+                joinBtn.addEventListener("click", async () => {
+                    try {
+                        const method = hasJoined ? "DELETE" : "POST";
+                        const endpoint = hasJoined
+                            ? "https://ultramarathon-finder-backend.onrender.com/api/groups/leave"
+                            : "https://ultramarathon-finder-backend.onrender.com/api/groups/join";
+
+                        const response = await fetch(endpoint, {
+                            method,
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${token}`,
+                            },
+                            body: JSON.stringify({ groupName: decodedGroup }),
+                        });
+
+                        if (!response.ok) {
+                            alert("Error updating group membership.");
+                            return;
+                        }
+
+                        // Reload page to refresh UI
+                        location.reload();
+                    } catch (err) {
+                        console.error("Join/Leave failed:", err);
+                    }
+                });
+
+                controlDiv.appendChild(joinBtn);
+                postsEl.parentNode.insertBefore(controlDiv, postsEl);
 
                 if (!hasJoined) {
                     form.style.display = "none";
