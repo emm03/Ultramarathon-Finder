@@ -66,6 +66,51 @@ document.addEventListener("DOMContentLoaded", () => {
 
     fetchGroupPosts();
 
+    document.addEventListener("click", async (e) => {
+        const postId = e.target.dataset.id;
+
+        if (e.target.classList.contains("edit-btn")) {
+            const oldTitle = e.target.dataset.title;
+            const oldMessage = e.target.dataset.message;
+
+            const newTitle = prompt("Edit post title:", oldTitle);
+            const newMessage = prompt("Edit post message:", oldMessage);
+            if (!newTitle || !newMessage) return;
+
+            try {
+                const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/groups/group-posts/${postId}`, {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ title: newTitle, message: newMessage }),
+                });
+
+                if (res.ok) fetchGroupPosts();
+                else alert("Failed to edit post.");
+            } catch (err) {
+                console.error("Edit post error:", err);
+            }
+        }
+
+        if (e.target.classList.contains("delete-btn")) {
+            if (!confirm("Are you sure you want to delete this post?")) return;
+
+            try {
+                const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/groups/group-posts/${postId}`, {
+                    method: "DELETE",
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                if (res.ok) fetchGroupPosts();
+                else alert("Failed to delete post.");
+            } catch (err) {
+                console.error("Delete post error:", err);
+            }
+        }
+    });
+
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const title = document.getElementById("group-post-title").value.trim();
