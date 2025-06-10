@@ -7,7 +7,6 @@
     <title>Group Forum - Ultramarathon Connect</title>
     <link rel="stylesheet" href="/style.css" />
     <link rel="stylesheet" href="/alanai_chatbot/chat-widget.css" />
-    <script defer src="/forum/group_forum.js"></script>
 </head>
 
 <body class="forum-page">
@@ -24,17 +23,6 @@
                     <li><a href="/race_directory.html">Race Directory</a></li>
                     <li><a href="/forum.html">Runner Community</a></li>
                     <li id="account-tab" class="auth-tab"><a href="/login.html">Login</a></li>
-                    <li class="dropdown auth-dropdown" style="display: none;">
-                        <a href="/account.html">
-                            <img id="nav-profile-pic" src="/images/default-profile.png" alt="Profile"
-                                class="nav-profile-img" />
-                            <span id="nav-username">My Account</span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/account.html">View Profile</a></li>
-                            <li><a href="/logout.html">Sign Out</a></li>
-                        </ul>
-                    </li>
                 </ul>
             </nav>
         </div>
@@ -42,9 +30,8 @@
 
     <main class="forum-wrapper">
         <h1 id="group-title" class="forum-heading">Training Group</h1>
-        <p class="forum-subheading" id="group-description">
-            Discuss tips, meetups, and plans with other runners in this race group.
-        </p>
+        <p class="forum-subheading" id="group-description">Discuss tips, meetups, and plans with other runners in this
+            race group.</p>
 
         <section class="post-form-section">
             <form id="group-post-form" class="post-form">
@@ -70,7 +57,7 @@
 
     <footer class="site-footer">
         <div class="footer-links">
-            <a href="/forum.html">Back to Main Forum</a> |
+            <a href="/forum.html">Back to Forum</a> |
             <a href="/faq.html">FAQ</a> |
             <a href="/privacy.html">Privacy Policy</a> |
             <span>Email: <a href="mailto:ultramarathonconnect@gmail.com">ultramarathonconnect@gmail.com</a></span>
@@ -80,6 +67,30 @@
 
     <script src="/alanai_chatbot/alan.js"></script>
     <script src="/index_script.js"></script>
+    <script src="/forum/group_forum.js" defer></script>
+
+    <!-- Inject dropdown if logged in -->
+    <script>
+        const token = localStorage.getItem("token");
+        const username = localStorage.getItem("username");
+        const profilePic = localStorage.getItem("profilePicture");
+
+        if (token && username) {
+            const accountTab = document.getElementById("account-tab");
+            accountTab.innerHTML = `
+        <div class="dropdown">
+          <a href="/account.html" class="dropdown-toggle">
+            <img src="${profilePic || '/images/default-profile.png'}" class="nav-profile-img" alt="Profile" />
+            <span>${username}</span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="/account.html">View Profile</a></li>
+            <li><a href="/logout.html">Sign Out</a></li>
+          </ul>
+        </div>
+      `;
+        }
+    </script>
 </body>
 
 </html>
