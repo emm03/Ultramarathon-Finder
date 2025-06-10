@@ -2425,6 +2425,13 @@ body {
     color: #ff8000;
 }
 
+.strava-credit {
+    font-size: 0.85rem;
+    text-align: center;
+    margin-top: 10px;
+    color: #777;
+}
+
 .training-log-teaser {
     background-color: #fff7ed;
     text-align: center;
