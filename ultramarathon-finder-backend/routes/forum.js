@@ -187,6 +187,55 @@ router.post('/comment/:commentId/reply', authenticateToken, async (req, res) => 
     }
 });
 
+// Edit a comment
+router.patch('/comment/:id', authenticateToken, async (req, res) => {
+    const { content } = req.body;
+
+    if (!content) {
+        return res.status(400).json({ message: 'Content is required.' });
+    }
+
+    try {
+        const comment = await Comment.findById(req.params.id);
+
+        if (!comment) {
+            return res.status(404).json({ message: 'Comment not found.' });
+        }
+
+        if (comment.username !== req.user.username) {
+            return res.status(403).json({ message: 'You can only edit your own comments.' });
+        }
+
+        comment.content = content;
+        await comment.save();
+        res.json({ message: 'Comment updated successfully.' });
+    } catch (error) {
+        console.error('Error editing comment:', error.message);
+        res.status(500).json({ message: 'Internal server error while editing comment.' });
+    }
+});
+
+// Delete a comment
+router.delete('/comment/:id', authenticateToken, async (req, res) => {
+    try {
+        const comment = await Comment.findById(req.params.id);
+
+        if (!comment) {
+            return res.status(404).json({ message: 'Comment not found.' });
+        }
+
+        if (comment.username !== req.user.username) {
+            return res.status(403).json({ message: 'You can only delete your own comments.' });
+        }
+
+        await Comment.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Comment deleted successfully.' });
+    } catch (error) {
+        console.error('Error deleting comment:', error.message);
+        res.status(500).json({ message: 'Internal server error while deleting comment.' });
+    }
+});
+
 // Edit a runner forum post
 router.patch('/posts/:id', authenticateToken, async (req, res) => {
     const { title, message } = req.body;
