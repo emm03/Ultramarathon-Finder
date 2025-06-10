@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const decodedTopic = decodeURIComponent(rawTopic);
     titleEl.textContent = decodedTopic;
+    console.log("✅ Category title set to:", decodedTopic);
     hiddenInput.value = decodedTopic;
 
     const token = localStorage.getItem("token");
