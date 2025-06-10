@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const topic = urlParams.get("topic");
-    const decodedTopic = decodeURIComponent(topic);
+    const rawTopic = urlParams.get("topic");
+    const decodedTopic = decodeURIComponent(rawTopic || "Unknown");
+
     document.getElementById("category-title").textContent = decodedTopic;
     document.getElementById("post-topic").value = decodedTopic;
 
@@ -10,13 +11,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const loadPosts = async () => {
         try {
-            const response = await fetch(`/api/forum/category/${encodeURIComponent(topic)}`);
+            const response = await fetch(`/api/forum/category/${encodeURIComponent(decodedTopic)}`);
             const posts = await response.json();
 
             const container = document.getElementById("posts-container");
             container.innerHTML = "";
 
-            if (posts.length === 0) {
+            if (!posts.length) {
                 container.innerHTML = "<p>No posts yet in this category. Be the first to post!</p>";
                 return;
             }
@@ -60,8 +61,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const title = document.getElementById("post-title").value.trim();
         const message = document.getElementById("post-message").value.trim();
         const topic = document.getElementById("post-topic").value;
-
         const errorEl = document.getElementById("form-error");
+
         errorEl.textContent = "";
 
         if (!token) {

@@ -23,17 +23,6 @@
                     <li><a href="/race_directory.html">Race Directory</a></li>
                     <li><a href="/forum.html">Runner Community</a></li>
                     <li id="account-tab" class="auth-tab"><a href="/login.html">Login</a></li>
-                    <li class="dropdown auth-dropdown" style="display: none;">
-                        <a href="/account.html">
-                            <img id="nav-profile-pic" src="/images/default-profile.png" alt="Profile"
-                                class="nav-profile-img" />
-                            <span id="nav-username">My Account</span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/account.html">View Profile</a></li>
-                            <li><a href="/logout.html">Sign Out</a></li>
-                        </ul>
-                    </li>
                 </ul>
             </nav>
         </div>
@@ -75,28 +64,39 @@
     </footer>
 
     <script src="/alanai_chatbot/alan.js"></script>
+    <script src="/index_script.js"></script>
 
+    <!-- Inject dropdown if logged in -->
     <script>
         const token = localStorage.getItem("token");
         const username = localStorage.getItem("username");
         const profilePic = localStorage.getItem("profilePicture");
 
         if (token && username) {
-            document.querySelector(".auth-tab").style.display = "none";
-            const dropdown = document.querySelector(".auth-dropdown");
-            if (dropdown) {
-                dropdown.style.display = "block";
-                document.getElementById("nav-username").textContent = username;
-                document.getElementById("nav-profile-pic").src = profilePic || "/images/default-profile.png";
-            }
+            const accountTab = document.getElementById("account-tab");
+            accountTab.innerHTML = `
+        <div class="dropdown">
+          <a href="/account.html" class="dropdown-toggle">
+            <img src="${profilePic || '/images/default-profile.png'}" class="nav-profile-img" alt="Profile" />
+            <span>${username}</span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="/account.html">View Profile</a></li>
+            <li><a href="/logout.html">Sign Out</a></li>
+          </ul>
+        </div>
+      `;
         }
+    </script>
 
+    <script>
         document.getElementById("create-group-form").addEventListener("submit", async (e) => {
             e.preventDefault();
             const raceName = document.getElementById("race-name").value.trim();
             const description = document.getElementById("race-description").value.trim();
             const website = document.getElementById("race-link").value.trim();
             const errorEl = document.getElementById("group-error");
+            const token = localStorage.getItem("token");
 
             errorEl.textContent = "";
 
