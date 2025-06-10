@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Category Forum - Ultramarathon Connect</title>
+    <link rel="stylesheet" href="../style.css" />
+    <script defer src="category.js"></script>
+</head>
+
+<body class="forum-page">
+    <header class="sticky-header">
+        <div class="header-inner">
+            <div class="header-left">
+                <img src="../ultra.png" alt="Ultramarathon Connect Logo" class="logo" />
+                <span class="site-title">Ultramarathon Connect</span>
+            </div>
+            <nav class="header-right">
+                <ul class="menu">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../race_directory.html">Race Directory</a></li>
+                    <li><a href="forum.html">Runner Community</a></li>
+                    <li><a href="../account.html">My Account</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="category-container">
+        <h2 id="category-title">Loading...</h2>
+
+        <!-- Post Form -->
+        <section class="post-form-section">
+            <form id="post-form" class="post-form">
+                <input type="text" id="post-title" placeholder="Post Title" required />
+                <textarea id="post-message" placeholder="What's on your mind?" required></textarea>
+                <input type="hidden" id="post-topic" />
+                <button type="submit">Post</button>
+                <p id="form-error" class="error-message"></p>
+            </form>
+        </section>
+
+        <!-- Posts will be loaded here -->
+        <div id="posts-container"></div>
+    </main>
+</body>
+
+</html>
