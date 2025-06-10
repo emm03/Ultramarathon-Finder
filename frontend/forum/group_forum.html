@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Training Group Forum - Ultramarathon Connect</title>
+    <title>Group Forum - Ultramarathon Connect</title>
     <link rel="stylesheet" href="/style.css" />
     <link rel="stylesheet" href="/alanai_chatbot/chat-widget.css" />
+    <script defer src="/forum/group_forum.js"></script>
 </head>
 
 <body class="forum-page">
@@ -28,8 +29,8 @@
         </div>
     </header>
 
-    <main class="forum-wrapper">
-        <h1 id="group-title" class="forum-heading">Training Group</h1>
+    <main class="category-container">
+        <h1 id="group-title" class="forum-heading"></h1>
         <p class="forum-subheading">Discuss tips, meetups, and plans with other runners in this race group.</p>
 
         <section class="post-form-section">
@@ -41,10 +42,9 @@
             </form>
         </section>
 
-        <section id="group-posts" class="forum-sections"></section>
+        <div id="group-posts"></div>
     </main>
 
-    <!-- Alan Chat -->
     <div id="alan-bubble">💬</div>
     <div id="alan-window">
         <div id="alan-messages"></div>
@@ -64,9 +64,31 @@
         <p class="footer-copy">&copy; 2025 Ultramarathon Connect. All rights reserved.</p>
     </footer>
 
-    <script src="/alanai_chatbot/alan.js"></script>
     <script src="/index_script.js"></script>
-    <script src="/forum/group_forum.js"></script>
+    <script src="/alanai_chatbot/alan.js"></script>
+
+    <!-- Inject dropdown if logged in -->
+    <script>
+        const token = localStorage.getItem("token");
+        const username = localStorage.getItem("username");
+        const profilePic = localStorage.getItem("profilePicture");
+
+        if (token && username) {
+            const accountTab = document.getElementById("account-tab");
+            accountTab.innerHTML = `
+        <div class="dropdown">
+          <a href="/account.html" class="dropdown-toggle">
+            <img src="${profilePic || '/images/default-profile.png'}" class="nav-profile-img" alt="Profile" />
+            <span>${username}</span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="/account.html">View Profile</a></li>
+            <li><a href="/logout.html">Sign Out</a></li>
+          </ul>
+        </div>
+      `;
+        }
+    </script>
 </body>
 
 </html>
