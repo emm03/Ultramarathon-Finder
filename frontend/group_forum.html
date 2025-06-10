@@ -84,26 +84,47 @@
                     data.posts.forEach(post => {
                         const div = document.createElement("div");
                         div.className = "post-card";
+
+                        const isOwner = token && currentUser === post.username;
+
+                        const replySection = `
+                    <div class="replies" id="replies-${post._id}">
+                        ${(post.replies || []).map(reply => `
+                            <div class="reply-card">
+                                <strong>${reply.username}</strong>: ${reply.content}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="reply-form" id="reply-form-${post._id}" style="display: none; margin-top: 10px;">
+                        <input type="text" class="reply-input" placeholder="Write a reply..." style="width: 100%; padding: 8px;" />
+                        <button class="submit-reply-btn join-btn" data-id="${post._id}">Post Reply</button>
+                    </div>
+                `;
+
                         div.innerHTML = `
-              <div class="post-header">
-                <img class="avatar" src="${post.profilePicture || './images/default-profile.png'}" alt="User Avatar">
-                <div class="meta">
-                  <strong>${post.username || 'Anonymous'}</strong><br>
-                  <small>${new Date(post.createdAt).toLocaleString()}</small>
-                </div>
-              </div>
-              <h4>${post.title}</h4>
-              <p>${post.message}</p>
-              ${token && currentUser === post.username ? `
-                <div class="post-actions">
-                  <button class="edit-btn green-btn" data-id="${post._id}" data-title="${post.title}" data-message="${post.message}">✏️ Edit</button>
-                  <button class="delete-btn green-btn" data-id="${post._id}">🗑️ Delete</button>
-                  <button class="reply-btn join-btn" data-id="${post._id}" data-title="${post.title}">💬 Reply</button>
-                </div>
-              ` : ''}
-            `;
+                    <div class="post-header">
+                        <img class="avatar" src="${post.profilePicture || './images/default-profile.png'}" alt="User Avatar">
+                        <div class="meta">
+                            <strong>${post.username || 'Anonymous'}</strong><br>
+                            <small>${new Date(post.createdAt).toLocaleString()}</small>
+                        </div>
+                    </div>
+                    <h4>${post.title}</h4>
+                    <p>${post.message}</p>
+                    <div class="post-actions">
+                        ${isOwner ? `
+                            <button class="edit-btn green-btn" data-id="${post._id}" data-title="${post.title}" data-message="${post.message}">✏️ Edit</button>
+                            <button class="delete-btn green-btn" data-id="${post._id}">🗑️ Delete</button>
+                        ` : ''}
+                        <button class="reply-btn join-btn" data-id="${post._id}">💬 Reply</button>
+                    </div>
+                    ${replySection}
+                `;
+
                         postsEl.appendChild(div);
                     });
+
+                    attachReplyListeners();
                 } else {
                     postsEl.innerHTML = "<p style='text-align:center;'>No posts yet. Be the first to share!</p>";
                 }
@@ -111,6 +132,48 @@
                 console.error("Failed to load group posts:", err);
                 postsEl.innerHTML = "<p>Error loading posts. Try again later.</p>";
             }
+        }
+
+        function attachReplyListeners() {
+            document.querySelectorAll('.reply-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const postId = btn.dataset.id;
+                    const form = document.getElementById(`reply-form-${postId}`);
+                    if (form) form.style.display = 'block';
+                });
+            });
+
+            document.querySelectorAll('.submit-reply-btn').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const postId = btn.dataset.id;
+                    const form = document.getElementById(`reply-form-${postId}`);
+                    const input = form?.querySelector('.reply-input');
+                    const content = input?.value.trim();
+
+                    if (!content) return alert("Reply cannot be empty.");
+
+                    try {
+                        const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/groups/group-posts/${postId}/reply`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ content })
+                        });
+
+                        if (res.ok) {
+                            input.value = '';
+                            fetchGroupPosts(); // reload to show updated replies
+                        } else {
+                            alert("Failed to post reply.");
+                        }
+                    } catch (err) {
+                        console.error("Reply error:", err);
+                        alert("Network error posting reply.");
+                    }
+                });
+            });
         }
 
         form?.addEventListener("submit", async (e) => {
