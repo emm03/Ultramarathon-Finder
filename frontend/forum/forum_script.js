@@ -232,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const endpoint = btn.classList.contains("joined") ? "leave-group" : "join-group";
 
                     try {
-                        const response = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/auth/${endpoint}`, {
+                        const response = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/groups/${endpoint}`, {
                             method: "PATCH",
                             headers: {
                                 "Content-Type": "application/json",
