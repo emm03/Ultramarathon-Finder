@@ -12,8 +12,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     document.addEventListener('click', async (e) => {
+        console.log("Clicked element:", e.target);
         // DELETE POST
         if (e.target.classList.contains('delete-btn')) {
+            console.log("Delete button clicked");
             const postId = e.target.dataset.id;
             if (confirm("Are you sure you want to delete this post?")) {
                 try {
@@ -31,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // EDIT POST
         if (e.target.classList.contains('edit-btn')) {
+            console.log("Edit button clicked");
             const postId = e.target.dataset.id;
             const oldTitle = e.target.dataset.title;
             const oldMsg = e.target.dataset.message;
