@@ -29,8 +29,9 @@
 
     <main class="forum-wrapper">
         <h1 id="group-title" class="forum-heading">Training Group</h1>
-        <p class="forum-subheading" id="group-description">Discuss tips, meetups, and plans with other runners in this
-            race group.</p>
+        <p class="forum-subheading" id="group-description">
+            Discuss tips, meetups, and plans with other runners in this race group.
+        </p>
 
         <section class="post-form-section">
             <form id="group-post-form" class="post-form">
@@ -64,12 +65,33 @@
         const form = document.getElementById("group-post-form");
         const errorMsg = document.getElementById("group-form-error");
 
-        if (!groupName) {
-            titleEl.textContent = "Group Not Found";
-            postsEl.innerHTML = "<p style='text-align:center;'>Invalid group URL.</p>";
-        } else {
-            titleEl.textContent = `${groupName} Training Group`;
-            fetchGroupPosts();
+        let currentUsername = null;
+
+        async function fetchUserProfile() {
+            if (!token) return;
+            try {
+                const res = await fetch("https://ultramarathon-finder-backend.onrender.com/api/auth/account", {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const data = await res.json();
+                currentUsername = data?.user?.username || null;
+
+                const joined = data?.user?.joinedGroups || [];
+                const cleanGroup = decodeURIComponent(groupName).trim();
+                const hasJoined = joined.includes(cleanGroup);
+
+                if (!hasJoined) {
+                    form.style.display = "none";
+                    const warning = document.createElement("p");
+                    warning.textContent = "Join this group to post messages!";
+                    warning.style.textAlign = "center";
+                    warning.style.fontWeight = "bold";
+                    warning.style.marginBottom = "20px";
+                    postsEl.parentNode.insertBefore(warning, postsEl);
+                }
+            } catch (err) {
+                console.error("Error fetching user profile:", err);
+            }
         }
 
         async function fetchGroupPosts() {
@@ -78,21 +100,27 @@
                 const data = await res.json();
                 postsEl.innerHTML = "";
 
-                if (data.posts && data.posts.length > 0) {
+                if (data.posts?.length > 0) {
                     data.posts.forEach(post => {
                         const div = document.createElement("div");
                         div.className = "post-card";
                         div.innerHTML = `
-                            <div class="post-header">
-                                <img class="avatar" src="${post.profilePicture || './images/default-profile.png'}" alt="User Avatar">
-                                <div class="meta">
-                                    <strong>${post.username || 'Anonymous'}</strong><br>
-                                    <small>${new Date(post.createdAt).toLocaleString()}</small>
-                                </div>
-                            </div>
-                            <h4>${post.title}</h4>
-                            <p>${post.message}</p>
-                        `;
+              <div class="post-header">
+                <img class="avatar" src="${post.profilePicture || './images/default-profile.png'}" alt="User Avatar">
+                <div class="meta">
+                  <strong>${post.username || 'Anonymous'}</strong><br>
+                  <small>${new Date(post.createdAt).toLocaleString()}</small>
+                </div>
+              </div>
+              <h4>${post.title}</h4>
+              <p>${post.message}</p>
+              <div class="post-actions">
+                ${token && post.username === currentUsername ? `
+                  <button class="edit-btn" data-id="${post._id}" data-title="${post.title}" data-message="${post.message}">✏️ Edit</button>
+                  <button class="delete-btn" data-id="${post._id}">🗑️ Delete</button>
+                ` : ""}
+              </div>
+            `;
                         postsEl.appendChild(div);
                     });
                 } else {
@@ -134,30 +162,58 @@
             }
         });
 
-        // Restrict posting to only joined group members
-        if (token && groupName) {
-            fetch("https://ultramarathon-finder-backend.onrender.com/api/auth/account", {
-                headers: { Authorization: `Bearer ${token}` }
-            })
-                .then(res => res.json())
-                .then(data => {
-                    const joined = data?.user?.joinedGroups || [];
-                    const cleanGroup = decodeURIComponent(groupName).trim();
-                    const hasJoined = joined.includes(cleanGroup);
+        // Handle edit and delete actions
+        document.addEventListener("click", async (e) => {
+            const target = e.target;
 
-                    if (!hasJoined) {
-                        form.style.display = "none";
-                        const warning = document.createElement("p");
-                        warning.textContent = "Join this group to post messages!";
-                        warning.style.textAlign = "center";
-                        warning.style.fontWeight = "bold";
-                        warning.style.marginBottom = "20px";
-                        postsEl.parentNode.insertBefore(warning, postsEl);
-                    }
-                })
-                .catch(err => {
-                    console.error("Error checking joined groups:", err);
-                });
+            if (target.classList.contains("delete-btn")) {
+                const postId = target.dataset.id;
+                if (!confirm("Are you sure you want to delete this post?")) return;
+
+                try {
+                    const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/groups/group-posts/${postId}`, {
+                        method: "DELETE",
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    if (res.ok) fetchGroupPosts();
+                    else alert("Failed to delete post.");
+                } catch (err) {
+                    console.error("Delete error:", err);
+                }
+            }
+
+            if (target.classList.contains("edit-btn")) {
+                const postId = target.dataset.id;
+                const oldTitle = target.dataset.title;
+                const oldMessage = target.dataset.message;
+
+                const newTitle = prompt("Edit title:", oldTitle);
+                const newMsg = prompt("Edit message:", oldMessage);
+                if (!newTitle || !newMsg) return;
+
+                try {
+                    const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/groups/group-posts/${postId}`, {
+                        method: "PATCH",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ title: newTitle, message: newMsg })
+                    });
+                    if (res.ok) fetchGroupPosts();
+                    else alert("Failed to update post.");
+                } catch (err) {
+                    console.error("Edit error:", err);
+                }
+            }
+        });
+
+        if (groupName) {
+            titleEl.textContent = `${groupName} Training Group`;
+            fetchUserProfile().then(fetchGroupPosts);
+        } else {
+            titleEl.textContent = "Group Not Found";
+            postsEl.innerHTML = "<p style='text-align:center;'>Invalid group URL.</p>";
         }
     </script>
 </body>

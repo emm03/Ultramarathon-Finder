@@ -11,6 +11,51 @@ document.addEventListener('DOMContentLoaded', () => {
         'General Chat': document.getElementById('section-chat')
     };
 
+    document.addEventListener('click', async (e) => {
+        // DELETE POST
+        if (e.target.classList.contains('delete-btn')) {
+            const postId = e.target.dataset.id;
+            if (confirm("Are you sure you want to delete this post?")) {
+                try {
+                    const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/forum/posts/${postId}`, {
+                        method: 'DELETE',
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    if (res.ok) fetchPosts();
+                    else alert("Failed to delete post.");
+                } catch (err) {
+                    console.error("Error deleting post:", err);
+                }
+            }
+        }
+
+        // EDIT POST
+        if (e.target.classList.contains('edit-btn')) {
+            const postId = e.target.dataset.id;
+            const oldTitle = e.target.dataset.title;
+            const oldMsg = e.target.dataset.message;
+
+            const newTitle = prompt("Edit post title:", oldTitle);
+            const newMessage = prompt("Edit post message:", oldMsg);
+            if (!newTitle || !newMessage) return;
+
+            try {
+                const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/forum/posts/${postId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ title: newTitle, message: newMessage })
+                });
+                if (res.ok) fetchPosts();
+                else alert("Failed to edit post.");
+            } catch (err) {
+                console.error("Error editing post:", err);
+            }
+        }
+    });
+
     const categoryCards = document.querySelectorAll('.category-card');
     categoryCards.forEach(card => {
         card.addEventListener('click', () => {
@@ -64,22 +109,29 @@ document.addEventListener('DOMContentLoaded', () => {
     function createPostCard(post) {
         const div = document.createElement('div');
         div.className = 'post-card';
+
+        const isOwner = token && post.username && localStorage.getItem('username') === post.username;
+
         div.innerHTML = `
-        <div class="post-header">
-          <img class="avatar" src="${post.profilePicture || './images/default-profile.png'}" alt="User Avatar">
-          <div class="meta">
-            <strong>${post.username || 'Anonymous'}</strong><br>
-            <small>${new Date(post.createdAt || post.timestamp).toLocaleString()}</small>
-          </div>
-        </div>
-        <h4>${post.title}</h4>
-        <p>${post.message}</p>
-        <div class="post-actions">
-          <button class="reaction-btn" data-id="${post._id}">🔥 ${post.reactions || 0}</button>
-          <button class="comment-btn" onclick="window.location.href='comments.html?postId=${post._id}'">💬 Reply</button>
-        </div>
-        <span class="post-meta">Posted in <strong>${post.topic}</strong></span>
-      `;
+            <div class="post-header">
+              <img class="avatar" src="${post.profilePicture || './images/default-profile.png'}" alt="User Avatar">
+              <div class="meta">
+                <strong>${post.username || 'Anonymous'}</strong><br>
+                <small>${new Date(post.createdAt || post.timestamp).toLocaleString()}</small>
+              </div>
+            </div>
+            <h4>${post.title}</h4>
+            <p>${post.message}</p>
+            <div class="post-actions">
+              <button class="reaction-btn" data-id="${post._id}">🔥 ${post.reactions || 0}</button>
+              <button class="comment-btn" onclick="window.location.href='comments.html?postId=${post._id}'">💬 Reply</button>
+              ${isOwner ? `
+                <button class="edit-btn" data-id="${post._id}" data-title="${post.title}" data-message="${post.message}">✏️ Edit</button>
+                <button class="delete-btn" data-id="${post._id}">🗑️ Delete</button>` : ''
+            }
+            </div>
+            <span class="post-meta">Posted in <strong>${post.topic}</strong></span>
+        `;
         return div;
     }
 

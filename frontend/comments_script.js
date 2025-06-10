@@ -50,16 +50,102 @@ document.addEventListener('DOMContentLoaded', () => {
             comments.forEach(comment => {
                 const div = document.createElement('div');
                 div.className = 'comment-card';
+
+                const isOwner = comment.isOwner || (comment.username === localStorage.getItem('username'));
+
                 div.innerHTML = `
                     <h4>${comment.username} <small>${new Date(comment.createdAt).toLocaleString()}</small></h4>
-                    <p>${comment.content}</p>
+                    <p class="comment-content">${comment.content}</p>
+                    <div class="comment-actions">
+                        ${isOwner ? `
+                            <button class="edit-comment-btn" data-id="${comment._id}">✏️ Edit</button>
+                            <button class="delete-comment-btn" data-id="${comment._id}">🗑️ Delete</button>
+                        ` : ''}
+                        <button class="reply-btn" data-id="${comment._id}">💬 Reply</button>
+                    </div>
+                    <div class="reply-form" data-id="${comment._id}" style="display:none;">
+                        <input type="text" class="reply-input" placeholder="Write a reply..." />
+                        <button class="submit-reply-btn" data-id="${comment._id}">Post Reply</button>
+                    </div>
+                    <div class="replies" data-id="${comment._id}">
+                        ${(comment.replies || []).map(reply => `
+                            <div class="reply-card">
+                                <strong>${reply.username}</strong>: ${reply.content}
+                            </div>
+                        `).join('')}
+                    </div>
                 `;
+
                 commentList.appendChild(div);
             });
         } catch (error) {
             console.error("Error loading comments:", error);
         }
     }
+
+    commentList.addEventListener('click', async (e) => {
+        const id = e.target.dataset.id;
+
+        if (e.target.classList.contains('delete-comment-btn')) {
+            if (!confirm('Delete this comment?')) return;
+            try {
+                const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/forum/comment/${id}`, {
+                    method: 'DELETE',
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (res.ok) fetchComments();
+            } catch (err) {
+                console.error('Error deleting comment:', err);
+            }
+        }
+
+        if (e.target.classList.contains('edit-comment-btn')) {
+            const contentEl = e.target.closest('.comment-card').querySelector('.comment-content');
+            const currentText = contentEl.textContent;
+            const newText = prompt("Edit your comment:", currentText);
+            if (!newText || newText === currentText) return;
+
+            try {
+                const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/forum/comment/${id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ content: newText })
+                });
+                if (res.ok) fetchComments();
+            } catch (err) {
+                console.error('Error editing comment:', err);
+            }
+        }
+
+        if (e.target.classList.contains('reply-btn')) {
+            const form = commentList.querySelector(`.reply-form[data-id="${id}"]`);
+            if (form) form.style.display = 'block';
+        }
+
+        if (e.target.classList.contains('submit-reply-btn')) {
+            const input = commentList.querySelector(`.reply-form[data-id="${id}"] .reply-input`);
+            const content = input.value.trim();
+            if (!content) return alert("Reply cannot be empty.");
+
+            try {
+                const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/forum/comment/${id}/reply`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ content })
+                });
+
+                if (res.ok) fetchComments();
+            } catch (err) {
+                console.error("Error posting reply:", err);
+            }
+        }
+    });
 
     if (commentForm) {
         commentForm.addEventListener('submit', async (e) => {
