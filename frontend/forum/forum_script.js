@@ -54,6 +54,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error("Error editing post:", err);
             }
         }
+
+        // REACT TO POST
+        if (e.target.classList.contains('reaction-btn')) {
+            const postId = e.target.dataset.id;
+            if (!token) return alert('Login to react!');
+
+            try {
+                const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/forum/posts/${postId}/react`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    fetchPosts();
+                }
+            } catch (err) {
+                console.error('Reaction error:', err);
+            }
+        }
     });
 
     const categoryCards = document.querySelectorAll('.category-card');
@@ -179,25 +197,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-    document.addEventListener('click', async (e) => {
-        if (e.target.classList.contains('reaction-btn')) {
-            const postId = e.target.dataset.id;
-            if (!token) return alert('Login to react!');
-
-            try {
-                const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/forum/posts/${postId}/react`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (res.ok) {
-                    fetchPosts();
-                }
-            } catch (err) {
-                console.error('Reaction error:', err);
-            }
-        }
-    });
 
     if (sortToggle) {
         sortToggle.addEventListener('change', () => {
