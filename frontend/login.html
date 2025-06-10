@@ -109,7 +109,14 @@
                     body: JSON.stringify({ email, password })
                 });
 
-                const data = await response.json();
+                let data;
+                try {
+                    data = await response.json();
+                } catch (err) {
+                    loginMessage.textContent = 'Server returned an unexpected response.';
+                    loginMessage.classList.add('error-message');
+                    return;
+                }
 
                 if (response.ok && data.token) {
                     localStorage.setItem('token', data.token);
