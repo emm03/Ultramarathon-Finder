@@ -41,9 +41,7 @@
             </form>
         </section>
 
-        <section id="group-posts" class="forum-sections">
-            <!-- Group-specific posts will appear here -->
-        </section>
+        <section id="group-posts" class="forum-sections"></section>
     </main>
 
     <footer class="site-footer">
@@ -76,7 +74,7 @@
 
         async function fetchGroupPosts() {
             try {
-                const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/forum/group-posts?group=${encodeURIComponent(groupName)}`);
+                const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/groups/group-posts?group=${encodeURIComponent(groupName)}`);
                 const data = await res.json();
                 postsEl.innerHTML = "";
 
@@ -85,16 +83,16 @@
                         const div = document.createElement("div");
                         div.className = "post-card";
                         div.innerHTML = `
-              <div class="post-header">
-                <img class="avatar" src="${post.profilePicture || './images/default-profile.png'}" alt="User Avatar">
-                <div class="meta">
-                  <strong>${post.username || 'Anonymous'}</strong><br>
-                  <small>${new Date(post.createdAt).toLocaleString()}</small>
-                </div>
-              </div>
-              <h4>${post.title}</h4>
-              <p>${post.message}</p>
-            `;
+                            <div class="post-header">
+                                <img class="avatar" src="${post.profilePicture || './images/default-profile.png'}" alt="User Avatar">
+                                <div class="meta">
+                                    <strong>${post.username || 'Anonymous'}</strong><br>
+                                    <small>${new Date(post.createdAt).toLocaleString()}</small>
+                                </div>
+                            </div>
+                            <h4>${post.title}</h4>
+                            <p>${post.message}</p>
+                        `;
                         postsEl.appendChild(div);
                     });
                 } else {
@@ -115,7 +113,7 @@
             if (!token) return errorMsg.textContent = "Please log in to post.";
 
             try {
-                const res = await fetch("https://ultramarathon-finder-backend.onrender.com/api/forum/group-posts", {
+                const res = await fetch("https://ultramarathon-finder-backend.onrender.com/api/groups/group-posts", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -135,6 +133,32 @@
                 errorMsg.textContent = "Network error. Try again later.";
             }
         });
+
+        // Restrict posting to only joined group members
+        if (token && groupName) {
+            fetch("https://ultramarathon-finder-backend.onrender.com/api/auth/account", {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+                .then(res => res.json())
+                .then(data => {
+                    const joined = data?.user?.joinedGroups || [];
+                    const cleanGroup = decodeURIComponent(groupName).trim();
+                    const hasJoined = joined.includes(cleanGroup);
+
+                    if (!hasJoined) {
+                        form.style.display = "none";
+                        const warning = document.createElement("p");
+                        warning.textContent = "Join this group to post messages!";
+                        warning.style.textAlign = "center";
+                        warning.style.fontWeight = "bold";
+                        warning.style.marginBottom = "20px";
+                        postsEl.parentNode.insertBefore(warning, postsEl);
+                    }
+                })
+                .catch(err => {
+                    console.error("Error checking joined groups:", err);
+                });
+        }
     </script>
 </body>
 
