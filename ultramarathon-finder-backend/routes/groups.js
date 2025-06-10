@@ -10,6 +10,8 @@ const router = express.Router();
 
 // CREATE GROUP
 router.post('/create-group', authenticateToken, async (req, res) => {
+    console.log("🧪 create-group: authenticated user = ", req.user);
+
     const { raceName, description, website } = req.body;
     if (!raceName || !description) {
         return res.status(400).json({ message: 'Race name and description are required.' });

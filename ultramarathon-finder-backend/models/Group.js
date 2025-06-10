@@ -20,7 +20,7 @@ const groupSchema = new mongoose.Schema({
     creator: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        required: true // MUST be populated in route using req.user.id
     },
     createdAt: {
         type: Date,

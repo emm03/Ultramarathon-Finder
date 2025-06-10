@@ -30,7 +30,11 @@ export const authenticateToken = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
+        req.user = {
+            userId: decoded.userId,
+            username: decoded.username,
+            profilePicture: decoded.profilePicture || ''
+        };
         next();
     } catch (error) {
         const errorMessage = error.name === 'TokenExpiredError'
