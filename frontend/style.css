@@ -2437,15 +2437,6 @@ body {
     margin: 0 0.5rem;
 }
 
-.gray-btn {
-    background-color: #ddd;
-    color: #333;
-    padding: 0.6rem 1.2rem;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: bold;
-}
-
 .lock-note {
     margin-top: 0.8rem;
     color: #666;
@@ -2489,34 +2480,9 @@ body {
     margin-top: 1.5rem;
 }
 
-.join-btn {
-    padding: 8px 16px;
-    background-color: #ff6600;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    margin-top: 10px;
-    font-weight: bold;
-}
-
-.join-btn:hover {
-    background-color: #e55a00;
-}
-
-.join-btn.joined {
-    background-color: #ff6600;
-    color: #fff;
-    cursor: pointer;
-}
-
-.join-btn.joined:hover {
-    background-color: #e55a00;
-}
-
-.green-btn {
-    background-color: #4CAF50;
-    color: white;
+.post-actions .green-btn {
+    background-color: #4CAF50 !important;
+    color: white !important;
     padding: 0.6rem 1.2rem;
     border: none;
     border-radius: 6px;
@@ -2525,6 +2491,21 @@ body {
     font-weight: bold;
 }
 
-.green-btn:hover {
-    background-color: #45a049;
+.post-actions .green-btn:hover {
+    background-color: #45a049 !important;
+}
+
+.post-actions .join-btn {
+    background-color: #ff6600 !important;
+    color: #fff !important;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 0.4rem;
+    font-weight: bold;
+}
+
+.post-actions .join-btn:hover {
+    background-color: #e55a00 !important;
 }

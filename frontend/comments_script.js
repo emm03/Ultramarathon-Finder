@@ -10,6 +10,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const commentInput = document.getElementById('comment-content');
     const commentList = document.getElementById('comment-list');
     const commentError = document.getElementById('comment-error');
+    const replyToggleBtn = document.getElementById('show-reply-form-btn');
+    const commentFormBox = document.getElementById('comment-form');
+
+    replyToggleBtn?.addEventListener('click', () => {
+        commentFormBox.style.display = 'block';
+        replyToggleBtn.style.display = 'none';
+    });
+
 
     async function fetchPost() {
         try {
