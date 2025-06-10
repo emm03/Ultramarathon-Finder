@@ -3,7 +3,8 @@
 import express from 'express';
 import Group from '../models/Group.js';
 import User from '../models/User.js';
-import { authenticateToken } from './auth.js'; // reuse the token middleware
+import ForumPost from '../models/ForumPost.js';
+import { authenticateToken } from './auth.js';
 
 const router = express.Router();
 
@@ -100,6 +101,39 @@ router.get('/all-groups', async (req, res) => {
     } catch (err) {
         console.error('Fetch all groups error:', err);
         res.status(500).json({ message: 'Server error fetching groups.' });
+    }
+});
+
+// -------------------- POST TO GROUP FORUM --------------------
+router.post('/group-posts', authenticateToken, async (req, res) => {
+    const { title, message, groupName } = req.body;
+    const userId = req.user.userId;
+
+    if (!title || !message || !groupName) {
+        return res.status(400).json({ message: 'Missing required fields.' });
+    }
+
+    try {
+        const user = await User.findById(userId);
+        if (!user || !user.joinedGroups.includes(groupName.trim())) {
+            return res.status(403).json({ message: 'You must join the group to post.' });
+        }
+
+        const newPost = new ForumPost({
+            title,
+            message,
+            topic: groupName,
+            userId,
+            username: user.username,
+            profilePicture: user.profilePicture,
+            createdAt: new Date()
+        });
+
+        await newPost.save();
+        res.status(201).json({ message: 'Group post created', post: newPost });
+    } catch (err) {
+        console.error('❌ Error creating group post:', err);
+        res.status(500).json({ message: 'Server error creating post.' });
     }
 });
 
