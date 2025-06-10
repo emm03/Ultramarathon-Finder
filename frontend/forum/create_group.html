@@ -6,30 +6,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Create Training Group - Ultramarathon Connect</title>
     <link rel="stylesheet" href="/style.css" />
-</head>
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Runner Community - Ultramarathon Connect</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="alanai_chatbot/chat-widget.css" />
+    <link rel="stylesheet" href="/alanai_chatbot/chat-widget.css" />
 </head>
 
 <body class="forum-page">
     <header class="sticky-header">
         <div class="header-inner">
             <div class="header-left">
-                <img src="ultra.png" alt="Ultramarathon Connect Logo" class="logo" />
+                <img src="/ultra.png" alt="Ultramarathon Connect Logo" class="logo" />
                 <span class="site-title">UltramarathonConnect</span>
             </div>
             <button class="menu-toggle">☰</button>
             <nav class="header-right">
                 <ul class="menu">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="race_directory.html">Race Directory</a></li>
-                    <li><a href="forum.html">Runner Community</a></li>
-                    <li id="account-tab" class="auth-tab"><a href="login.html">Login</a></li>
+                    <li><a href="/index.html">Home</a></li>
+                    <li><a href="/race_directory.html">Race Directory</a></li>
+                    <li><a href="/forum.html">Runner Community</a></li>
+                    <li id="account-tab" class="auth-tab"><a href="/login.html">Login</a></li>
+                    <li class="dropdown auth-dropdown" style="display: none;">
+                        <a href="/account.html">
+                            <img id="nav-profile-pic" src="/images/default-profile.png" alt="Profile"
+                                class="nav-profile-img" />
+                            <span id="nav-username">My Account</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/account.html">View Profile</a></li>
+                            <li><a href="/logout.html">Sign Out</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </nav>
         </div>
@@ -50,6 +54,16 @@
         </section>
     </main>
 
+    <!-- Alan Chat Widget -->
+    <div id="alan-bubble">💬</div>
+    <div id="alan-window">
+        <div id="alan-messages"></div>
+        <form id="alan-form">
+            <input id="alan-input" type="text" placeholder="Ask Alan about races..." />
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
     <footer class="site-footer">
         <div class="footer-links">
             <a href="/forum.html">Back to Forum</a> |
@@ -60,12 +74,13 @@
         <p class="footer-copy">&copy; 2025 Ultramarathon Connect. All rights reserved.</p>
     </footer>
 
+    <script src="/alanai_chatbot/alan.js"></script>
+
     <script>
         const token = localStorage.getItem("token");
         const username = localStorage.getItem("username");
         const profilePic = localStorage.getItem("profilePicture");
 
-        // Show logged-in header dropdown
         if (token && username) {
             document.querySelector(".auth-tab").style.display = "none";
             const dropdown = document.querySelector(".auth-dropdown");
@@ -76,7 +91,6 @@
             }
         }
 
-        // Handle form submission
         document.getElementById("create-group-form").addEventListener("submit", async (e) => {
             e.preventDefault();
             const raceName = document.getElementById("race-name").value.trim();
