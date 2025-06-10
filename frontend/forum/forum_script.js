@@ -137,46 +137,48 @@ document.addEventListener('DOMContentLoaded', () => {
         return div;
     }
 
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-        const title = document.getElementById('post-title').value.trim();
-        const message = document.getElementById('post-message').value.trim();
-        const topic = document.getElementById('post-topic').value;
-        const errorMsg = document.getElementById('form-error');
-        errorMsg.textContent = '';
+            const title = document.getElementById('post-title').value.trim();
+            const message = document.getElementById('post-message').value.trim();
+            const topic = document.getElementById('post-topic').value;
+            const errorMsg = document.getElementById('form-error');
+            errorMsg.textContent = '';
 
-        if (!token) {
-            errorMsg.textContent = 'You must be logged in to post.';
-            return;
-        }
-
-        if (!title || !message || !topic) {
-            errorMsg.textContent = 'All fields are required.';
-            return;
-        }
-
-        try {
-            const res = await fetch('https://ultramarathon-finder-backend.onrender.com/api/forum/posts', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ title, message, topic })
-            });
-
-            if (res.ok) {
-                form.reset();
-                fetchPosts();
-            } else {
-                const data = await res.json();
-                errorMsg.textContent = data.message || 'Failed to post.';
+            if (!token) {
+                errorMsg.textContent = 'You must be logged in to post.';
+                return;
             }
-        } catch (err) {
-            errorMsg.textContent = 'Something went wrong. Try again later.';
-        }
-    });
+
+            if (!title || !message || !topic) {
+                errorMsg.textContent = 'All fields are required.';
+                return;
+            }
+
+            try {
+                const res = await fetch('https://ultramarathon-finder-backend.onrender.com/api/forum/posts', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ title, message, topic })
+                });
+
+                if (res.ok) {
+                    form.reset();
+                    fetchPosts();
+                } else {
+                    const data = await res.json();
+                    errorMsg.textContent = data.message || 'Failed to post.';
+                }
+            } catch (err) {
+                errorMsg.textContent = 'Something went wrong. Try again later.';
+            }
+        });
+    }
 
     document.addEventListener('click', async (e) => {
         if (e.target.classList.contains('reaction-btn')) {
