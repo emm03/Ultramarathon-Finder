@@ -277,14 +277,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const section = document.querySelector(".training-groups-section");
 
             data.groups.forEach(group => {
+                console.log("Group object:", group);  // Add this
+
                 const div = document.createElement("div");
                 div.className = "training-group";
 
-                const encodedGroupName = encodeURIComponent(group.groupName);
+                const name = group.groupName || group.title || group.raceName || "Unnamed Group";
+                const encodedGroupName = encodeURIComponent(name);
+
                 div.innerHTML = `
-                    <h4><a href="forum/group_forum.html?group=${encodedGroupName}">${group.groupName}</a></h4>
-                    <p>${group.description || "No description provided."}</p>
-                    <button class="join-btn">Join Group</button>
+                  <h4><a href="forum/group_forum.html?group=${encodedGroupName}">${name}</a></h4>
+                  <p>${group.description || "No description provided."}</p>
+                  <button class="join-btn">Join Group</button>
                 `;
 
                 section.insertBefore(div, section.querySelector(".create-group-btn"));
