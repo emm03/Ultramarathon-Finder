@@ -1,1 +1,6 @@
 http://ultramarathonconnect.com/* https://ultramarathonconnect.com/:splat 301!
+/forum.html /forum/forum.html 200
+/category.html /forum/category.html 200
+/group_forum.html /forum/group_forum.html 200
+/create_group.html /forum/create_group.html 200
+/comments.html /forum/comments.html 200
