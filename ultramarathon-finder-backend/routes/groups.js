@@ -187,4 +187,30 @@ router.delete('/group-posts/:id', authenticateToken, async (req, res) => {
     }
 });
 
+// REPLY to a group post
+router.post('/group-posts/:id/reply', authenticateToken, async (req, res) => {
+    const postId = req.params.id;
+    const { content } = req.body;
+
+    if (!content) {
+        return res.status(400).json({ message: 'Reply content is required.' });
+    }
+
+    try {
+        const post = await ForumPost.findById(postId);
+        if (!post) return res.status(404).json({ message: 'Group post not found.' });
+
+        post.replies.push({
+            username: req.user.username,
+            content
+        });
+
+        await post.save();
+        res.status(201).json({ message: 'Reply added successfully', post });
+    } catch (err) {
+        console.error('❌ Error replying to group post:', err.message);
+        res.status(500).json({ message: 'Server error adding reply.' });
+    }
+});
+
 export default router;

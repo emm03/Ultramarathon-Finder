@@ -2,6 +2,12 @@
 
 import mongoose from 'mongoose';
 
+const replySchema = new mongoose.Schema({
+    username: { type: String, required: true },
+    content: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now }
+});
+
 const forumPostSchema = new mongoose.Schema({
     title: {
         type: String,
@@ -33,6 +39,7 @@ const forumPostSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    replies: [replySchema], // ✅ New replies field
     createdAt: {
         type: Date,
         default: Date.now
