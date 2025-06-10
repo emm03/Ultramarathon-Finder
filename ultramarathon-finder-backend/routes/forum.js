@@ -19,6 +19,7 @@ router.post('/posts', authenticateToken, async (req, res) => {
             title,
             message,
             topic,
+            userId: req.user.userId,
             username: req.user.username,
             profilePicture: req.user.profilePicture || null
         });
