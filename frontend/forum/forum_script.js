@@ -275,6 +275,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch("https://ultramarathon-finder-backend.onrender.com/api/groups/all-groups");
             const data = await res.json();
             const section = document.querySelector(".training-groups-section");
+            const dynamicGroupContainer = document.getElementById("dynamic-training-groups");
+            if (dynamicGroupContainer) dynamicGroupContainer.innerHTML = "";
 
             data.groups.forEach(group => {
                 console.log("Group object:", group);  // Add this
