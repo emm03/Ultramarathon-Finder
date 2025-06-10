@@ -22,13 +22,13 @@ const userSchema = new mongoose.Schema({
         required: [true, 'Password is required'],
         minlength: [6, 'Password must be at least 6 characters long']
     },
-    profilePicture: { // NEW FIELD for profile picture URL
+    profilePicture: {
         type: String,
-        default: '' // Default empty string when no profile picture is uploaded
+        default: ''
     },
     role: {
         type: String,
-        enum: ['user', 'admin'], // Restricts role to 'user' or 'admin'
+        enum: ['user', 'admin'],
         default: 'user'
     },
     createdAt: {
@@ -36,41 +36,39 @@ const userSchema = new mongoose.Schema({
         default: Date.now
     },
     lastLogin: {
-        type: Date // Tracks the last login timestamp
+        type: Date
     },
     stravaAccessToken: {
         type: String,
-        default: null // Stores the user's Strava token if connected
+        default: null
     },
     joinedGroups: {
         type: [String],
         default: []
     }
-
 });
 
-// Hash password before saving the user
+// ✅ Hash password before saving (trim included)
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next();
     try {
         const salt = await bcrypt.genSalt(10);
-        this.password = await bcrypt.hash(this.password, salt);
+        this.password = await bcrypt.hash(this.password.trim(), salt); // 🔥 trim here
         next();
     } catch (error) {
         next(error);
     }
 });
 
-// Method to compare passwords
+// Compare passwords
 userSchema.methods.comparePassword = async function (password) {
     return await bcrypt.compare(password, this.password);
 };
 
-// Method to update last login time
+// Update last login
 userSchema.methods.updateLastLogin = async function () {
     this.lastLogin = new Date();
     await this.save();
 };
 
-// Export the User model
 export default mongoose.model('User', userSchema);

@@ -70,15 +70,19 @@ router.post('/upload-profile-picture', authenticateToken, upload.single('profile
 
 // -------------------- REGISTER --------------------
 router.post('/register', async (req, res) => {
-    const { username, email, password } = req.body;
+    let { username, email, password } = req.body;
     if (!username || !email || !password)
         return res.status(400).json({ message: 'All fields are required' });
 
     try {
+        username = username.trim();
+        email = email.trim().toLowerCase(); // optional: normalize case
+        password = password.trim();
+
         const existingUser = await User.findOne({ email });
         if (existingUser) return res.status(400).json({ message: 'User already exists' });
 
-        const user = new User({ username, email, password: password.trim() });
+        const user = new User({ username, email, password });
         await user.save();
 
         res.status(201).json({ message: 'User registered successfully' });
