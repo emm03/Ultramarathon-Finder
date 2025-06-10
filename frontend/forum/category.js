@@ -1,8 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
     const urlParams = new URLSearchParams(window.location.search);
     const rawTopic = urlParams.get("topic");
-    const decodedTopic = decodeURIComponent(rawTopic || "Unknown");
 
+    if (!rawTopic) {
+        document.getElementById("category-title").textContent = "Invalid Category";
+        return;
+    }
+
+    const decodedTopic = decodeURIComponent(rawTopic);
     document.getElementById("category-title").textContent = decodedTopic;
     document.getElementById("post-topic").value = decodedTopic;
 
