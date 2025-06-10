@@ -138,4 +138,53 @@ router.get('/group-posts', async (req, res) => {
     }
 });
 
+// EDIT a group post
+router.patch('/group-posts/:id', authenticateToken, async (req, res) => {
+    const postId = req.params.id;
+    const { title, message } = req.body;
+
+    if (!title || !message) {
+        return res.status(400).json({ message: 'Both title and message are required.' });
+    }
+
+    try {
+        const post = await ForumPost.findById(postId);
+        if (!post) return res.status(404).json({ message: 'Post not found.' });
+
+        if (post.userId.toString() !== req.user.userId) {
+            return res.status(403).json({ message: 'You can only edit your own posts.' });
+        }
+
+        post.title = title;
+        post.message = message;
+        await post.save();
+
+        res.status(200).json({ message: 'Post updated successfully.', post });
+    } catch (err) {
+        console.error('❌ Error editing group post:', err);
+        res.status(500).json({ message: 'Server error updating post.' });
+    }
+});
+
+// DELETE a group post
+router.delete('/group-posts/:id', authenticateToken, async (req, res) => {
+    const postId = req.params.id;
+    const userId = req.user.userId;
+
+    try {
+        const post = await ForumPost.findById(postId);
+        if (!post) return res.status(404).json({ message: 'Post not found.' });
+
+        if (post.userId.toString() !== userId) {
+            return res.status(403).json({ message: 'You can only delete your own posts.' });
+        }
+
+        await ForumPost.findByIdAndDelete(postId);
+        res.status(200).json({ message: 'Post deleted successfully.' });
+    } catch (err) {
+        console.error('❌ Error deleting group post:', err);
+        res.status(500).json({ message: 'Server error deleting post.' });
+    }
+});
+
 export default router;
