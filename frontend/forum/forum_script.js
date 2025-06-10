@@ -276,12 +276,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const div = document.createElement("div");
                 div.className = "training-group";
 
-                const encodedGroupName = encodeURIComponent(group.raceName);
+                const encodedGroupName = encodeURIComponent(group.groupName);
                 div.innerHTML = `
-                <h4><a href="group_forum.html?group=${encodedGroupName}">${group.raceName}</a></h4>
-                <p>${group.description}</p>
-                <button class="join-btn">Join Group</button>
-            `;
+                    <h4><a href="forum/group_forum.html?group=${encodedGroupName}">${group.groupName}</a></h4>
+                    <p>${group.description || "No description provided."}</p>
+                    <button class="join-btn">Join Group</button>
+                `;
 
                 section.insertBefore(div, section.querySelector(".create-group-btn"));
             });
