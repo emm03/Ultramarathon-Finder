@@ -2,14 +2,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const urlParams = new URLSearchParams(window.location.search);
     const rawTopic = urlParams.get("topic");
 
-    if (!rawTopic) {
-        document.getElementById("category-title").textContent = "Invalid Category";
+    const titleEl = document.getElementById("category-title");
+    const hiddenInput = document.getElementById("post-topic");
+
+    if (!rawTopic || !titleEl || !hiddenInput) {
+        if (titleEl) titleEl.textContent = "Invalid Category";
         return;
     }
 
     const decodedTopic = decodeURIComponent(rawTopic);
-    document.getElementById("category-title").textContent = decodedTopic;
-    document.getElementById("post-topic").value = decodedTopic;
+    titleEl.textContent = decodedTopic;
+    hiddenInput.value = decodedTopic;
 
     const token = localStorage.getItem("token");
     const username = localStorage.getItem("username");
