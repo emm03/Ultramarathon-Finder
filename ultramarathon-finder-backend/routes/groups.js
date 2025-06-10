@@ -47,7 +47,12 @@ router.patch('/join-group', authenticateToken, async (req, res) => {
         const user = await User.findById(userId);
         if (!user) return res.status(404).json({ message: 'User not found.' });
 
-        if (!user.joinedGroups.includes(groupName)) {
+        const normalize = str => str.trim().toLowerCase();
+        const isAlreadyJoined = user.joinedGroups.some(
+            g => normalize(g) === normalize(groupName)
+        );
+
+        if (!isAlreadyJoined) {
             user.joinedGroups.push(groupName);
             await user.save();
         }
@@ -63,13 +68,22 @@ router.patch('/join-group', authenticateToken, async (req, res) => {
 router.patch('/leave-group', authenticateToken, async (req, res) => {
     const { groupName } = req.body;
     const userId = req.user.userId;
-    if (!groupName) return res.status(400).json({ message: 'Group name is required.' });
+
+    if (!groupName) {
+        return res.status(400).json({ message: 'Group name is required.' });
+    }
 
     try {
         const user = await User.findById(userId);
-        if (!user) return res.status(404).json({ message: 'User not found.' });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
 
-        user.joinedGroups = user.joinedGroups.filter(g => g.trim() !== groupName.trim());
+        const normalize = str => str.trim().toLowerCase();
+        user.joinedGroups = user.joinedGroups.filter(
+            g => normalize(g) !== normalize(groupName)
+        );
+
         await user.save();
 
         res.status(200).json({ joinedGroups: user.joinedGroups });
