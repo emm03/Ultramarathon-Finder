@@ -272,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // === LOAD DYNAMIC TRAINING GROUPS ===
     async function fetchTrainingGroups() {
         try {
-            const res = await fetch("https://ultramarathon-finder-backend.onrender.com/api/groups");
+            const res = await fetch("https://ultramarathon-finder-backend.onrender.com/api/groups/all-groups");
             const data = await res.json();
             const section = document.querySelector(".training-groups-section");
 
