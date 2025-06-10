@@ -286,4 +286,16 @@ router.delete('/posts/:id', authenticateToken, async (req, res) => {
     }
 });
 
+// Get posts filtered by topic (category view)
+router.get('/category/:topic', async (req, res) => {
+    try {
+        const topic = decodeURIComponent(req.params.topic);
+        const posts = await Post.find({ topic }).sort({ createdAt: -1 });
+        res.status(200).json(posts);
+    } catch (error) {
+        console.error('Error fetching posts by topic:', error.message);
+        res.status(500).json({ message: 'Error fetching posts by topic' });
+    }
+});
+
 export default router;
