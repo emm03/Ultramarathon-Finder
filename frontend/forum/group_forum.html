@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Group Forum - Ultramarathon Connect</title>
+    <title>Training Group Forum - Ultramarathon Connect</title>
     <link rel="stylesheet" href="/style.css" />
     <link rel="stylesheet" href="/alanai_chatbot/chat-widget.css" />
 </head>
@@ -30,8 +30,7 @@
 
     <main class="forum-wrapper">
         <h1 id="group-title" class="forum-heading">Training Group</h1>
-        <p class="forum-subheading" id="group-description">Discuss tips, meetups, and plans with other runners in this
-            race group.</p>
+        <p class="forum-subheading">Discuss tips, meetups, and plans with other runners in this race group.</p>
 
         <section class="post-form-section">
             <form id="group-post-form" class="post-form">
@@ -45,7 +44,7 @@
         <section id="group-posts" class="forum-sections"></section>
     </main>
 
-    <!-- Alan Chat Widget -->
+    <!-- Alan Chat -->
     <div id="alan-bubble">💬</div>
     <div id="alan-window">
         <div id="alan-messages"></div>
@@ -67,30 +66,7 @@
 
     <script src="/alanai_chatbot/alan.js"></script>
     <script src="/index_script.js"></script>
-    <script src="/forum/group_forum.js" defer></script>
-
-    <!-- Inject dropdown if logged in -->
-    <script>
-        const token = localStorage.getItem("token");
-        const username = localStorage.getItem("username");
-        const profilePic = localStorage.getItem("profilePicture");
-
-        if (token && username) {
-            const accountTab = document.getElementById("account-tab");
-            accountTab.innerHTML = `
-        <div class="dropdown">
-          <a href="/account.html" class="dropdown-toggle">
-            <img src="${profilePic || '/images/default-profile.png'}" class="nav-profile-img" alt="Profile" />
-            <span>${username}</span>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a href="/account.html">View Profile</a></li>
-            <li><a href="/logout.html">Sign Out</a></li>
-          </ul>
-        </div>
-      `;
-        }
-    </script>
+    <script src="/forum/group_forum.js"></script>
 </body>
 
 </html>
