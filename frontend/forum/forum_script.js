@@ -79,8 +79,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { threshold: 0.3 });
 
     Object.entries(topicSections).forEach(([topic, section]) => {
-        section.dataset.topic = topic;
-        observer.observe(section);
+        if (section) {
+            section.dataset.topic = topic;
+            observer.observe(section);
+        }
     });
 
     async function fetchPosts(sortBy = 'recent') {
