@@ -40,21 +40,76 @@ document.addEventListener("DOMContentLoaded", () => {
                 const isOwner = token && username === post.username;
 
                 postDiv.innerHTML = `
-            <div class="post-header">
-                <img class="avatar" src="${post.profilePicture || '/images/default-profile.png'}" alt="User Avatar" />
-                <div class="meta">
-                    <strong>${post.username || "Anonymous"}</strong><br>
-                    <small>${new Date(post.createdAt).toLocaleString()}</small>
-                </div>
-            </div>
-            <h4>${post.title}</h4>
-            <p>${post.message}</p>
-            <div class="post-actions">
-                ${isOwner ? `
-                <button class="edit-btn green-btn" data-id="${post._id}" data-title="${post.title}" data-message="${post.message}">✏️ Edit</button>
-                <button class="delete-btn green-btn" data-id="${post._id}">🗑️ Delete</button>` : ''}
-            </div>
-          `;
+                    <div class="post-header">
+                        <img class="avatar" src="${post.profilePicture || '/images/default-profile.png'}" alt="User Avatar" />
+                        <div class="meta">
+                            <strong>${post.username || "Anonymous"}</strong><br>
+                            <small>${new Date(post.createdAt).toLocaleString()}</small>
+                        </div>
+                    </div>
+                    <h4>${post.title}</h4>
+                    <p>${post.message}</p>
+                    <div class="post-actions">
+                        <button class="reply-btn" data-id="${post._id}">💬 Reply</button>
+                        ${isOwner ? `
+                        <button class="edit-btn green-btn" data-id="${post._id}" data-title="${post.title}" data-message="${post.message}">✏️ Edit</button>
+                        <button class="delete-btn green-btn" data-id="${post._id}">🗑️ Delete</button>` : ''}
+                    </div>
+                    <div class="replies">
+                        ${post.replies && post.replies.length > 0
+                        ? post.replies.map(r => `
+                                <div class="reply">
+                                    <h5>${r.username}</h5>
+                                    <small>${new Date(r.createdAt).toLocaleString()}</small>
+                                    <p>${r.content}</p>
+                                </div>
+                            `).join('')
+                        : '<p>No replies yet.</p>'
+                    }
+                    </div>
+                    <div class="reply-input" style="display: none; margin-top: 10px;">
+                        <textarea placeholder="Write your reply..." rows="3" style="width: 100%; margin-bottom: 8px;"></textarea>
+                        <button class="submit-reply-btn">Submit Reply</button>
+                    </div>
+                `;
+
+                // === Add reply toggle behavior ===
+                const replyBtn = postDiv.querySelector(".reply-btn");
+                const replyBox = postDiv.querySelector(".reply-input");
+                const submitReplyBtn = postDiv.querySelector(".submit-reply-btn");
+
+                replyBtn.addEventListener("click", () => {
+                    replyBox.style.display = replyBox.style.display === "none" ? "block" : "none";
+                });
+
+                submitReplyBtn.addEventListener("click", async () => {
+                    const textarea = replyBox.querySelector("textarea");
+                    const content = textarea.value.trim();
+
+                    if (!content) {
+                        alert("Reply cannot be empty.");
+                        return;
+                    }
+
+                    try {
+                        const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/groups/group-posts/${post._id}/reply`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ content })
+                        });
+
+                        if (res.ok) {
+                            fetchGroupPosts(); // Refresh replies
+                        } else {
+                            alert("Failed to post reply.");
+                        }
+                    } catch (err) {
+                        console.error("Reply submit error:", err);
+                    }
+                });
 
                 postsEl.appendChild(postDiv);
             });
@@ -170,10 +225,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 controlDiv.className = "group-control";
                 controlDiv.style.textAlign = "center";
                 controlDiv.style.marginBottom = "20px";
-
-                const joinBtn = document.createElement("button");
-                joinBtn.className = "green-btn";
-                joinBtn.textContent = hasJoined ? "Leave Group" : "Join Group";
 
                 joinBtn.addEventListener("click", async () => {
                     try {
