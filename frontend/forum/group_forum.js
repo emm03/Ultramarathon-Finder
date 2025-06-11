@@ -21,9 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const fetchGroupPosts = async () => {
         try {
             const res = await fetch(
-                `https://ultramarathon-finder-backend.onrender.com/api/groups/group-posts?group=${encodeURIComponent(
-                    decodedGroup
-                )}`
+                `https://ultramarathon-finder-backend.onrender.com/api/groups/group-posts?group=${encodeURIComponent(decodedGroup)}`
             );
             const data = await res.json();
             postsEl.innerHTML = "";
@@ -38,6 +36,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 postDiv.className = "post-card";
 
                 const isOwner = token && username === post.username;
+
+                const repliesHtml = (post.replies || []).map(r => `
+                    <div class="reply">
+                        <h5>${r.username}</h5>
+                        <small>${new Date(r.createdAt).toLocaleString()}</small>
+                        <p>${r.content}</p>
+                    </div>
+                `).join('');
 
                 postDiv.innerHTML = `
                     <div class="post-header">
@@ -55,25 +61,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         <button class="edit-btn green-btn" data-id="${post._id}" data-title="${post.title}" data-message="${post.message}">✏️ Edit</button>
                         <button class="delete-btn green-btn" data-id="${post._id}">🗑️ Delete</button>` : ''}
                     </div>
-                    <div class="replies">
-                        ${post.replies && post.replies.length > 0
-                        ? post.replies.map(r => `
-                                <div class="reply">
-                                    <h5>${r.username}</h5>
-                                    <small>${new Date(r.createdAt).toLocaleString()}</small>
-                                    <p>${r.content}</p>
-                                </div>
-                            `).join('')
-                        : '<p>No replies yet.</p>'
-                    }
-                    </div>
+                    <div class="replies">${repliesHtml || '<p>No replies yet.</p>'}</div>
                     <div class="reply-input" style="display: none; margin-top: 10px;">
                         <textarea placeholder="Write your reply..." rows="3" style="width: 100%; margin-bottom: 8px;"></textarea>
                         <button class="submit-reply-btn">Submit Reply</button>
                     </div>
                 `;
 
-                // === Add reply toggle behavior ===
                 const replyBtn = postDiv.querySelector(".reply-btn");
                 const replyBox = postDiv.querySelector(".reply-input");
                 const submitReplyBtn = postDiv.querySelector(".submit-reply-btn");
@@ -85,11 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 submitReplyBtn.addEventListener("click", async () => {
                     const textarea = replyBox.querySelector("textarea");
                     const content = textarea.value.trim();
-
-                    if (!content) {
-                        alert("Reply cannot be empty.");
-                        return;
-                    }
+                    if (!content) return alert("Reply cannot be empty.");
 
                     try {
                         const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/groups/group-posts/${post._id}/reply`, {
@@ -100,12 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             },
                             body: JSON.stringify({ content })
                         });
-
-                        if (res.ok) {
-                            fetchGroupPosts(); // Refresh replies
-                        } else {
-                            alert("Failed to post reply.");
-                        }
+                        if (res.ok) fetchGroupPosts();
+                        else alert("Failed to post reply.");
                     } catch (err) {
                         console.error("Reply submit error:", err);
                     }
@@ -123,11 +109,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.addEventListener("click", async (e) => {
         const postId = e.target.dataset.id;
-
         if (e.target.classList.contains("edit-btn")) {
             const oldTitle = e.target.dataset.title;
             const oldMessage = e.target.dataset.message;
-
             const newTitle = prompt("Edit post title:", oldTitle);
             const newMessage = prompt("Edit post message:", oldMessage);
             if (!newTitle || !newMessage) return;
@@ -137,11 +121,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     method: "PATCH",
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${token}`
                     },
-                    body: JSON.stringify({ title: newTitle, message: newMessage }),
+                    body: JSON.stringify({ title: newTitle, message: newMessage })
                 });
-
                 if (res.ok) fetchGroupPosts();
                 else alert("Failed to edit post.");
             } catch (err) {
@@ -155,9 +138,8 @@ document.addEventListener("DOMContentLoaded", () => {
             try {
                 const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/groups/group-posts/${postId}`, {
                     method: "DELETE",
-                    headers: { Authorization: `Bearer ${token}` },
+                    headers: { Authorization: `Bearer ${token}` }
                 });
-
                 if (res.ok) fetchGroupPosts();
                 else alert("Failed to delete post.");
             } catch (err) {
@@ -189,9 +171,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${token}`
                     },
-                    body: JSON.stringify({ title, message, groupName: decodedGroup }),
+                    body: JSON.stringify({ title, message, groupName: decodedGroup })
                 }
             );
 
@@ -208,69 +190,5 @@ document.addEventListener("DOMContentLoaded", () => {
             errorMsg.textContent = "Failed to submit post.";
         }
     });
-
-    // Show or hide post form based on group membership + add Join/Leave button
-    if (token && decodedGroup) {
-        fetch("https://ultramarathon-finder-backend.onrender.com/api/auth/account", {
-            headers: { Authorization: `Bearer ${token}` },
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                const joined = data?.user?.joinedGroups || [];
-                const hasJoined = joined.some(
-                    (g) => g.trim().toLowerCase() === decodedGroup.trim().toLowerCase()
-                );
-
-                const controlDiv = document.createElement("div");
-                controlDiv.className = "group-control";
-                controlDiv.style.textAlign = "center";
-                controlDiv.style.marginBottom = "20px";
-
-                joinBtn.addEventListener("click", async () => {
-                    try {
-                        const method = hasJoined ? "DELETE" : "POST";
-                        const endpoint = hasJoined
-                            ? "https://ultramarathon-finder-backend.onrender.com/api/groups/leave"
-                            : "https://ultramarathon-finder-backend.onrender.com/api/groups/join";
-
-                        console.log(`Sending ${method} to ${endpoint} with groupName:`, decodedGroup);
-
-                        const response = await fetch(endpoint, {
-                            method,
-                            headers: {
-                                "Content-Type": "application/json",
-                                Authorization: `Bearer ${token}`,
-                            },
-                            body: JSON.stringify({ groupName: decodedGroup }),
-                        });
-
-                        const result = await response.json();
-                        console.log("Join/Leave response:", result);
-
-                        if (!response.ok) {
-                            alert(result.message || "Error updating group membership.");
-                            return;
-                        }
-
-                        location.reload();
-                    } catch (err) {
-                        console.error("Join/Leave failed:", err);
-                    }
-                });
-
-                controlDiv.appendChild(joinBtn);
-                postsEl.parentNode.insertBefore(controlDiv, postsEl);
-
-                if (!hasJoined) {
-                    form.style.display = "none";
-                    const warning = document.createElement("p");
-                    warning.textContent = "Join this group to post messages!";
-                    warning.style.textAlign = "center";
-                    warning.style.fontWeight = "bold";
-                    warning.style.marginBottom = "20px";
-                    postsEl.parentNode.insertBefore(warning, postsEl);
-                }
-            })
-            .catch((err) => console.error("Join check failed:", err));
-    }
+    
 });
