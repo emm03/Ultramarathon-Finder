@@ -102,6 +102,10 @@ main.category-container {
 /* Adjust dropdown position in new top bar */
 .auth-tab .account-dropdown {
     position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
 }
 
 .auth-tab .dropdown-content {
@@ -129,9 +133,7 @@ main.category-container {
     background-color: #f0f0f0;
 }
 
-/* Show dropdown when hovering over account tab OR dropdown */
-.auth-tab:hover .dropdown-content,
-.auth-tab .dropdown-content:hover {
+.auth-tab:hover .dropdown-content {
     display: block;
 }
 
