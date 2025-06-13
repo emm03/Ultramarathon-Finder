@@ -527,6 +527,35 @@ button:hover {
     }
 }
 
+/* Proper layout for mobile header rows */
+@media (max-width: 768px) {
+    .header-top-row {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .mobile-header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 0 1rem;
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .mobile-account-tab {
+        margin-top: 0.5rem;
+        text-align: center;
+        width: 100%;
+    }
+}
+
 /* Carousel Section */
 .carousel {
     position: relative;
