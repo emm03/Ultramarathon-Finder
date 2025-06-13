@@ -102,12 +102,9 @@ main.category-container {
 /* Adjust dropdown position in new top bar */
 .auth-tab .account-dropdown {
     position: relative;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
 }
 
+/* Ensure dropdown is hidden by default */
 .auth-tab .dropdown-content {
     position: absolute;
     top: 40px;
@@ -122,6 +119,12 @@ main.category-container {
     z-index: 1001;
 }
 
+/* Show dropdown when hovering over the entire .auth-tab */
+.auth-tab:hover .dropdown-content {
+    display: block;
+}
+
+/* Hover behavior for dropdown links */
 .auth-tab .dropdown-content a {
     display: block;
     padding: 10px;
@@ -131,10 +134,6 @@ main.category-container {
 
 .auth-tab .dropdown-content a:hover {
     background-color: #f0f0f0;
-}
-
-.auth-tab:hover .dropdown-content {
-    display: block;
 }
 
 /* Desktop menu */

@@ -92,29 +92,18 @@ function setupAuthenticatedMenu(menu, token) {
             const container = tab.querySelector('.account-dropdown');
             const dropdown = tab.querySelector('.dropdown-content');
 
-            container.addEventListener('mouseenter', () => {
-                if (window.innerWidth >= 769) {
-                    dropdown.classList.add('show');
-                }
-            });
-            container.addEventListener('mouseleave', () => {
-                if (window.innerWidth >= 769) {
-                    dropdown.classList.remove('show');
-                }
-            });
-
-            // Click to toggle for mobile
+            // Mobile only: toggle dropdown on tap
             container.addEventListener('click', (e) => {
                 if (window.innerWidth < 769) {
                     e.stopPropagation();
-                    dropdown.classList.toggle('show');
+                    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
                 }
             });
 
-            // Close dropdown on outside click (mobile)
+            // Close on outside click for mobile
             document.addEventListener('click', (e) => {
-                if (!tab.contains(e.target)) {
-                    dropdown.classList.remove('show');
+                if (window.innerWidth < 769 && !tab.contains(e.target)) {
+                    dropdown.style.display = 'none';
                 }
             });
 
