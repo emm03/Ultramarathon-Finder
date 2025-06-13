@@ -23,7 +23,7 @@ body.forum-page main {
 main {
     margin: 0;
     padding: 0;
-    padding-top: 133px;
+    padding-top: 110px;
 }
 
 /* On the homepage only, reduce top padding to tighten header overlap */
@@ -48,7 +48,7 @@ main.category-container {
     z-index: 1000;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     padding: 0;
-    height: 133px;
+    height: 110px;
 }
 
 .header-inner {
@@ -87,11 +87,9 @@ main.category-container {
 .header-top-row,
 .header-bottom-row {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.8rem 1.25rem;
-    background-color: #333;
-    color: white;
+    justify-content: flex-end;
+    padding: 0.5rem 1.25rem;
+    background-color: #222;
 }
 
 /* Adjust dropdown position in new top bar */
