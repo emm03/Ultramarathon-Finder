@@ -453,7 +453,7 @@ button:hover {
     height: 100vh;
     overflow: hidden;
     background-color: #000;
-    margin-top: 2rem;
+    margin-top: 0;
 }
 
 .carousel-inner {
@@ -470,7 +470,6 @@ button:hover {
     height: 100%;
     opacity: 0;
     transition: opacity 1s ease-in-out;
-    /* Smooth fade transition */
 }
 
 .carousel-item.active {
