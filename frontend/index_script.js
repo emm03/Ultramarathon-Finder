@@ -122,7 +122,7 @@ function setupAuthenticatedMenu(menu, token) {
 
 function setupUnauthenticatedMenu(menu) {
     const tab = document.getElementById("account-tab");
-    tab.innerHTML = `<a href="login.html">Login</a>`;
+    tab.innerHTML = `<a href="login.html" class="orange-signin-btn">Sign In</a>`;
 }
 
 // -------------------- MAP --------------------
