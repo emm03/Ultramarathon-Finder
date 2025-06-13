@@ -96,14 +96,14 @@ function setupAuthenticatedMenu(menu, token) {
             container.addEventListener('click', (e) => {
                 if (window.innerWidth < 769) {
                     e.stopPropagation();
-                    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                    dropdown.classList.toggle('show');
                 }
             });
 
             // Close on outside click for mobile
             document.addEventListener('click', (e) => {
                 if (window.innerWidth < 769 && !tab.contains(e.target)) {
-                    dropdown.style.display = 'none';
+                    dropdown.classList.remove('show');
                 }
             });
 
