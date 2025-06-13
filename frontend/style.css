@@ -28,7 +28,7 @@ main {
 
 /* On the homepage only, reduce top padding to tighten header overlap */
 body.index main {
-    padding-top: 100px;
+    padding-top: 0;
 }
 
 /* For category forum pages */
