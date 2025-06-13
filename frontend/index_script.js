@@ -88,10 +88,22 @@ function setupAuthenticatedMenu(menu, token) {
             </div>
         `;
 
-            const dropdown = tab.querySelector('.dropdown-content');
+            // Hover behavior for desktop
             const container = tab.querySelector('.account-dropdown');
+            const dropdown = tab.querySelector('.dropdown-content');
 
-            // Click for mobile
+            container.addEventListener('mouseenter', () => {
+                if (window.innerWidth >= 769) {
+                    dropdown.classList.add('show');
+                }
+            });
+            container.addEventListener('mouseleave', () => {
+                if (window.innerWidth >= 769) {
+                    dropdown.classList.remove('show');
+                }
+            });
+
+            // Click to toggle for mobile
             container.addEventListener('click', (e) => {
                 if (window.innerWidth < 769) {
                     e.stopPropagation();
@@ -99,21 +111,14 @@ function setupAuthenticatedMenu(menu, token) {
                 }
             });
 
-            // Hover for desktop
-            container.addEventListener('mouseenter', () => {
-                if (window.innerWidth >= 769) {
-                    dropdown.classList.add('show');
-                }
-            });
-
-            container.addEventListener('mouseleave', () => {
-                if (window.innerWidth >= 769) {
+            // Close dropdown on outside click (mobile)
+            document.addEventListener('click', (e) => {
+                if (!tab.contains(e.target)) {
                     dropdown.classList.remove('show');
                 }
             });
 
-            // Sign out
-            const logoutBtn = tab.querySelector("#logout-link");
+            const logoutBtn = document.getElementById("logout-link");
             if (logoutBtn) {
                 logoutBtn.addEventListener("click", e => {
                     e.preventDefault();
