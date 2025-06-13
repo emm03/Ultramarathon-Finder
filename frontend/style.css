@@ -87,7 +87,7 @@ main.category-container {
 .header-top-row,
 .header-bottom-row {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     padding: 0.5rem 1.25rem;
     background-color: #333;
@@ -124,7 +124,8 @@ main.category-container {
     background-color: #f0f0f0;
 }
 
-.auth-tab .dropdown-content.show {
+/* Show dropdown only on hover of the entire account area */
+.auth-tab:hover .dropdown-content {
     display: block;
 }
 
