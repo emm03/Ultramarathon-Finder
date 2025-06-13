@@ -103,6 +103,11 @@ main.category-container {
 }
 
 @media (max-width: 768px) {
+    body.menu-open {
+        overflow: hidden;
+        height: 100vh;
+    }
+
     .menu-toggle {
         display: block;
         font-size: 1.8rem;
@@ -111,23 +116,36 @@ main.category-container {
         border: none;
         cursor: pointer;
         margin-left: 12px;
+        z-index: 1001;
     }
 
     .menu {
         display: none;
         flex-direction: column;
         align-items: center;
-        background-color: #333;
-        position: absolute;
-        top: 70px;
+        justify-content: center;
+        background-color: #222;
+        position: fixed;
+        top: 0;
         left: 0;
-        width: 100%;
-        padding: 1rem 0;
-        z-index: 999;
+        height: 100vh;
+        width: 100vw;
+        z-index: 1000;
+        transition: all 0.3s ease-in-out;
     }
 
     .menu.show {
         display: flex;
+    }
+
+    .menu li {
+        margin: 1.2rem 0;
+    }
+
+    .menu a {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
     }
 }
 
@@ -1790,6 +1808,39 @@ button:hover {
     }
 }
 
+@media (max-width: 768px) {
+    .race-card {
+        width: 100% !important;
+        margin: 1rem 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+        border-radius: 6px;
+        display: block;
+    }
+
+    .race-grid {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0 1rem;
+    }
+
+    .race-card img {
+        width: 100%;
+        height: auto;
+        border-radius: 4px;
+    }
+
+    .race-card h3 {
+        font-size: 1.2rem;
+        margin-top: 0.5rem;
+    }
+
+    .race-card p {
+        font-size: 0.95rem;
+    }
+}
+
 /* ========== Runner Forum Redesign ========== */
 .forum-wrapper {
     max-width: 1100px;
@@ -2536,4 +2587,49 @@ body {
 
 .post-actions .join-btn:hover {
     background-color: #e55a00 !important;
+}
+
+/* === Mobile Account Dropdown === */
+.account-dropdown {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.profile-picture-nav {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-left: 12px;
+    vertical-align: middle;
+}
+
+.account-dropdown .dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 44px;
+    background-color: #fff;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.account-dropdown .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    display: block;
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.account-dropdown .dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.account-dropdown .dropdown-content.show {
+    display: block;
 }

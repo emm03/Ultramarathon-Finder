@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (toggle && menuList) {
         toggle.addEventListener('click', () => {
             menuList.classList.toggle('show');
+            document.body.classList.toggle('menu-open');
         });
     }
 });
@@ -61,9 +62,10 @@ function initializeCarousel() {
 // -------------------- AUTH HEADER BEHAVIOR --------------------
 function setupAuthenticatedMenu(menu, token) {
     const tab = document.getElementById("account-tab");
+
     tab.innerHTML = `
-        <div class="dropdown">
-            <button class="dropbtn">My Account</button>
+        <div class="account-dropdown">
+            <img src="${localStorage.getItem("profilePicture") || 'images/default-profile.png'}" alt="Profile Picture" class="profile-picture-nav" />
             <div class="dropdown-content">
                 <a href="account.html">Profile</a>
                 <a href="training_log.html">Training Log</a>
@@ -80,7 +82,11 @@ function setupAuthenticatedMenu(menu, token) {
         });
     }
 
-    fetchUserProfilePicture(token, menu);
+    const profileImg = tab.querySelector(".profile-picture-nav");
+    profileImg.addEventListener("click", () => {
+        const dropdown = tab.querySelector(".dropdown-content");
+        dropdown.classList.toggle("show");
+    });
 }
 
 function setupUnauthenticatedMenu(menu) {
