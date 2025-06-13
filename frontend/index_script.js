@@ -89,24 +89,31 @@ function setupAuthenticatedMenu(menu, token) {
         `;
 
             const dropdown = tab.querySelector('.dropdown-content');
-            const dropdownContainer = tab.querySelector('.account-dropdown');
+            const container = tab.querySelector('.account-dropdown');
 
-            // Mobile toggle
-            dropdownContainer.addEventListener('click', (e) => {
+            // Click for mobile
+            container.addEventListener('click', (e) => {
                 if (window.innerWidth < 769) {
                     e.stopPropagation();
                     dropdown.classList.toggle('show');
                 }
             });
 
-            // Close mobile dropdown on outside tap
-            document.addEventListener('click', (e) => {
-                if (!tab.contains(e.target)) {
+            // Hover for desktop
+            container.addEventListener('mouseenter', () => {
+                if (window.innerWidth >= 769) {
+                    dropdown.classList.add('show');
+                }
+            });
+
+            container.addEventListener('mouseleave', () => {
+                if (window.innerWidth >= 769) {
                     dropdown.classList.remove('show');
                 }
             });
 
-            const logoutBtn = document.getElementById("logout-link");
+            // Sign out
+            const logoutBtn = tab.querySelector("#logout-link");
             if (logoutBtn) {
                 logoutBtn.addEventListener("click", e => {
                     e.preventDefault();
