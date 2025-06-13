@@ -136,6 +136,243 @@ main.category-container {
     background-color: #f0f0f0;
 }
 
+/* Account Actions */
+.account-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+}
+
+.account-actions .orange-btn {
+    background-color: #f57c00;
+    /* Matching orange theme */
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.account-actions .orange-btn:hover {
+    background-color: #d96100;
+    /* Darker hover effect */
+}
+
+/* Specific styles for Login and Register buttons */
+.account-buttons {
+    display: flex;
+    /* Flexbox for Login/Register alignment */
+    justify-content: center;
+    /* Center horizontally */
+    gap: 10px;
+    /* Add spacing between Login and Register */
+    margin-top: 0;
+    /* Align Login/Register buttons with others */
+}
+
+/* General orange button styling */
+.orange-btn {
+    display: inline-block;
+    margin: 10px auto;
+    /* Adjusted for spacing */
+    padding: 10px 20px;
+    background-color: #f7931e;
+    /* Orange button color */
+    color: #fff;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    /* Pointer cursor for buttons */
+    text-align: center;
+}
+
+.orange-btn:hover {
+    background-color: #e5801b;
+    /* Darker orange for hover */
+}
+
+/* Footer Styling */
+footer {
+    text-align: center;
+    background-color: #333;
+    color: #fff;
+    padding: 20px 0;
+    font-size: 0.9rem;
+}
+
+footer p {
+    margin: 5px 0;
+}
+
+/* Pagination controls styling */
+.pagination-controls {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.pagination-controls .page-button {
+    background-color: #f7931e;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    margin: 0 3px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.pagination-controls .page-button.active {
+    background-color: #e5801b;
+    font-weight: bold;
+}
+
+.pagination-controls .page-button:hover {
+    background-color: #d96e15;
+}
+
+.pagination-controls .dots {
+    padding: 0 5px;
+    color: #666;
+    font-size: 14px;
+}
+
+.account-section {
+    background: #fff;
+    margin: 2rem auto;
+    padding: 2rem;
+    max-width: 500px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.account-section h2 {
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.account-section p {
+    font-size: 1rem;
+    color: #666;
+}
+
+button {
+    background: #5cb85c;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+button:hover {
+    background: #4cae4c;
+}
+
+/* Account Page Styling */
+.account-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #f8f9fa;
+    /* Light background for contrast */
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow for depth */
+    max-width: 800px;
+    margin: 20px auto;
+    /* Center and add spacing */
+}
+
+/* Account Card */
+.account-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    /* Make it responsive */
+    text-align: center;
+    background-color: #ffffff;
+    /* White background for the card */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow */
+}
+
+/* =================== Account Dropdown Styling =================== */
+#account-wrapper {
+    position: relative;
+    margin-left: 1rem;
+}
+
+.account-dropdown {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.account-dropdown span {
+    font-weight: bold;
+    color: white;
+    margin-left: 0.5rem;
+}
+
+.account-dropdown .profile-picture-nav {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+}
+
+/* Dropdown Menu */
+.account-dropdown .dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 120%;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    border-radius: 6px;
+    min-width: 180px;
+    z-index: 999;
+    padding: 0.8rem 0;
+}
+
+.account-dropdown .dropdown-content a {
+    display: block;
+    padding: 10px 16px;
+    color: black;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.account-dropdown .dropdown-content a:hover {
+    background-color: #f0f0f0;
+}
+
+/* Hover dropdown on desktop */
+@media (min-width: 769px) {
+    .account-dropdown:hover .dropdown-content {
+        display: block;
+    }
+}
+
+/* Toggle dropdown manually on mobile */
+.account-dropdown .dropdown-content.show {
+    display: block;
+}
+
 /* Desktop menu */
 .menu {
     display: flex;
@@ -477,55 +714,6 @@ main.category-container {
 
 .forum-preview button.orange-btn {
     margin-top: 1rem;
-}
-
-/* Specific styles for Login and Register buttons */
-.account-buttons {
-    display: flex;
-    /* Flexbox for Login/Register alignment */
-    justify-content: center;
-    /* Center horizontally */
-    gap: 10px;
-    /* Add spacing between Login and Register */
-    margin-top: 0;
-    /* Align Login/Register buttons with others */
-}
-
-/* General orange button styling */
-.orange-btn {
-    display: inline-block;
-    margin: 10px auto;
-    /* Adjusted for spacing */
-    padding: 10px 20px;
-    background-color: #f7931e;
-    /* Orange button color */
-    color: #fff;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
-    border: none;
-    font-size: 1rem;
-    cursor: pointer;
-    /* Pointer cursor for buttons */
-    text-align: center;
-}
-
-.orange-btn:hover {
-    background-color: #e5801b;
-    /* Darker orange for hover */
-}
-
-/* Footer Styling */
-footer {
-    text-align: center;
-    background-color: #333;
-    color: #fff;
-    padding: 20px 0;
-    font-size: 0.9rem;
-}
-
-footer p {
-    margin: 5px 0;
 }
 
 /* Unified Footer Link Styling (with higher specificity) */
@@ -1357,69 +1545,6 @@ footer .footer-links a:hover {
     color: white;
 }
 
-/* Pagination controls styling */
-.pagination-controls {
-    text-align: center;
-    margin: 20px 0;
-}
-
-.pagination-controls .page-button {
-    background-color: #f7931e;
-    color: #fff;
-    border: none;
-    padding: 5px 10px;
-    margin: 0 3px;
-    cursor: pointer;
-    border-radius: 3px;
-}
-
-.pagination-controls .page-button.active {
-    background-color: #e5801b;
-    font-weight: bold;
-}
-
-.pagination-controls .page-button:hover {
-    background-color: #d96e15;
-}
-
-.pagination-controls .dots {
-    padding: 0 5px;
-    color: #666;
-    font-size: 14px;
-}
-
-.account-section {
-    background: #fff;
-    margin: 2rem auto;
-    padding: 2rem;
-    max-width: 500px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.account-section h2 {
-    margin-bottom: 1rem;
-    color: #333;
-}
-
-.account-section p {
-    font-size: 1rem;
-    color: #666;
-}
-
-button {
-    background: #5cb85c;
-    color: #fff;
-    border: none;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    border-radius: 3px;
-}
-
-button:hover {
-    background: #4cae4c;
-}
-
 /* Comment Form Styling */
 #comment-form {
     display: flex;
@@ -1609,39 +1734,6 @@ button:hover {
     /* Ensure it stays on the same line */
 }
 
-/* Account Page Styling */
-.account-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background-color: #f8f9fa;
-    /* Light background for contrast */
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    /* Subtle shadow for depth */
-    max-width: 800px;
-    margin: 20px auto;
-    /* Center and add spacing */
-}
-
-/* Account Card */
-.account-card {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    /* Make it responsive */
-    text-align: center;
-    background-color: #ffffff;
-    /* White background for the card */
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    /* Subtle shadow */
-}
-
 /* Profile Picture */
 .profile-container {
     display: flex;
@@ -1758,32 +1850,6 @@ button:hover {
     font-size: 1em;
     color: #666666;
     /* Subtle text for secondary info */
-}
-
-/* Account Actions */
-.account-actions {
-    margin-top: 20px;
-    display: flex;
-    gap: 15px;
-}
-
-.account-actions .orange-btn {
-    background-color: #f57c00;
-    /* Matching orange theme */
-    color: #ffffff;
-    padding: 10px 20px;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    font-size: 1em;
-    text-transform: uppercase;
-    font-weight: bold;
-    transition: background-color 0.3s;
-}
-
-.account-actions .orange-btn:hover {
-    background-color: #d96100;
-    /* Darker hover effect */
 }
 
 /* Upload Button */
@@ -2647,70 +2713,4 @@ body {
 
 .post-actions .join-btn:hover {
     background-color: #e55a00 !important;
-}
-
-/* =================== Account Dropdown Styling =================== */
-#account-wrapper {
-    position: relative;
-    margin-left: 1rem;
-}
-
-.account-dropdown {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    position: relative;
-}
-
-.account-dropdown span {
-    font-weight: bold;
-    color: white;
-    margin-left: 0.5rem;
-}
-
-.account-dropdown .profile-picture-nav {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid white;
-}
-
-/* Dropdown Menu */
-.account-dropdown .dropdown-content {
-    display: block;
-    position: absolute;
-    right: 0;
-    top: 120%;
-    background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    border-radius: 6px;
-    min-width: 180px;
-    z-index: 999;
-    padding: 0.8rem 0;
-}
-
-.account-dropdown .dropdown-content a {
-    display: block;
-    padding: 10px 16px;
-    color: black;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 0.95rem;
-}
-
-.account-dropdown .dropdown-content a:hover {
-    background-color: #f0f0f0;
-}
-
-/* Hover dropdown on desktop */
-@media (min-width: 769px) {
-    .account-dropdown:hover .dropdown-content {
-        display: block;
-    }
-}
-
-/* Toggle dropdown manually on mobile */
-.account-dropdown .dropdown-content.show {
-    display: block;
 }
