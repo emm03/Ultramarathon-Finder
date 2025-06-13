@@ -86,10 +86,29 @@ main.category-container {
 
 .header-top-row {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     padding: 0.5rem 1.25rem;
     background-color: #333;
+}
+
+/* Center the logo + title only on mobile */
+.header-center {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+@media (max-width: 768px) {
+    .header-top-row {
+        justify-content: space-between;
+    }
+
+    .header-center {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 }
 
 .header-bottom-row {
