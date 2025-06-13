@@ -88,7 +88,6 @@ function setupAuthenticatedMenu(menu, token) {
             </div>
         `;
 
-            // Hover behavior for desktop
             const container = tab.querySelector('.account-dropdown');
             const dropdown = tab.querySelector('.dropdown-content');
 
@@ -102,7 +101,7 @@ function setupAuthenticatedMenu(menu, token) {
 
             // Close on outside click for mobile
             document.addEventListener('click', (e) => {
-                if (window.innerWidth < 769 && !tab.contains(e.target)) {
+                if (window.innerWidth < 769 && !container.contains(e.target)) {
                     dropdown.classList.remove('show');
                 }
             });
