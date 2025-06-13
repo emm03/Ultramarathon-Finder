@@ -76,6 +76,63 @@ main.category-container {
     white-space: nowrap;
 }
 
+/* ========== Dual Row Header Layout ========== */
+.dual-row-header {
+    height: auto;
+    flex-direction: column;
+}
+
+.header-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1.25rem;
+    background-color: #333;
+    color: white;
+}
+
+.header-bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1.25rem;
+    background-color: #222;
+}
+
+/* Adjust dropdown position in new top bar */
+.auth-tab .account-dropdown {
+    position: relative;
+}
+
+.auth-tab .dropdown-content {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: white;
+    color: black;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: none;
+    min-width: 160px;
+    z-index: 1001;
+}
+
+.auth-tab .dropdown-content a {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: #333;
+}
+
+.auth-tab .dropdown-content a:hover {
+    background-color: #f0f0f0;
+}
+
+.auth-tab .dropdown-content.show {
+    display: block;
+}
+
 /* Desktop menu */
 .menu {
     display: flex;
