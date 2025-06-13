@@ -26,13 +26,14 @@ main {
     padding-top: 133px;
 }
 
-/* On the homepage only, remove top padding so header touches carousel */
+/* On the homepage only, reduce top padding to tighten header overlap */
 body.index main {
-    padding-top: 0;
+    padding-top: 100px;
 }
 
+/* For category forum pages */
 main.category-container {
-    margin-top: 80px;
+    margin-top: 105px;
 }
 
 /* ================= HEADER FINAL FIX (Desktop + Mobile) ================= */
@@ -66,11 +67,11 @@ main.category-container {
 }
 
 .logo {
-    height: 40px;
+    height: 56px;
 }
 
 .site-title {
-    font-size: 1.4rem;
+    font-size: 1.65rem;
     font-weight: bold;
     color: white;
     white-space: nowrap;
@@ -80,23 +81,17 @@ main.category-container {
 .dual-row-header {
     height: auto;
     flex-direction: column;
+    background-color: #333;
 }
 
-.header-top-row {
+.header-top-row,
+.header-bottom-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0.8rem 1.25rem;
     background-color: #333;
     color: white;
-}
-
-.header-bottom-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.5rem 1.25rem;
-    background-color: #222;
 }
 
 /* Adjust dropdown position in new top bar */
