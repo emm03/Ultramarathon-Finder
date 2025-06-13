@@ -101,13 +101,28 @@ main.category-container {
 
 @media (max-width: 768px) {
     .header-top-row {
-        justify-content: space-between;
+        flex-direction: column;
+        align-items: center;
     }
 
-    .header-center {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
+    .header-left {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .header-left.header-center {
+        position: static;
+        transform: none;
+    }
+
+    .auth-tab {
+        margin-top: 8px;
+    }
+
+    .menu-toggle {
+        margin-top: 8px;
+        position: relative;
+        z-index: 1001;
     }
 }
 
@@ -125,19 +140,6 @@ main.category-container {
     align-items: center;
     width: 100%;
     position: relative;
-}
-
-@media (max-width: 768px) {
-    .header-left.header-center {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-
-    .menu-toggle {
-        position: relative;
-        z-index: 1001;
-    }
 }
 
 @media (min-width: 769px) {
