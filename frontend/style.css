@@ -398,6 +398,16 @@ button:hover {
     display: block;
 }
 
+.account-hover-container {
+    position: relative;
+    display: inline-block;
+}
+
+.account-hover-container:hover .dropdown-content,
+.account-hover-container .dropdown-content:hover {
+    display: block;
+}
+
 /* Desktop menu */
 .menu {
     display: flex;

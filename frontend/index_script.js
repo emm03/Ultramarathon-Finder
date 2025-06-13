@@ -77,21 +77,23 @@ function setupAuthenticatedMenu(menu, token) {
             localStorage.setItem("profilePicture", profilePic);
 
             tab.innerHTML = `
-            <div class="account-dropdown">
-                <img src="${profilePic}" alt="Profile Picture" class="profile-picture-nav" />
-                <span>${username}'s Account Info</span>
-                <div class="dropdown-content">
-                    <a href="account.html">Profile</a>
-                    <a href="training_log.html">Training Log</a>
-                    <a href="#" id="logout-link">Sign Out</a>
+                <div class="account-hover-container">
+                    <div class="account-dropdown">
+                        <img src="${profilePic}" alt="Profile Picture" class="profile-picture-nav" />
+                        <span>${username}'s Account Info</span>
+                    </div>
+                    <div class="dropdown-content">
+                        <a href="account.html">Profile</a>
+                        <a href="training_log.html">Training Log</a>
+                        <a href="#" id="logout-link">Sign Out</a>
+                    </div>
                 </div>
-            </div>
-        `;
-
-            const container = tab.querySelector('.account-dropdown');
-            const dropdown = tab.querySelector('.dropdown-content');
+            `;
 
             // Mobile only: toggle dropdown on tap
+            const dropdown = tab.querySelector('.dropdown-content');
+            const container = tab.querySelector('.account-hover-container');
+
             container.addEventListener('click', (e) => {
                 if (window.innerWidth < 769) {
                     e.stopPropagation();
@@ -99,9 +101,8 @@ function setupAuthenticatedMenu(menu, token) {
                 }
             });
 
-            // Close on outside click for mobile
             document.addEventListener('click', (e) => {
-                if (window.innerWidth < 769 && !container.contains(e.target)) {
+                if (window.innerWidth < 769 && !tab.contains(e.target)) {
                     dropdown.classList.remove('show');
                 }
             });
