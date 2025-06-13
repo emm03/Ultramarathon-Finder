@@ -63,30 +63,60 @@ function initializeCarousel() {
 function setupAuthenticatedMenu(menu, token) {
     const tab = document.getElementById("account-tab");
 
-    tab.innerHTML = `
-        <div class="account-dropdown">
-            <img src="${localStorage.getItem("profilePicture") || 'images/default-profile.png'}" alt="Profile Picture" class="profile-picture-nav" />
-            <div class="dropdown-content">
-                <a href="account.html">Profile</a>
-                <a href="training_log.html">Training Log</a>
-                <a href="#" id="logout-link">Sign Out</a>
+    fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/account', {
+        method: 'GET',
+        headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        }
+    })
+        .then(res => res.json())
+        .then(data => {
+            const username = data.user?.username || 'User';
+            const profilePic = data.user?.profilePicture || 'images/default-profile.png';
+            localStorage.setItem("profilePicture", profilePic);
+
+            tab.innerHTML = `
+            <div class="account-dropdown">
+                <img src="${profilePic}" alt="Profile Picture" class="profile-picture-nav" />
+                <span>${username}'s Account Info</span>
+                <div class="dropdown-content">
+                    <a href="account.html">Profile</a>
+                    <a href="training_log.html">Training Log</a>
+                    <a href="#" id="logout-link">Sign Out</a>
+                </div>
             </div>
-        </div>
-    `;
+        `;
 
-    const logoutBtn = document.getElementById("logout-link");
-    if (logoutBtn) {
-        logoutBtn.addEventListener("click", e => {
-            e.preventDefault();
-            logoutUser(false);
+            const dropdown = tab.querySelector('.dropdown-content');
+            const dropdownContainer = tab.querySelector('.account-dropdown');
+
+            // Mobile toggle
+            dropdownContainer.addEventListener('click', (e) => {
+                if (window.innerWidth < 769) {
+                    e.stopPropagation();
+                    dropdown.classList.toggle('show');
+                }
+            });
+
+            // Close mobile dropdown on outside tap
+            document.addEventListener('click', (e) => {
+                if (!tab.contains(e.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+
+            const logoutBtn = document.getElementById("logout-link");
+            if (logoutBtn) {
+                logoutBtn.addEventListener("click", e => {
+                    e.preventDefault();
+                    logoutUser(false);
+                });
+            }
+        })
+        .catch(err => {
+            console.error("Failed to load user for account tab:", err);
         });
-    }
-
-    const profileImg = tab.querySelector(".profile-picture-nav");
-    profileImg.addEventListener("click", () => {
-        const dropdown = tab.querySelector(".dropdown-content");
-        dropdown.classList.toggle("show");
-    });
 }
 
 function setupUnauthenticatedMenu(menu) {

@@ -2589,47 +2589,68 @@ body {
     background-color: #e55a00 !important;
 }
 
-/* === Mobile Account Dropdown === */
-.account-dropdown {
+/* =================== Account Dropdown Styling =================== */
+#account-wrapper {
     position: relative;
-    display: inline-block;
-    cursor: pointer;
+    margin-left: 1rem;
 }
 
-.profile-picture-nav {
+.account-dropdown {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.account-dropdown span {
+    font-weight: bold;
+    color: white;
+    margin-left: 0.5rem;
+}
+
+.account-dropdown .profile-picture-nav {
     width: 36px;
     height: 36px;
     border-radius: 50%;
     object-fit: cover;
-    margin-left: 12px;
-    vertical-align: middle;
+    border: 2px solid white;
 }
 
+/* Dropdown Menu */
 .account-dropdown .dropdown-content {
     display: none;
     position: absolute;
     right: 0;
-    top: 44px;
-    background-color: #fff;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
-    z-index: 1000;
-    border-radius: 5px;
-    overflow: hidden;
+    top: 120%;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    border-radius: 6px;
+    min-width: 180px;
+    z-index: 999;
+    padding: 0.8rem 0;
 }
 
 .account-dropdown .dropdown-content a {
-    color: black;
-    padding: 12px 16px;
     display: block;
+    padding: 10px 16px;
+    color: black;
     text-decoration: none;
+    font-weight: 500;
     font-size: 0.95rem;
 }
 
 .account-dropdown .dropdown-content a:hover {
-    background-color: #f1f1f1;
+    background-color: #f0f0f0;
 }
 
+/* Hover dropdown on desktop */
+@media (min-width: 769px) {
+    .account-dropdown:hover .dropdown-content {
+        display: block;
+    }
+}
+
+/* Toggle dropdown manually on mobile */
 .account-dropdown .dropdown-content.show {
     display: block;
 }
