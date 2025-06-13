@@ -90,20 +90,24 @@ function setupAuthenticatedMenu(menu, token) {
                 </div>
             `;
 
-            // Mobile only: toggle dropdown on tap
             const dropdown = tab.querySelector('.dropdown-content');
             const container = tab.querySelector('.account-hover-container');
 
+            // Mobile: tap to toggle open/close
+            let dropdownVisible = false;
             container.addEventListener('click', (e) => {
                 if (window.innerWidth < 769) {
                     e.stopPropagation();
-                    dropdown.classList.toggle('show');
+                    dropdownVisible = !dropdownVisible;
+                    dropdown.style.display = dropdownVisible ? 'block' : 'none';
                 }
             });
 
+            // Close dropdown if tapped outside (mobile)
             document.addEventListener('click', (e) => {
                 if (window.innerWidth < 769 && !tab.contains(e.target)) {
-                    dropdown.classList.remove('show');
+                    dropdown.style.display = 'none';
+                    dropdownVisible = false;
                 }
             });
 
