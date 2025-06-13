@@ -99,12 +99,34 @@ main.category-container {
     background-color: #333;
 }
 
-/* Adjust dropdown position in new top bar */
-.auth-tab .account-dropdown {
+/* --- Auth Tab Dropdown --- */
+.auth-tab {
     position: relative;
 }
 
-/* Ensure dropdown is hidden by default */
+/* Account layout */
+.auth-tab .account-dropdown {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.auth-tab .account-dropdown span {
+    font-weight: bold;
+    color: white;
+    margin-left: 0.5rem;
+}
+
+.auth-tab .account-dropdown .profile-picture-nav {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+}
+
+/* Dropdown Menu (hidden by default) */
 .auth-tab .dropdown-content {
     position: absolute;
     top: 40px;
@@ -119,12 +141,13 @@ main.category-container {
     z-index: 1001;
 }
 
-/* Show dropdown when hovering over the entire .auth-tab */
-.auth-tab:hover .dropdown-content {
+/* Keep dropdown visible when hovering over the tab or the dropdown itself */
+.auth-tab:hover .dropdown-content,
+.auth-tab .dropdown-content:hover {
     display: block;
 }
 
-/* Hover behavior for dropdown links */
+/* Dropdown links */
 .auth-tab .dropdown-content a {
     display: block;
     padding: 10px;
