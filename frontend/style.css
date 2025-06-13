@@ -92,37 +92,33 @@ main.category-container {
     background-color: #333;
 }
 
-/* Center the logo + title only on mobile */
-.header-center {
+/* ================= MOBILE HEADER STRUCTURE ================= */
+
+.header-top-row.mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1.25rem;
+    background-color: #333;
+}
+
+.header-top-row .top-left {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-@media (max-width: 768px) {
-    .header-top-row {
-        flex-direction: column;
-        align-items: center;
-    }
+.header-account-row {
+    display: flex;
+    justify-content: center;
+    background-color: #333;
+    padding: 0.3rem 1rem;
+}
 
-    .header-left {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .header-left.header-center {
-        position: static;
-        transform: none;
-    }
-
-    .auth-tab {
-        margin-top: 8px;
-    }
-
-    .menu-toggle {
-        margin-top: 8px;
-        position: relative;
-        z-index: 1001;
+@media (min-width: 769px) {
+    .header-account-row {
+        display: none;
+        /* desktop already has account on top right */
     }
 }
 
@@ -131,26 +127,6 @@ main.category-container {
     justify-content: flex-end;
     padding: 0.5rem 1.25rem;
     background-color: #333;
-}
-
-/* ===== Mobile Header Layout Fix ===== */
-.mobile-header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    position: relative;
-}
-
-@media (min-width: 769px) {
-    .mobile-header-container {
-        justify-content: space-between;
-    }
-
-    .header-left.header-center {
-        position: static;
-        transform: none;
-    }
 }
 
 /* --- Auth Tab Dropdown --- */
