@@ -363,7 +363,9 @@ button:hover {
 
 /* Hover dropdown on desktop */
 @media (min-width: 769px) {
-    .account-dropdown:hover .dropdown-content {
+
+    .account-dropdown:hover .dropdown-content,
+    .account-dropdown .dropdown-content:hover {
         display: block;
     }
 }
