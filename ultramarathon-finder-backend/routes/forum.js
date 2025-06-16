@@ -188,6 +188,35 @@ router.post('/comment/:commentId/reply', authenticateToken, async (req, res) => 
     }
 });
 
+// Reply to a forum post (used by category.js for inline replies)
+router.post('/posts/:id/reply', authenticateToken, async (req, res) => {
+    const { content } = req.body;
+    const user = req.user;
+
+    if (!content) {
+        return res.status(400).json({ message: 'Reply content is required.' });
+    }
+
+    try {
+        const post = await Post.findById(req.params.id);
+        if (!post) return res.status(404).json({ message: 'Post not found.' });
+
+        if (!post.replies) post.replies = [];
+
+        post.replies.push({
+            username: user.username,
+            content,
+            createdAt: new Date()
+        });
+
+        await post.save();
+        res.status(200).json({ message: 'Reply added successfully', post });
+    } catch (err) {
+        console.error('Error saving reply:', err.message);
+        res.status(500).json({ message: 'Server error while saving reply.' });
+    }
+});
+
 // Edit a comment
 router.patch('/comment/:id', authenticateToken, async (req, res) => {
     const { content } = req.body;
