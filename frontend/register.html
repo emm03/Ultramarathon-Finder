@@ -7,28 +7,6 @@
     <title>Register - Ultramarathon Connect</title>
     <link rel="stylesheet" href="style.css" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-    <style>
-        .password-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .password-wrapper input {
-            flex: 1;
-            padding-right: 42px;
-            font-size: 1rem;
-        }
-
-        .toggle-password {
-            position: absolute;
-            right: 12px;
-            font-size: 22px;
-            color: #555;
-            cursor: pointer;
-            user-select: none;
-        }
-    </style>
 </head>
 
 <body class="forum-page">
@@ -75,32 +53,27 @@
                         <div class="password-wrapper">
                             <input type="password" id="password" name="password" placeholder="Create a password"
                                 required />
-                            <span class="material-icons toggle-password" title="Show password">visibility</span>
+                            <span class="material-icons toggle-password" title="Show password"
+                                aria-label="Show password">visibility</span>
                         </div>
 
                         <label for="confirm-password" style="margin-top: 10px;">Confirm Password:</label>
                         <div class="password-wrapper">
                             <input type="password" id="confirm-password" name="confirm-password"
                                 placeholder="Confirm your password" required />
-                            <span class="material-icons toggle-password" title="Show password">visibility</span>
+                            <span class="material-icons toggle-password" title="Show password"
+                                aria-label="Show password">visibility</span>
                         </div>
 
                         <small>Password must be at least 6 characters long and include one uppercase letter, one number,
                             and one symbol (e.g. !@#$%^&*.,?_~).</small>
                     </div>
 
-                    <div id="register-message" style="
-            display: none;
-            background-color: #f57c00;
-            color: white;
-            padding: 10px 12px;
-            font-size: 0.93rem;
-            border-radius: 6px;
-            margin-top: 12px;
-          "></div>
+                    <div id="register-message" class="form-message"></div>
 
                     <button type="submit" class="orange-btn" style="margin-top: 15px;">Register</button>
                 </form>
+
                 <p>Already have an account? <a href="login.html"><strong>Login here</strong></a>.</p>
             </div>
         </div>
@@ -159,9 +132,9 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    messageEl.style.display = 'none';
                     messageEl.classList.add('success-message');
                     messageEl.textContent = 'Registration successful! Redirecting to login...';
+                    messageEl.style.display = 'block';
                     setTimeout(() => window.location.href = 'login.html', 2000);
                 } else {
                     messageEl.textContent = data.message || 'Error: Registration failed.';
@@ -179,7 +152,9 @@
                 const isVisible = input.type === 'text';
                 input.type = isVisible ? 'password' : 'text';
                 icon.textContent = isVisible ? 'visibility' : 'visibility_off';
-                icon.title = isVisible ? 'Show password' : 'Hide password';
+                const label = isVisible ? 'Show password' : 'Hide password';
+                icon.title = label;
+                icon.setAttribute('aria-label', label);
             });
         });
     </script>
