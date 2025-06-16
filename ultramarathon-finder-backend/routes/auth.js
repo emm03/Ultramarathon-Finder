@@ -75,13 +75,18 @@ router.post('/upload-profile-picture', authenticateToken, upload.single('profile
 // -------------------- REGISTER --------------------
 router.post('/register', async (req, res) => {
     let { username, email, password } = req.body;
+
+    console.log("✅ Received from frontend:", { username, email, password });
+
     if (!username || !email || !password)
         return res.status(400).json({ message: 'All fields are required' });
 
     try {
         username = username.trim();
-        email = email.trim().toLowerCase(); // optional: normalize case
+        email = email.trim().toLowerCase();
         password = password.trim();
+
+        console.log("🧪 Trimmed password:", JSON.stringify(password));
 
         const existingUser = await User.findOne({ email });
         if (existingUser) return res.status(400).json({ message: 'User already exists' });
@@ -89,15 +94,19 @@ router.post('/register', async (req, res) => {
         const user = new User({ username, email, password });
         await user.save();
 
+        console.log("✅ Saved user. Hashed password:", user.password);
+
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
+        console.error("❌ Registration error:", error.message);
         res.status(500).json({ message: 'Internal server error during registration' });
     }
 });
 
 // -------------------- LOGIN --------------------
 router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+    email = email.trim().toLowerCase();
     console.log("Login attempt for:", email);
 
     if (!email || !password)
