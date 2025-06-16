@@ -27,11 +27,12 @@ router.get('/strava-auth', async (req, res) => {
             }
         });
 
-        const { access_token, refresh_token } = tokenRes.data;
+        const { access_token, refresh_token, expires_at } = tokenRes.data;
 
         await User.findByIdAndUpdate(userId, {
             stravaAccessToken: access_token,
-            stravaRefreshToken: refresh_token
+            stravaRefreshToken: refresh_token,
+            stravaTokenExpiresAt: expires_at
         });
 
         console.log(`✅ Stored Strava tokens for user ${userId}`);
@@ -60,12 +61,41 @@ const requireUser = async (req, res, next) => {
     }
 };
 
+// -------------------- Token Auto-Refresh Helper --------------------
+async function getValidAccessToken(user) {
+    const now = Math.floor(Date.now() / 1000); // current Unix time in seconds
+
+    if (user.stravaAccessToken && user.stravaTokenExpiresAt && now < user.stravaTokenExpiresAt) {
+        return user.stravaAccessToken; // still valid
+    }
+
+    // Token is expired — refresh it
+    console.log("🔄 Refreshing Strava token for user:", user._id);
+
+    const response = await axios.post('https://www.strava.com/oauth/token', null, {
+        params: {
+            client_id: process.env.STRAVA_CLIENT_ID,
+            client_secret: process.env.STRAVA_CLIENT_SECRET,
+            grant_type: 'refresh_token',
+            refresh_token: user.stravaRefreshToken
+        }
+    });
+
+    const { access_token, refresh_token, expires_at } = response.data;
+
+    user.stravaAccessToken = access_token;
+    user.stravaRefreshToken = refresh_token;
+    user.stravaTokenExpiresAt = expires_at;
+    await user.save();
+
+    return access_token;
+}
+
 // -------------------- Fetch Strava Activities --------------------
 router.get('/api/strava/activities', requireUser, async (req, res) => {
-    const accessToken = req.user.stravaAccessToken;
-    if (!accessToken) return res.status(401).json({ error: "Strava not connected." });
-
     try {
+        const accessToken = await getValidAccessToken(req.user);
+
         const activityRes = await axios.get('https://www.strava.com/api/v3/athlete/activities', {
             headers: { Authorization: `Bearer ${accessToken}` },
             params: { per_page: 5 }
@@ -86,15 +116,11 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
 
                 const description = fullActivityRes.data.description || '';
 
-                console.log(`📸 Raw photo data for activity ${activity.id}:`, photoRes.data);
-
                 const photos = Array.isArray(photoRes.data)
                     ? photoRes.data
                         .map(p => p?.urls?.['600'] || p?.urls?.['100'])
                         .filter(Boolean)
                     : [];
-
-                console.log(`✅ Activity ${activity.id} - ${photos.length} photo(s) found.`);
 
                 return {
                     ...activity,

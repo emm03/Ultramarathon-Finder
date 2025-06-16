@@ -38,13 +38,23 @@ const userSchema = new mongoose.Schema({
     lastLogin: {
         type: Date
     },
+    joinedGroups: {
+        type: [String],
+        default: []
+    },
+
+    // ✅ STRAVA FIELDS
     stravaAccessToken: {
         type: String,
         default: null
     },
-    joinedGroups: {
-        type: [String],
-        default: []
+    stravaRefreshToken: {
+        type: String,
+        default: null
+    },
+    stravaTokenExpiresAt: {
+        type: Number, // Unix timestamp (in seconds)
+        default: null
     }
 });
 
@@ -53,7 +63,7 @@ userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next();
     try {
         const salt = await bcrypt.genSalt(10);
-        this.password = await bcrypt.hash(this.password.trim(), salt); // 🔥 trim here
+        this.password = await bcrypt.hash(this.password.trim(), salt);
         next();
     } catch (error) {
         next(error);
