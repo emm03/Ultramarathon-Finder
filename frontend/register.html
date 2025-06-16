@@ -6,6 +6,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register - Ultramarathon Connect</title>
     <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <style>
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-wrapper input {
+            flex: 1;
+            padding-right: 42px;
+            font-size: 1rem;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            font-size: 22px;
+            color: #555;
+            cursor: pointer;
+            user-select: none;
+        }
+    </style>
 </head>
 
 <body class="forum-page">
@@ -49,16 +72,17 @@
 
                     <div class="form-group">
                         <label for="password">Password:</label>
-                        <input type="password" id="password" name="password" placeholder="Create a password" required />
+                        <div class="password-wrapper">
+                            <input type="password" id="password" name="password" placeholder="Create a password"
+                                required />
+                            <span class="material-icons toggle-password" title="Show password">visibility</span>
+                        </div>
 
                         <label for="confirm-password" style="margin-top: 10px;">Confirm Password:</label>
-                        <input type="password" id="confirm-password" name="confirm-password"
-                            placeholder="Confirm your password" required />
-
-                        <div class="show-password-toggle"
-                            style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
-                            <input type="checkbox" id="toggle-password" />
-                            <label for="toggle-password" style="margin: 0;">Show password</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="confirm-password" name="confirm-password"
+                                placeholder="Confirm your password" required />
+                            <span class="material-icons toggle-password" title="Show password">visibility</span>
                         </div>
 
                         <small>Password must be at least 6 characters long and include one uppercase letter, one number,
@@ -134,16 +158,17 @@
             }
         });
 
-        // Show/hide password toggle
-        document.getElementById('toggle-password').addEventListener('change', (e) => {
-            const passwordField = document.getElementById('password');
-            const confirmField = document.getElementById('confirm-password');
-            const type = e.target.checked ? 'text' : 'password';
-            passwordField.type = type;
-            confirmField.type = type;
+        // Toggle both password fields using Material Icons
+        document.querySelectorAll('.toggle-password').forEach(icon => {
+            icon.addEventListener('click', () => {
+                const input = icon.previousElementSibling;
+                const isVisible = input.type === 'text';
+                input.type = isVisible ? 'password' : 'text';
+                icon.textContent = isVisible ? 'visibility' : 'visibility_off';
+                icon.title = isVisible ? 'Show password' : 'Hide password';
+            });
         });
     </script>
-
 </body>
 
 </html>
