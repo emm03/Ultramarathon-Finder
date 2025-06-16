@@ -63,13 +63,12 @@ const requireUser = async (req, res, next) => {
 
 // -------------------- Token Auto-Refresh Helper --------------------
 async function getValidAccessToken(user) {
-    const now = Math.floor(Date.now() / 1000); // current Unix time in seconds
+    const now = Math.floor(Date.now() / 1000); // Unix time in seconds
 
     if (user.stravaAccessToken && user.stravaTokenExpiresAt && now < user.stravaTokenExpiresAt) {
-        return user.stravaAccessToken; // still valid
+        return user.stravaAccessToken;
     }
 
-    // Token is expired — refresh it
     console.log("🔄 Refreshing Strava token for user:", user._id);
 
     const response = await axios.post('https://www.strava.com/oauth/token', null, {
@@ -122,11 +121,8 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                         .filter(Boolean)
                     : [];
 
-                return {
-                    ...activity,
-                    description,
-                    photos
-                };
+                console.log(`✅ Activity ${activity.id} - ${photos.length} photo(s) found.`);
+                return { ...activity, description, photos };
             } catch (err) {
                 console.error(`⚠️ Error enriching activity ${activity.id}:`, err.message);
                 return { ...activity, description: '', photos: [] };
