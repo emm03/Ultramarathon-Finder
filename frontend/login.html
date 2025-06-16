@@ -7,36 +7,6 @@
     <title>Login - Ultramarathon Connect</title>
     <link rel="stylesheet" href="style.css" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-    <style>
-        .password-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .password-wrapper input {
-            flex: 1;
-            padding-right: 42px;
-            font-size: 1rem;
-        }
-
-        .toggle-password {
-            position: absolute;
-            right: 12px;
-            font-size: 22px;
-            color: #555;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .form-group input[type="text"],
-        .form-group input[type="email"],
-        .form-group input[type="password"] {
-            width: 100%;
-            max-width: 100%;
-            box-sizing: border-box;
-        }
-    </style>
 </head>
 
 <body class="forum-page">
@@ -63,41 +33,34 @@
         </div>
     </header>
 
-    <main class="login-wrapper">
-        <div class="login-card">
-            <h2>Login to Your Account</h2>
-            <form id="login-form">
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" placeholder="Enter your email" required />
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="password" name="password" placeholder="Enter your password"
-                            required />
-                        <span class="material-icons toggle-password" title="Show password" aria-label="Show password"
-                            tabindex="0">visibility</span>
+    <main>
+        <div class="form-container">
+            <div class="form-card">
+                <h2>Login to Your Account</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required />
                     </div>
-                </div>
 
-                <div id="login-message" style="
-          display: none;
-          background-color: #f57c00;
-          color: white;
-          padding: 12px 14px;
-          font-size: 0.93rem;
-          border-radius: 6px;
-          margin-top: 12px;
-          margin-bottom: 6px;
-        "></div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="password" name="password" placeholder="Enter your password"
+                                required />
+                            <span class="material-icons toggle-password" title="Show password"
+                                aria-label="Show password" tabindex="0">visibility</span>
+                        </div>
+                    </div>
 
-                <button type="submit" class="orange-btn" style="margin-top: 10px;">Login</button>
-            </form>
+                    <div id="login-message" class="form-message" style="display: none;"></div>
 
-            <p><a href="forgot-password.html" class="forgot-password">Forgot Password?</a></p>
-            <p>Don't have an account? <a href="register.html"><strong>Create one for free!</strong></a></p>
+                    <button type="submit" class="orange-btn">Login</button>
+                </form>
+
+                <p><a href="forgot-password.html" class="forgot-password">Forgot Password?</a></p>
+                <p>Don't have an account? <a href="register.html"><strong>Create one for free!</strong></a></p>
+            </div>
         </div>
     </main>
 

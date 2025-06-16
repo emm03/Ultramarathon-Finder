@@ -2506,83 +2506,7 @@ footer .footer-links a:hover {
     display: block;
 }
 
-/* Login Page Styling */
-.login-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 140px;
-    padding-bottom: 60px;
-    min-height: 100vh;
-}
-
-.login-card {
-    background: #fff;
-    padding: 2.5rem 2rem;
-    border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    width: 100%;
-    text-align: center;
-}
-
-.login-card h2 {
-    margin-bottom: 1.5rem;
-    font-size: 1.8rem;
-    color: #333;
-}
-
-.login-card .form-group {
-    margin-bottom: 1.25rem;
-    text-align: left;
-}
-
-.login-card label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 0.3rem;
-    color: #444;
-}
-
-.login-card input {
-    width: 100%;
-    padding: 10px;
-    font-size: 1rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
-
-.login-card button.orange-btn {
-    width: 100%;
-    margin-top: 1rem;
-}
-
-.login-card p {
-    margin-top: 1rem;
-    font-size: 0.95rem;
-}
-
-body {
-    margin: 0;
-    padding: 0;
-}
-
-.leaflet-top,
-.leaflet-bottom {
-    z-index: 0;
-}
-
-#race-map .leaflet-control-container {
-    z-index: 0 !important;
-    position: relative !important;
-}
-
-#race-map {
-    position: relative;
-    z-index: 0;
-}
-
-/* --- Shared Login/Register Form Styles --- */
+/* --- Shared Login/Register Page Layout --- */
 .form-container {
     display: flex;
     justify-content: center;
@@ -2604,35 +2528,115 @@ body {
 .form-card h2 {
     text-align: center;
     margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+    color: #333;
 }
 
 .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
+    text-align: left;
 }
 
 .form-group label {
     display: block;
     font-weight: bold;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.3rem;
+    color: #444;
 }
 
-.form-group input {
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"] {
     width: 100%;
     padding: 10px;
     font-size: 1rem;
-    border: 1px solid #ccc;
     border-radius: 6px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
 }
 
-.form-card small {
-    font-size: 0.8rem;
-    color: #666;
+/* Password wrapper with eye icon */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
-#register-message,
-#login-message {
+.password-wrapper input {
+    padding-right: 42px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    font-size: 22px;
+    color: #555;
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle-password:hover {
+    color: #f57c00;
+}
+
+/* Login/Register Buttons */
+button.orange-btn {
+    width: 100%;
     margin-top: 1rem;
+    background-color: #f57c00;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button.orange-btn:hover {
+    background-color: #e96b00;
+}
+
+/* Error/Success Message */
+.form-message {
+    display: none;
+    background-color: #f57c00;
+    color: white;
+    padding: 12px 14px;
+    font-size: 0.93rem;
+    border-radius: 6px;
+    margin-top: 12px;
+    margin-bottom: 6px;
     text-align: center;
+}
+
+/* Login card link spacing */
+.form-card p {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    text-align: center;
+}
+
+/* Optional */
+body {
+    margin: 0;
+    padding: 0;
+}
+
+/* Map-related z-index fixes (preserved from original) */
+.leaflet-top,
+.leaflet-bottom {
+    z-index: 0;
+}
+
+#race-map .leaflet-control-container {
+    z-index: 0 !important;
+    position: relative !important;
+}
+
+#race-map {
+    position: relative;
+    z-index: 0;
 }
 
 .articles-section {
