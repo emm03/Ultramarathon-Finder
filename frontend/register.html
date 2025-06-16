@@ -50,6 +50,16 @@
                     <div class="form-group">
                         <label for="password">Password:</label>
                         <input type="password" id="password" name="password" placeholder="Create a password" required />
+
+                        <label for="confirm-password" style="margin-top: 10px;">Confirm Password:</label>
+                        <input type="password" id="confirm-password" name="confirm-password"
+                            placeholder="Confirm your password" required />
+
+                        <div class="show-password-toggle">
+                            <input type="checkbox" id="toggle-password" />
+                            <label for="toggle-password">Show password</label>
+                        </div>
+
                         <small>Password must be at least 6 characters long and include one uppercase letter, one number,
                             and one symbol (e.g. !@#$%^&*.,?_~).</small>
                     </div>
@@ -76,16 +86,23 @@
     <script>
         document.getElementById('register-form').addEventListener('submit', async (e) => {
             e.preventDefault();
+
             const username = document.getElementById('username').value.trim();
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value.trim();
+            const confirmPassword = document.getElementById('confirm-password').value.trim();
 
             const messageEl = document.getElementById('register-message');
             messageEl.textContent = '';
             messageEl.className = '';
 
-            if (!username || !email || !password) {
+            if (!username || !email || !password || !confirmPassword) {
                 messageEl.textContent = 'Please fill in all fields.';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                messageEl.textContent = 'Passwords do not match.';
                 return;
             }
 
@@ -115,7 +132,17 @@
                 messageEl.textContent = 'Error: Could not register user.';
             }
         });
+
+        // Show/hide password toggle
+        document.getElementById('toggle-password').addEventListener('change', (e) => {
+            const passwordField = document.getElementById('password');
+            const confirmField = document.getElementById('confirm-password');
+            const type = e.target.checked ? 'text' : 'password';
+            passwordField.type = type;
+            confirmField.type = type;
+        });
     </script>
+
 </body>
 
 </html>
