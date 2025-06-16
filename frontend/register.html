@@ -89,9 +89,18 @@
                             and one symbol (e.g. !@#$%^&*.,?_~).</small>
                     </div>
 
-                    <button type="submit" class="orange-btn">Register</button>
+                    <div id="register-message" style="
+            display: none;
+            background-color: #f57c00;
+            color: white;
+            padding: 10px 12px;
+            font-size: 0.93rem;
+            border-radius: 6px;
+            margin-top: 12px;
+          "></div>
+
+                    <button type="submit" class="orange-btn" style="margin-top: 15px;">Register</button>
                 </form>
-                <p id="register-message" class="error-message"></p>
                 <p>Already have an account? <a href="login.html"><strong>Login here</strong></a>.</p>
             </div>
         </div>
@@ -116,24 +125,27 @@
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value.trim();
             const confirmPassword = document.getElementById('confirm-password').value.trim();
-
             const messageEl = document.getElementById('register-message');
+
+            messageEl.style.display = 'none';
             messageEl.textContent = '';
-            messageEl.className = '';
 
             if (!username || !email || !password || !confirmPassword) {
                 messageEl.textContent = 'Please fill in all fields.';
+                messageEl.style.display = 'block';
                 return;
             }
 
             if (password !== confirmPassword) {
                 messageEl.textContent = 'Passwords do not match.';
+                messageEl.style.display = 'block';
                 return;
             }
 
             const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9])[A-Za-z\d\S]{6,}$/;
             if (!passwordRegex.test(password)) {
                 messageEl.textContent = 'Password must include at least 1 uppercase letter, 1 number, and 1 symbol.';
+                messageEl.style.display = 'block';
                 return;
             }
 
@@ -147,18 +159,20 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    messageEl.textContent = 'Registration successful! Redirecting to login...';
+                    messageEl.style.display = 'none';
                     messageEl.classList.add('success-message');
+                    messageEl.textContent = 'Registration successful! Redirecting to login...';
                     setTimeout(() => window.location.href = 'login.html', 2000);
                 } else {
                     messageEl.textContent = data.message || 'Error: Registration failed.';
+                    messageEl.style.display = 'block';
                 }
             } catch {
                 messageEl.textContent = 'Error: Could not register user.';
+                messageEl.style.display = 'block';
             }
         });
 
-        // Toggle both password fields using Material Icons
         document.querySelectorAll('.toggle-password').forEach(icon => {
             icon.addEventListener('click', () => {
                 const input = icon.previousElementSibling;

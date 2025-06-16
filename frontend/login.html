@@ -73,9 +73,19 @@
                     </div>
                 </div>
 
-                <button type="submit" class="orange-btn">Login</button>
+                <div id="login-message" style="
+          display: none;
+          background-color: #f57c00;
+          color: white;
+          padding: 10px 12px;
+          font-size: 0.93rem;
+          border-radius: 6px;
+          margin-top: 10px;">
+                </div>
+
+                <button type="submit" class="orange-btn" style="margin-top: 15px;">Login</button>
             </form>
-            <p id="login-message" class="error-message"></p>
+
             <p><a href="forgot-password.html" class="forgot-password">Forgot Password?</a></p>
             <p>Don't have an account? <a href="register.html"><strong>Create one for free!</strong></a></p>
         </div>
@@ -118,13 +128,14 @@
 
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value.trim();
-
             const loginMessage = document.getElementById('login-message');
+
+            loginMessage.style.display = 'none';
             loginMessage.textContent = '';
-            loginMessage.className = '';
 
             if (!email || !password) {
                 loginMessage.textContent = 'Please fill in both fields.';
+                loginMessage.style.display = 'block';
                 return;
             }
 
@@ -140,32 +151,30 @@
                     data = await response.json();
                 } catch (err) {
                     loginMessage.textContent = 'Server returned an unexpected response.';
-                    loginMessage.classList.add('error-message');
+                    loginMessage.style.display = 'block';
                     return;
                 }
 
                 if (response.ok && data.token) {
+                    loginMessage.style.display = 'none';
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('username', data.user.username);
                     localStorage.setItem('lastActive', Date.now().toString());
-                    loginMessage.textContent = 'Login successful!';
-                    loginMessage.classList.add('success-message');
 
                     setTimeout(() => {
                         window.location.href = 'index.html';
                     }, 1500);
                 } else {
-                    loginMessage.textContent = data.message || 'Invalid login credentials.';
-                    loginMessage.classList.add('error-message');
+                    loginMessage.textContent = data.message || 'Your email or password is incorrect. Try again.';
+                    loginMessage.style.display = 'block';
                 }
             } catch (error) {
                 console.error("Login error:", error);
                 loginMessage.textContent = 'Error: Could not connect to the server.';
-                loginMessage.classList.add('error-message');
+                loginMessage.style.display = 'block';
             }
         });
 
-        // Material icon toggle logic
         document.querySelectorAll('.toggle-password').forEach(icon => {
             icon.addEventListener('click', () => {
                 const input = icon.previousElementSibling;
