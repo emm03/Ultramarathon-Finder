@@ -6,8 +6,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const profilePic = localStorage.getItem("profilePicture");
 
     const tab = document.getElementById("account-tab");
-    if (!tab || !token || !username) return;
+    if (!tab) return;
 
+    // Show login tab if not logged in
+    if (!token || !username) {
+        tab.style.display = "block";
+        return;
+    }
+
+    // Inject dropdown if logged in (note: absolute paths with `/`)
     tab.innerHTML = `
         <div class="auth-dropdown">
             <img id="nav-profile-pic" src="${profilePic || '/images/default-profile.png'}" alt="Profile" class="profile-icon">
@@ -19,4 +26,5 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
         </div>
     `;
+    tab.style.display = "block";
 });
