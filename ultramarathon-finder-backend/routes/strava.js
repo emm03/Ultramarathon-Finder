@@ -63,31 +63,41 @@ const requireUser = async (req, res, next) => {
 
 // -------------------- Token Auto-Refresh Helper --------------------
 async function getValidAccessToken(user) {
-    const now = Math.floor(Date.now() / 1000); // Unix time in seconds
+    const now = Math.floor(Date.now() / 1000); // current Unix time in seconds
+    console.log(`🔍 Checking Strava token for user ${user.username}`);
+    console.log(`➡️ Current time: ${now}, Token expires at: ${user.stravaTokenExpiresAt}`);
 
     if (user.stravaAccessToken && user.stravaTokenExpiresAt && now < user.stravaTokenExpiresAt) {
+        console.log("✅ Using existing access token.");
         return user.stravaAccessToken;
     }
 
-    console.log("🔄 Refreshing Strava token for user:", user._id);
+    // Token is expired — refresh it
+    console.log("🔄 Refreshing Strava token...");
 
-    const response = await axios.post('https://www.strava.com/oauth/token', null, {
-        params: {
-            client_id: process.env.STRAVA_CLIENT_ID,
-            client_secret: process.env.STRAVA_CLIENT_SECRET,
-            grant_type: 'refresh_token',
-            refresh_token: user.stravaRefreshToken
-        }
-    });
+    try {
+        const response = await axios.post('https://www.strava.com/oauth/token', null, {
+            params: {
+                client_id: process.env.STRAVA_CLIENT_ID,
+                client_secret: process.env.STRAVA_CLIENT_SECRET,
+                grant_type: 'refresh_token',
+                refresh_token: user.stravaRefreshToken
+            }
+        });
 
-    const { access_token, refresh_token, expires_at } = response.data;
+        const { access_token, refresh_token, expires_at } = response.data;
 
-    user.stravaAccessToken = access_token;
-    user.stravaRefreshToken = refresh_token;
-    user.stravaTokenExpiresAt = expires_at;
-    await user.save();
+        user.stravaAccessToken = access_token;
+        user.stravaRefreshToken = refresh_token;
+        user.stravaTokenExpiresAt = expires_at;
+        await user.save();
 
-    return access_token;
+        console.log("✅ Refreshed and saved new Strava access token.");
+        return access_token;
+    } catch (error) {
+        console.error("❌ Failed to refresh Strava token:", error.response?.data || error.message);
+        throw new Error("Unable to refresh Strava token.");
+    }
 }
 
 // -------------------- Fetch Strava Activities --------------------

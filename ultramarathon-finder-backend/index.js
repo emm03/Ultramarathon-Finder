@@ -19,15 +19,14 @@ import groupRoutes from './routes/groups.js';
 
 const app = express();
 
-// ✅ Middleware comes BEFORE routes
+// ✅ Middleware
 app.use(express.json());
-
 app.use((req, res, next) => {
   console.log("Full Request Headers:", req.headers);
   next();
 });
 
-// ✅ Correct order: CORS before all routes
+// ✅ CORS
 const allowedOrigins = [
   'https://ultramarathonconnect.com',
   'http://localhost:3000'
@@ -48,11 +47,11 @@ app.use(cors({
 
 app.options('*', cors());
 
-// 🧠 In-memory session memory store for Alan AI
+// ✅ In-memory session store for Alan AI
 const userSessionMemory = new Map();
 app.locals.userSessionMemory = userSessionMemory;
 
-// Debug environment variables
+// ✅ Debug environment variables
 console.log('Loaded Environment Variables:', {
   PORT: process.env.PORT,
   MONGO_URI: process.env.MONGO_URI ? 'Loaded' : 'Not Set',
@@ -62,41 +61,39 @@ console.log('Loaded Environment Variables:', {
   AWS_REGION: process.env.AWS_REGION ? 'Loaded' : 'Not Set',
   S3_BUCKET_NAME: process.env.S3_BUCKET_NAME ? 'Loaded' : 'Not Set',
   OPENAI_API_KEY: process.env.OPENAI_API_KEY ? 'Loaded' : 'Not Set',
+  STRAVA_CLIENT_ID: process.env.STRAVA_CLIENT_ID ? 'Loaded' : 'Not Set',
+  STRAVA_CLIENT_SECRET: process.env.STRAVA_CLIENT_SECRET ? 'Loaded' : 'Not Set',
+  STRAVA_REDIRECT_URI: process.env.STRAVA_REDIRECT_URI ? 'Loaded' : 'Not Set',
 });
 
-// MongoDB connection
+// ✅ MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-}).then(() => console.log('Connected to MongoDB'))
+}).then(() => console.log('✅ Connected to MongoDB'))
   .catch((error) => {
-    console.error('Error connecting to MongoDB:', error.message);
+    console.error('❌ Error connecting to MongoDB:', error.message);
     process.exit(1);
   });
 
-// API Routes
+// ✅ Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/forum', forumRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/alan', alanRoute);
 app.use('/api/groups', groupRoutes);
-console.log('✅ Groups route registered at /api/groups');
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 app.use('/static', express.static(path.join(process.cwd(), 'public')));
 
-// ✅ Routes now come AFTER middleware
+// ✅ Strava API routes
 app.use('/', stravaRoutes);
 
-// ✅ Catch-all 404 moved to bottom
-app.use((req, res) => {
-  res.status(404).json({ message: 'Endpoint not found' });
-});
-
-// Base route
+// ✅ Base route
 app.get('/', (req, res) => {
   res.send('Ultramarathon Finder Backend is running!');
 });
 
+// ✅ Env check route
 app.get('/api/env-check', (req, res) => {
   res.json({
     PORT: process.env.PORT,
@@ -107,10 +104,13 @@ app.get('/api/env-check', (req, res) => {
     AWS_REGION: process.env.AWS_REGION ? 'Loaded' : 'Not Set',
     S3_BUCKET_NAME: process.env.S3_BUCKET_NAME ? 'Loaded' : 'Not Set',
     OPENAI_API_KEY: process.env.OPENAI_API_KEY ? 'Loaded' : 'Not Set',
+    STRAVA_CLIENT_ID: process.env.STRAVA_CLIENT_ID ? 'Loaded' : 'Not Set',
+    STRAVA_CLIENT_SECRET: process.env.STRAVA_CLIENT_SECRET ? 'Loaded' : 'Not Set',
+    STRAVA_REDIRECT_URI: process.env.STRAVA_REDIRECT_URI ? 'Loaded' : 'Not Set',
   });
 });
 
-// S3 test route
+// ✅ S3 test route
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY,
   secretAccessKey: process.env.AWS_SECRET_KEY,
@@ -132,7 +132,7 @@ app.get('/api/s3-test', async (req, res) => {
   }
 });
 
-// Get user profile route
+// ✅ User profile route
 app.get('/api/user/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select('username email profilePicture');
@@ -144,24 +144,24 @@ app.get('/api/user/:id', async (req, res) => {
   }
 });
 
-// ✅ Error middleware (before 404)
+// ✅ Error middleware
 app.use((err, req, res, next) => {
   console.error('Error middleware:', err.message);
   res.status(500).json({ message: 'Unexpected error', error: err.message });
 });
 
-// 🧽 Remove trailing slashes from URL to prevent route mismatch
+// ✅ Remove trailing slashes to avoid route mismatches
 app.use((req, res, next) => {
   req.url = req.url.replace(/\/+$/, '');
   next();
 });
 
-// ✅ Catch-all 404 fallback
+// ✅ Catch-all 404 handler
 app.use((req, res) => {
   res.status(404).json({ message: 'Endpoint not found' });
 });
 
-// Launch app
+// ✅ Launch app
 const PORT = process.env.PORT || 5001;
 
 loadRaceData()
