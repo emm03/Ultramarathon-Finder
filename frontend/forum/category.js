@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (!content) return alert("Reply cannot be empty.");
 
                     try {
-                        const res = await fetch(`/api/forum/category/${post._id}/reply`, {
+                        const res = await fetch(`/api/forum/posts/${post._id}/reply`, {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
