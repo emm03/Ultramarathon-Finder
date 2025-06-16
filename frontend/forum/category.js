@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const decodedTopic = decodeURIComponent(rawTopic);
     titleEl.textContent = decodedTopic;
-    console.log("✅ Category title set to:", decodedTopic);
     hiddenInput.value = decodedTopic;
 
     const token = localStorage.getItem("token");
@@ -37,6 +36,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const isOwner = token && username === post.username;
 
+                const repliesHtml = (post.replies || []).map(reply => `
+                    <div class="reply">
+                        <h5>${reply.username}</h5>
+                        <small>${new Date(reply.createdAt).toLocaleString()}</small>
+                        <p>${reply.content}</p>
+                    </div>
+                `).join('');
+
                 postDiv.innerHTML = `
                     <div class="post-header">
                         <img class="avatar" src="${post.profilePicture || './images/default-profile.png'}" alt="Avatar" />
@@ -48,13 +55,46 @@ document.addEventListener("DOMContentLoaded", () => {
                     <h4>${post.title}</h4>
                     <p>${post.message}</p>
                     <div class="post-actions">
-                        <button onclick="window.location.href='/comments.html?postId=${post._id}'" class="comment-btn">💬 Reply</button>
+                        <button class="reply-btn" data-id="${post._id}">💬 Reply</button>
                         ${isOwner ? `
                             <button class="edit-btn green-btn" data-id="${post._id}" data-title="${post.title}" data-message="${post.message}">✏️ Edit</button>
-                            <button class="delete-btn green-btn" data-id="${post._id}">🗑️ Delete</button>
-                        ` : ''}
+                            <button class="delete-btn green-btn" data-id="${post._id}">🗑️ Delete</button>` : ''}
+                    </div>
+                    <div class="replies">${repliesHtml || '<p>No replies yet.</p>'}</div>
+                    <div class="reply-input" style="display: none; margin-top: 10px;">
+                        <textarea placeholder="Write your reply..." rows="3" style="width: 100%; margin-bottom: 8px;"></textarea>
+                        <button class="submit-reply-btn">Submit Reply</button>
                     </div>
                 `;
+
+                const replyBtn = postDiv.querySelector(".reply-btn");
+                const replyBox = postDiv.querySelector(".reply-input");
+                const submitReplyBtn = postDiv.querySelector(".submit-reply-btn");
+
+                replyBtn.addEventListener("click", () => {
+                    replyBox.style.display = replyBox.style.display === "none" ? "block" : "none";
+                });
+
+                submitReplyBtn.addEventListener("click", async () => {
+                    const textarea = replyBox.querySelector("textarea");
+                    const content = textarea.value.trim();
+                    if (!content) return alert("Reply cannot be empty.");
+
+                    try {
+                        const res = await fetch(`/api/forum/category/${post._id}/reply`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ content })
+                        });
+                        if (res.ok) loadPosts();
+                        else alert("Failed to post reply.");
+                    } catch (err) {
+                        console.error("Reply error:", err);
+                    }
+                });
 
                 container.appendChild(postDiv);
             });
