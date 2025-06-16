@@ -7,4 +7,8 @@ http://ultramarathonconnect.com/* https://ultramarathonconnect.com/:splat 301
 /create_group.html /forum/create_group.html 200
 /comments.html /forum/comments.html 200
 
+/forum/account.html /account.html 200
+/forum/training_log.html /training_log.html 200
+/forum/profile_edit.html /profile_edit.html 200
+
 /forum/* /:splat 200
