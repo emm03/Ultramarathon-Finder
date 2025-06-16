@@ -48,7 +48,7 @@
         </section>
     </main>
 
-    <!-- Alan Chat Widget -->
+    <!-- Alan Chat -->
     <div id="alan-bubble">💬</div>
     <div id="alan-window">
         <div id="alan-messages"></div>
@@ -71,29 +71,6 @@
     <script src="/alanai_chatbot/alan.js"></script>
     <script src="/index_script.js"></script>
     <script src="inject_account_dropdown.js"></script>
-
-    <!-- Inject dropdown if logged in -->
-    <script>
-        const token = localStorage.getItem("token");
-        const username = localStorage.getItem("username");
-        const profilePic = localStorage.getItem("profilePicture");
-
-        if (token && username) {
-            const accountTab = document.getElementById("account-tab");
-            accountTab.innerHTML = `
-        <div class="dropdown">
-          <a href="/account.html" class="dropdown-toggle">
-            <img src="${profilePic || '/images/default-profile.png'}" class="nav-profile-img" alt="Profile" />
-            <span>${username}</span>
-          </a>
-          <ul class="dropdown-menu">
-            <li><a href="/account.html">View Profile</a></li>
-            <li><a href="/logout.html">Sign Out</a></li>
-          </ul>
-        </div>
-      `;
-        }
-    </script>
 
     <script>
         document.getElementById("create-group-form").addEventListener("submit", async (e) => {

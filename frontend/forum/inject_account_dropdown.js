@@ -1,4 +1,4 @@
-// forum/inject_account_dropdown.js
+// inject_account_dropdown.js (works for both root and /forum pages)
 
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("token");
@@ -8,13 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const tab = document.getElementById("account-tab");
     if (!tab) return;
 
-    // Show login tab if not logged in
     if (!token || !username) {
         tab.style.display = "block";
         return;
     }
 
-    // Inject dropdown if logged in (note: absolute paths with `/`)
     tab.innerHTML = `
         <div class="auth-dropdown">
             <img id="nav-profile-pic" src="${profilePic || '/images/default-profile.png'}" alt="Profile" class="profile-icon">
