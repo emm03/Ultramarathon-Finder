@@ -150,6 +150,17 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Unexpected error', error: err.message });
 });
 
+// 🧽 Remove trailing slashes from URL to prevent route mismatch
+app.use((req, res, next) => {
+  req.url = req.url.replace(/\/+$/, '');
+  next();
+});
+
+// ✅ Catch-all 404 fallback
+app.use((req, res) => {
+  res.status(404).json({ message: 'Endpoint not found' });
+});
+
 // Launch app
 const PORT = process.env.PORT || 5001;
 
