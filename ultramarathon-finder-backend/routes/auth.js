@@ -280,4 +280,21 @@ router.post('/manual-hash-debug', async (req, res) => {
     }
 });
 
+// -------------------- Check Auth Status --------------------
+router.get('/status', (req, res) => {
+    const auth = req.headers.authorization || '';
+    const token = auth.split(' ')[1];
+
+    if (!token) {
+        return res.json({ loggedIn: false });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        res.json({ loggedIn: true, token, user: decoded });
+    } catch (err) {
+        res.json({ loggedIn: false });
+    }
+});
+
 export default router;
