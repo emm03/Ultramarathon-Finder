@@ -2823,3 +2823,13 @@ body {
 .post-actions .join-btn:hover {
     background-color: #e55a00 !important;
 }
+
+.avatar,
+.profile-pic,
+#nav-profile-pic {
+    max-width: 40px;
+    max-height: 40px;
+    object-fit: cover;
+    border-radius: 50%;
+    display: inline-block;
+}
