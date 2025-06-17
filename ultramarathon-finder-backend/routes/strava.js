@@ -126,22 +126,19 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                 const fullActivity = fullActivityRes.data;
                 const description = fullActivity.description || '';
 
-                let photos = [];
+                const photos = Array.isArray(photoRes.data)
+                    ? [...new Set(
+                        photoRes.data
+                            .flatMap(p => Object.values(p.urls || {}))
+                            .concat(
+                                fullActivity.photos?.primary?.urls
+                                    ? Object.values(fullActivity.photos.primary.urls)
+                                    : []
+                            )
+                            .filter(url => typeof url === 'string' && url.startsWith('http'))
+                    )]
+                    : [];
 
-                // Pull from photoRes array
-                if (Array.isArray(photoRes.data)) {
-                    photos = photoRes.data
-                        .map(p => p?.urls?.['600'] || p?.urls?.['100'])
-                        .filter(Boolean);
-                }
-
-                // Pull from fullActivity photo primary object
-                const primaryPhotoUrls = fullActivity.photos?.primary?.urls;
-                if (primaryPhotoUrls && typeof primaryPhotoUrls === 'object') {
-                    photos.push(...Object.values(primaryPhotoUrls));
-                }
-
-                photos = [...new Set(photos)]; // remove duplicates
 
                 console.log(`✅ Activity ${activity.id} - ${photos.length} photo(s) found.`);
                 return { ...activity, description, photos };
