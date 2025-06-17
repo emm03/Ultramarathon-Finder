@@ -2742,10 +2742,8 @@ body {
     position: relative;
     width: 100%;
     height: 500px;
-    /* increased from 400px */
     overflow: hidden;
     margin-bottom: 0.5rem;
-    /* reduced spacing */
 }
 
 .hero-img {
@@ -2753,13 +2751,11 @@ body {
     height: 100%;
     object-fit: cover;
     object-position: center top;
-    /* ensures subject is more visible */
 }
 
 .hero-overlay {
     position: absolute;
     bottom: 40px;
-    /* raised overlay to avoid cutting off */
     left: 30px;
     color: white;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
@@ -2775,18 +2771,20 @@ body {
     margin-top: 0.5rem;
 }
 
-/* Adjust article content padding */
+/* Tighten spacing below hero image */
 .article-content {
     padding-top: 0;
+    margin-top: 0;
 }
 
-.article-content p.meta {
+.article-content > p.meta {
     margin-top: 0;
+    padding-top: 0;
     margin-bottom: 0.5rem;
 }
 
-.article-content p:first-of-type {
-    margin-top: 0;
+.article-content > p:nth-of-type(2) {
+    margin-top: 0.3rem;
 }
 
 main.article-content {
