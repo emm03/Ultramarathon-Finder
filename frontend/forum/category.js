@@ -128,8 +128,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 postDiv.querySelectorAll(".delete-reply-btn").forEach(btn => {
                     btn.addEventListener("click", () => {
                         const replyId = btn.dataset.replyId;
+                        const postId = btn.dataset.postId;
                         if (confirm("Delete this reply?")) {
-                            fetch(`/api/forum/posts/${post._id}/reply/${replyId}`, {
+                            fetch(`/api/forum/posts/${postId}/reply/${replyId}`, {
                                 method: "DELETE",
                                 headers: {
                                     Authorization: `Bearer ${token}`
