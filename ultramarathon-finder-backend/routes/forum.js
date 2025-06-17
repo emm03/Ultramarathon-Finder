@@ -259,14 +259,17 @@ router.delete('/posts/:postId/reply/:replyId', authenticateToken, async (req, re
             return res.status(403).json({ message: 'You can only delete your own replies.' });
         }
 
-        reply.remove();
+        // Fix: Use filter instead of reply.remove()
+        post.replies = post.replies.filter(r => r._id.toString() !== replyId);
         await post.save();
+
         res.json({ message: 'Reply deleted successfully.' });
     } catch (err) {
         console.error('Error deleting reply:', err.message);
         res.status(500).json({ message: 'Server error while deleting reply.' });
     }
 });
+
 
 // Edit a comment
 router.patch('/comment/:id', authenticateToken, async (req, res) => {
