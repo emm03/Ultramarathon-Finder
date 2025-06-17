@@ -1745,8 +1745,8 @@ footer .footer-links a:hover {
 /* Button Styling */
 .like-btn,
 .reply-btn {
-    background-color: #28a745;
-    color: white;
+    background-color: #28a745 !important;
+    color: white !important;
     padding: 6px 10px;
     font-size: 0.85rem;
     border: none;
@@ -1756,8 +1756,8 @@ footer .footer-links a:hover {
     transition: background-color 0.3s ease;
 }
 
-.like-btn:hover {
-    background-color: darkorange;
+.reply-btn:hover {
+    background-color: #218838 !important;
 }
 
 .like-btn:focus,
