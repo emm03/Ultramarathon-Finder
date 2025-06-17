@@ -36,13 +36,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const isOwner = token && username === post.username;
 
-                const repliesHtml = (post.replies || []).map(reply => `
-                    <div class="reply">
-                        <h5>${reply.username}</h5>
-                        <small>${new Date(reply.createdAt).toLocaleString()}</small>
-                        <p>${reply.content}</p>
-                    </div>
-                `).join('');
+                const repliesHtml = (post.replies || []).map(reply => {
+                    const isReplyOwner = token && username === reply.username;
+                    return `
+                        <div class="reply" data-reply-id="${reply._id}">
+                            <h5>${reply.username}</h5>
+                            <small>${new Date(reply.createdAt).toLocaleString()}</small>
+                            <p>${reply.content}</p>
+                            <div class="reply-actions">
+                                ${isReplyOwner ? `
+                                    <button class="edit-reply-btn green-btn" data-post-id="${post._id}" data-reply-id="${reply._id}">✏️ Edit</button>
+                                    <button class="delete-reply-btn green-btn" data-post-id="${post._id}" data-reply-id="${reply._id}">🗑️ Delete</button>` : ''}
+                                <button class="reply-to-reply-btn" data-post-id="${post._id}" data-username="${reply.username}">💬 Reply</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
 
                 postDiv.innerHTML = `
                     <div class="post-header">
@@ -95,6 +104,50 @@ document.addEventListener("DOMContentLoaded", () => {
                         console.error("Reply error:", err);
                     }
                 });
+
+                // Add Edit/Delete/Reply-to-Reply listeners after rendering
+                postDiv.querySelectorAll(".edit-reply-btn").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        const replyId = btn.dataset.replyId;
+                        const replyDiv = postDiv.querySelector(`.reply[data-reply-id="${replyId}"]`);
+                        const currentContent = replyDiv.querySelector("p").textContent;
+                        const newContent = prompt("Edit your reply:", currentContent);
+                        if (newContent && newContent !== currentContent) {
+                            fetch(`/api/forum/posts/${post._id}/reply/${replyId}`, {
+                                method: "PUT",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    Authorization: `Bearer ${token}`
+                                },
+                                body: JSON.stringify({ content: newContent })
+                            }).then(res => res.ok ? loadPosts() : alert("Failed to edit reply."));
+                        }
+                    });
+                });
+
+                postDiv.querySelectorAll(".delete-reply-btn").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        const replyId = btn.dataset.replyId;
+                        if (confirm("Delete this reply?")) {
+                            fetch(`/api/forum/posts/${post._id}/reply/${replyId}`, {
+                                method: "DELETE",
+                                headers: {
+                                    Authorization: `Bearer ${token}`
+                                }
+                            }).then(res => res.ok ? loadPosts() : alert("Failed to delete reply."));
+                        }
+                    });
+                });
+
+                postDiv.querySelectorAll(".reply-to-reply-btn").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        replyBox.style.display = "block";
+                        const textarea = replyBox.querySelector("textarea");
+                        textarea.value = `@${btn.dataset.username} `;
+                        textarea.focus();
+                    });
+                });
+
 
                 container.appendChild(postDiv);
             });
