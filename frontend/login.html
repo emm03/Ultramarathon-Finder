@@ -76,31 +76,20 @@
     </footer>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const token = localStorage.getItem("token");
-            const lastActive = localStorage.getItem("lastActive");
-            const now = Date.now();
-
-            if (token && lastActive && now - parseInt(lastActive) > 2 * 60 * 60 * 1000) {
-                localStorage.removeItem("token");
-                localStorage.removeItem("profilePicture");
-                alert("You have been logged out due to inactivity.");
-                window.location.href = "login.html";
+        window.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById("login-form");
+            if (!form) {
+                console.error("⚠️ login-form not found");
                 return;
             }
 
-            localStorage.setItem("lastActive", now.toString());
+            const loginMessage = document.getElementById('login-message');
 
-            if (token) {
-                window.location.href = "index.html";
-            }
-
-            document.getElementById('login-form').addEventListener('submit', async (e) => {
+            form.addEventListener("submit", async (e) => {
                 e.preventDefault();
 
                 const email = document.getElementById('email').value.trim();
                 const password = document.getElementById('password').value.trim();
-                const loginMessage = document.getElementById('login-message');
 
                 loginMessage.style.display = 'none';
                 loginMessage.textContent = '';
@@ -118,45 +107,33 @@
                         body: JSON.stringify({ email, password })
                     });
 
-                    let data;
-                    try {
-                        data = await response.json();
-                    } catch (err) {
-                        loginMessage.textContent = 'Server returned an unexpected response.';
-                        loginMessage.style.display = 'block';
-                        return;
-                    }
+                    const data = await response.json();
 
                     if (response.ok && data.token) {
-                        loginMessage.style.display = 'none';
                         localStorage.setItem('token', data.token);
                         localStorage.setItem('username', data.user.username);
+                        localStorage.setItem('profilePicture', data.user.profilePicture || '');
                         localStorage.setItem('lastActive', Date.now().toString());
 
-                        setTimeout(() => {
-                            window.location.href = 'index.html';
-                        }, 1500);
+                        window.location.href = 'index.html';
                     } else {
-                        loginMessage.textContent = data.message || 'Your email or password is incorrect. Try again.';
+                        loginMessage.textContent = data.message || 'Incorrect email or password.';
                         loginMessage.style.display = 'block';
                     }
-                } catch (error) {
-                    console.error("Login error:", error);
-                    loginMessage.textContent = 'Error: Could not connect to the server.';
+                } catch (err) {
+                    console.error("⚠️ Login fetch error:", err);
+                    loginMessage.textContent = 'Could not connect to server.';
                     loginMessage.style.display = 'block';
                 }
             });
 
+            // Password toggle
             document.querySelectorAll('.toggle-password').forEach(icon => {
                 icon.addEventListener('click', () => {
                     const input = icon.previousElementSibling;
                     const isVisible = input.type === 'text';
                     input.type = isVisible ? 'password' : 'text';
                     icon.textContent = isVisible ? 'visibility' : 'visibility_off';
-
-                    const label = isVisible ? 'Show password' : 'Hide password';
-                    icon.title = label;
-                    icon.setAttribute('aria-label', label);
                 });
             });
         });
