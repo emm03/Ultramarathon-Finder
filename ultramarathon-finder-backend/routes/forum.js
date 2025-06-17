@@ -217,6 +217,57 @@ router.post('/posts/:id/reply', authenticateToken, async (req, res) => {
     }
 });
 
+// Edit a reply on a post
+router.put('/posts/:postId/reply/:replyId', authenticateToken, async (req, res) => {
+    const { postId, replyId } = req.params;
+    const { content } = req.body;
+
+    if (!content) return res.status(400).json({ message: 'Content is required.' });
+
+    try {
+        const post = await Post.findById(postId);
+        if (!post) return res.status(404).json({ message: 'Post not found.' });
+
+        const reply = post.replies.id(replyId);
+        if (!reply) return res.status(404).json({ message: 'Reply not found.' });
+
+        if (reply.username !== req.user.username) {
+            return res.status(403).json({ message: 'You can only edit your own replies.' });
+        }
+
+        reply.content = content;
+        await post.save();
+        res.json({ message: 'Reply updated successfully.' });
+    } catch (err) {
+        console.error('Error editing reply:', err.message);
+        res.status(500).json({ message: 'Server error while editing reply.' });
+    }
+});
+
+// Delete a reply on a post
+router.delete('/posts/:postId/reply/:replyId', authenticateToken, async (req, res) => {
+    const { postId, replyId } = req.params;
+
+    try {
+        const post = await Post.findById(postId);
+        if (!post) return res.status(404).json({ message: 'Post not found.' });
+
+        const reply = post.replies.id(replyId);
+        if (!reply) return res.status(404).json({ message: 'Reply not found.' });
+
+        if (reply.username !== req.user.username) {
+            return res.status(403).json({ message: 'You can only delete your own replies.' });
+        }
+
+        reply.remove();
+        await post.save();
+        res.json({ message: 'Reply deleted successfully.' });
+    } catch (err) {
+        console.error('Error deleting reply:', err.message);
+        res.status(500).json({ message: 'Server error while deleting reply.' });
+    }
+});
+
 // Edit a comment
 router.patch('/comment/:id', authenticateToken, async (req, res) => {
     const { content } = req.body;
