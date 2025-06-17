@@ -94,70 +94,70 @@
             if (token) {
                 window.location.href = "index.html";
             }
-        });
 
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
+            document.getElementById('login-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
 
-            const email = document.getElementById('email').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const loginMessage = document.getElementById('login-message');
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value.trim();
+                const loginMessage = document.getElementById('login-message');
 
-            loginMessage.style.display = 'none';
-            loginMessage.textContent = '';
+                loginMessage.style.display = 'none';
+                loginMessage.textContent = '';
 
-            if (!email || !password) {
-                loginMessage.textContent = 'Please fill in both fields.';
-                loginMessage.style.display = 'block';
-                return;
-            }
-
-            try {
-                const response = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, password })
-                });
-
-                let data;
-                try {
-                    data = await response.json();
-                } catch (err) {
-                    loginMessage.textContent = 'Server returned an unexpected response.';
+                if (!email || !password) {
+                    loginMessage.textContent = 'Please fill in both fields.';
                     loginMessage.style.display = 'block';
                     return;
                 }
 
-                if (response.ok && data.token) {
-                    loginMessage.style.display = 'none';
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('username', data.user.username);
-                    localStorage.setItem('lastActive', Date.now().toString());
+                try {
+                    const response = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email, password })
+                    });
 
-                    setTimeout(() => {
-                        window.location.href = 'index.html';
-                    }, 1500);
-                } else {
-                    loginMessage.textContent = data.message || 'Your email or password is incorrect. Try again.';
+                    let data;
+                    try {
+                        data = await response.json();
+                    } catch (err) {
+                        loginMessage.textContent = 'Server returned an unexpected response.';
+                        loginMessage.style.display = 'block';
+                        return;
+                    }
+
+                    if (response.ok && data.token) {
+                        loginMessage.style.display = 'none';
+                        localStorage.setItem('token', data.token);
+                        localStorage.setItem('username', data.user.username);
+                        localStorage.setItem('lastActive', Date.now().toString());
+
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 1500);
+                    } else {
+                        loginMessage.textContent = data.message || 'Your email or password is incorrect. Try again.';
+                        loginMessage.style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error("Login error:", error);
+                    loginMessage.textContent = 'Error: Could not connect to the server.';
                     loginMessage.style.display = 'block';
                 }
-            } catch (error) {
-                console.error("Login error:", error);
-                loginMessage.textContent = 'Error: Could not connect to the server.';
-                loginMessage.style.display = 'block';
-            }
-        });
+            });
 
-        document.querySelectorAll('.toggle-password').forEach(icon => {
-            icon.addEventListener('click', () => {
-                const input = icon.previousElementSibling;
-                const isVisible = input.type === 'text';
-                input.type = isVisible ? 'password' : 'text';
-                icon.textContent = isVisible ? 'visibility' : 'visibility_off';
+            document.querySelectorAll('.toggle-password').forEach(icon => {
+                icon.addEventListener('click', () => {
+                    const input = icon.previousElementSibling;
+                    const isVisible = input.type === 'text';
+                    input.type = isVisible ? 'password' : 'text';
+                    icon.textContent = isVisible ? 'visibility' : 'visibility_off';
 
-                const label = isVisible ? 'Show password' : 'Hide password';
-                icon.title = label;
-                icon.setAttribute('aria-label', label);
+                    const label = isVisible ? 'Show password' : 'Hide password';
+                    icon.title = label;
+                    icon.setAttribute('aria-label', label);
+                });
             });
         });
     </script>
