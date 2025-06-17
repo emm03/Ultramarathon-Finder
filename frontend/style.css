@@ -2789,6 +2789,11 @@ body {
     margin-top: 0;
 }
 
+main.article-content {
+    margin-top: 0;
+    padding-top: 0;
+}
+
 /* Featured Race Sections */
 .race-highlight {
     background: #ffffff;
