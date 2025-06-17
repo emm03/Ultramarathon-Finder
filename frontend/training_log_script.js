@@ -94,16 +94,20 @@ async function fetchActivities() {
                 const div = document.createElement('div');
                 div.className = 'activity-card';
                 div.innerHTML = `
-          <h3>${act.name}</h3>
-          <div class="activity-meta">${new Date(act.start_date).toLocaleString()} | ${act.type}</div>
-          <div class="activity-description">${act.description || 'No description provided.'}</div>
-          <div class="activity-stats">
-            Distance: ${(act.distance / 1000).toFixed(2)} km<br>
-            Time: ${(act.elapsed_time / 60).toFixed(1)} mins<br>
-            Pace: ${(act.elapsed_time / 60 / (act.distance / 1000)).toFixed(1)} min/km
-          </div>
-          ${act.photos && act.photos.length > 0 ? act.photos.map(url => `<img src="${url}" style="max-width: 100%; border-radius: 8px; margin-top: 0.5rem;" />`).join('') : ''}
-        `;
+                    <h3>${act.name}</h3>
+                    <div class="activity-meta">${new Date(act.start_date).toLocaleString()} | ${act.type}</div>
+                    <div class="activity-description">${act.description || 'No description provided.'}</div>
+                    <div class="activity-stats">
+                        Distance: ${(act.distance / 1000).toFixed(2)} km<br>
+                        Time: ${(act.elapsed_time / 60).toFixed(1)} mins<br>
+                        Pace: ${(act.elapsed_time / 60 / (act.distance / 1000)).toFixed(1)} min/km
+                    </div>
+                    ${act.photos && act.photos.length > 0 ? `
+                        <div class="photo-carousel">
+                            ${act.photos.map(url => `<img src="${url}" class="carousel-photo" alt="Activity photo" />`).join('')}
+                        </div>
+                    ` : ''}
+                `;
                 list.appendChild(div);
             });
 
