@@ -2743,6 +2743,11 @@ body.article-page main {
     transform: scale(1.2);
 }
 
+/* Specific spacing fix for June 14–15 article */
+body.june14-article .article-content {
+    margin-top: -20px;
+}
+
 /* Hero Image with Overlay */
 .article-hero {
     position: relative;
