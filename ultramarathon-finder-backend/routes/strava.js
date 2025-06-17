@@ -63,17 +63,10 @@ const requireUser = async (req, res, next) => {
 
 // -------------------- Token Auto-Refresh Helper --------------------
 async function getValidAccessToken(user) {
-    const now = Math.floor(Date.now() / 1000); // current Unix time in seconds
-    console.log(`🔍 Checking Strava token for user ${user.username}`);
-    console.log(`➡️ Current time: ${now}, Token expires at: ${user.stravaTokenExpiresAt}`);
-
+    const now = Math.floor(Date.now() / 1000);
     if (user.stravaAccessToken && user.stravaTokenExpiresAt && now < user.stravaTokenExpiresAt) {
-        console.log("✅ Using existing access token.");
         return user.stravaAccessToken;
     }
-
-    // Token is expired — refresh it
-    console.log("🔄 Refreshing Strava token...");
 
     try {
         const response = await axios.post('https://www.strava.com/oauth/token', null, {
@@ -92,7 +85,6 @@ async function getValidAccessToken(user) {
         user.stravaTokenExpiresAt = expires_at;
         await user.save();
 
-        console.log("✅ Refreshed and saved new Strava access token.");
         return access_token;
     } catch (error) {
         console.error("❌ Failed to refresh Strava token:", error.response?.data || error.message);
@@ -126,23 +118,24 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                 const fullActivity = fullActivityRes.data;
                 const description = fullActivity.description || '';
 
-                const allUrls = Array.isArray(photoRes.data)
-                    ? photoRes.data.flatMap(p => Object.values(p.urls || {}))
-                    : [];
+                const primaryUrls = fullActivity.photos?.primary?.urls || {};
 
-                const primaryUrls = fullActivity.photos?.primary?.urls
-                    ? Object.values(fullActivity.photos.primary.urls)
-                    : [];
+                const photos = [
+                    ...Object.values(primaryUrls),
+                    ...photoRes.data
+                        .flatMap(p => Object.values(p.urls || {}))
+                        .filter(url =>
+                            typeof url === 'string' &&
+                            /\.(jpe?g|png|webp)$/i.test(url)
+                        )
+                ];
 
-                const photos = [...new Set([...allUrls, ...primaryUrls])]
-                    .filter(url =>
-                        typeof url === 'string' &&
-                        url.startsWith('http') &&
-                        /\.(jpg|jpeg|png|webp)$/i.test(url)
-                    );
+                const uniquePhotos = [...new Set(photos)].filter(url =>
+                    typeof url === 'string' && url.startsWith('http')
+                );
 
-                console.log(`✅ Activity ${activity.id} - ${photos.length} photo(s) found.`);
-                return { ...activity, description, photos };
+                console.log(`✅ Activity ${activity.id} - ${uniquePhotos.length} photo(s) found.`);
+                return { ...activity, description, photos: uniquePhotos };
             } catch (err) {
                 console.error(`⚠️ Error enriching activity ${activity.id}:`, err.message);
                 return { ...activity, description: '', photos: [] };
