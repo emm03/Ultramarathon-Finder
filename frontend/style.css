@@ -2721,10 +2721,6 @@ body {
     margin: 0 auto;
 }
 
-.article-content {
-    padding-top: 1rem;
-}
-
 .scroll-btn {
     background: none;
     border: none;
@@ -2748,19 +2744,22 @@ body {
     height: 500px;
     /* increased from 400px */
     overflow: hidden;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.5rem;
+    /* reduced spacing */
 }
 
 .hero-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center top;
+    /* ensures subject is more visible */
 }
 
 .hero-overlay {
     position: absolute;
     bottom: 40px;
-    /* raised from 20px */
+    /* raised overlay to avoid cutting off */
     left: 30px;
     color: white;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
@@ -2774,6 +2773,11 @@ body {
 .hero-date {
     font-size: 1.2rem;
     margin-top: 0.5rem;
+}
+
+/* Adjust article content padding */
+.article-content {
+    padding-top: 0;
 }
 
 /* Featured Race Sections */
