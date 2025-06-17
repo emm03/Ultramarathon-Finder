@@ -2780,6 +2780,15 @@ body {
     padding-top: 0;
 }
 
+.article-content p.meta {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.article-content p:first-of-type {
+    margin-top: 0;
+}
+
 /* Featured Race Sections */
 .race-highlight {
     background: #ffffff;
