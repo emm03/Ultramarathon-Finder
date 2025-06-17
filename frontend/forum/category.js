@@ -149,8 +149,45 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
                 });
 
-
                 container.appendChild(postDiv);
+
+                // Edit Post
+                postDiv.querySelectorAll(".edit-btn").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        const postId = btn.dataset.id;
+                        const oldTitle = btn.dataset.title;
+                        const oldMsg = btn.dataset.message;
+
+                        const newTitle = prompt("Edit post title:", oldTitle);
+                        const newMessage = prompt("Edit post message:", oldMsg);
+                        if (!newTitle || !newMessage) return;
+
+                        fetch(`/api/forum/posts/${postId}`, {
+                            method: "PATCH",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ title: newTitle, message: newMessage })
+                        }).then(res => res.ok ? loadPosts() : alert("Failed to edit post."));
+                    });
+                });
+
+                // Delete Post
+                postDiv.querySelectorAll(".delete-btn").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        const postId = btn.dataset.id;
+                        if (confirm("Are you sure you want to delete this post?")) {
+                            fetch(`/api/forum/posts/${postId}`, {
+                                method: "DELETE",
+                                headers: {
+                                    Authorization: `Bearer ${token}`
+                                }
+                            }).then(res => res.ok ? loadPosts() : alert("Failed to delete post."));
+                        }
+                    });
+                });
+
             });
         } catch (err) {
             console.error("Error loading posts:", err);
