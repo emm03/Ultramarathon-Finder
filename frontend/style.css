@@ -2640,7 +2640,7 @@ body {
 }
 
 .articles-section {
-    padding: 2rem;
+    padding: 3rem 1.5rem;
     background-color: #f9f9f9;
     text-align: center;
 }
@@ -2706,6 +2706,21 @@ body {
     text-decoration: none;
 }
 
+.article-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease-in-out;
+}
+
+.article-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
 .scroll-btn {
     background: none;
     border: none;
@@ -2713,10 +2728,13 @@ body {
     cursor: pointer;
     padding: 0 1rem;
     user-select: none;
+    color: #ff8000;
+    opacity: 1;
+    transition: transform 0.2s ease;
 }
 
 .scroll-btn:hover {
-    color: #ff8000;
+    transform: scale(1.2);
 }
 
 .strava-credit {
