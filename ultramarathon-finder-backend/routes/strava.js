@@ -118,28 +118,33 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                     axios.get(`https://www.strava.com/api/v3/activities/${activity.id}`, {
                         headers: { Authorization: `Bearer ${accessToken}` }
                     }),
-                    axios.get(`https://www.strava.com/api/v3/activities/${activity.id}/photos?photo_sources=true`, {
+                    axios.get(`https://www.strava.com/api/v3/activities/${activity.id}/photos`, {
                         headers: { Authorization: `Bearer ${accessToken}` }
                     })
                 ]);
 
-                const description = fullActivityRes.data.description || '';
+                const fullActivity = fullActivityRes.data;
+                const description = fullActivity.description || '';
 
-                const photoUrlCandidates = [];
+                let photos = [];
 
+                // Pull from photoRes array
                 if (Array.isArray(photoRes.data)) {
-                    photoRes.data.forEach(p => {
-                        if (p?.urls?.['600']) photoUrlCandidates.push(p.urls['600']);
-                        else if (p?.urls?.['100']) photoUrlCandidates.push(p.urls['100']);
-                    });
-                } else if (photoRes.data?.primary?.urls) {
-                    const urls = photoRes.data.primary.urls;
-                    if (urls['600']) photoUrlCandidates.push(urls['600']);
-                    else if (urls['100']) photoUrlCandidates.push(urls['100']);
+                    photos = photoRes.data
+                        .map(p => p?.urls?.['600'] || p?.urls?.['100'])
+                        .filter(Boolean);
                 }
 
-                console.log(`✅ Activity ${activity.id} - ${photoUrlCandidates.length} photo(s) found.`);
-                return { ...activity, description, photos: photoUrlCandidates };
+                // Pull from fullActivity photo primary object
+                const primaryPhotoUrls = fullActivity.photos?.primary?.urls;
+                if (primaryPhotoUrls && typeof primaryPhotoUrls === 'object') {
+                    photos.push(...Object.values(primaryPhotoUrls));
+                }
+
+                photos = [...new Set(photos)]; // remove duplicates
+
+                console.log(`✅ Activity ${activity.id} - ${photos.length} photo(s) found.`);
+                return { ...activity, description, photos };
             } catch (err) {
                 console.error(`⚠️ Error enriching activity ${activity.id}:`, err.message);
                 return { ...activity, description: '', photos: [] };
