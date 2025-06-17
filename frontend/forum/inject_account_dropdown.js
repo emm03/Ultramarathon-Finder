@@ -1,4 +1,4 @@
-// inject_account_dropdown.js
+// Restored inject_account_dropdown.js
 
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("token");
