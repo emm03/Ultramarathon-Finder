@@ -37,13 +37,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const isOwner = token && username === post.username;
 
-                const repliesHtml = (post.replies || []).map(r => `
-                    <div class="reply">
-                        <h5>${r.username}</h5>
-                        <small>${new Date(r.createdAt).toLocaleString()}</small>
-                        <p>${r.content}</p>
-                    </div>
-                `).join('');
+                const repliesHtml = (post.replies || []).map(r => {
+                    const isReplyOwner = token && username === r.username;
+                    return `
+                        <div class="reply" data-reply-id="${r._id}">
+                            <h5>${r.username}</h5>
+                            <small>${new Date(r.createdAt).toLocaleString()}</small>
+                            <p>${r.content}</p>
+                            <div class="reply-actions">
+                                ${isReplyOwner ? `
+                                    <button class="edit-reply-btn green-btn" data-post-id="${post._id}" data-reply-id="${r._id}">✏️ Edit</button>
+                                    <button class="delete-reply-btn green-btn" data-post-id="${post._id}" data-reply-id="${r._id}">🗑️ Delete</button>` : ''}
+                                <button class="reply-to-reply-btn" data-post-id="${post._id}" data-username="${r.username}">💬 Reply</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
 
                 postDiv.innerHTML = `
                     <div class="post-header">
@@ -97,6 +106,48 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 });
 
+                postDiv.querySelectorAll(".edit-reply-btn").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        const replyId = btn.dataset.replyId;
+                        const replyDiv = postDiv.querySelector(`.reply[data-reply-id="${replyId}"]`);
+                        const currentContent = replyDiv.querySelector("p").textContent;
+                        const newContent = prompt("Edit your reply:", currentContent);
+                        if (newContent && newContent !== currentContent) {
+                            fetch(`https://ultramarathon-finder-backend.onrender.com/api/groups/group-posts/${post._id}/reply/${replyId}`, {
+                                method: "PUT",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    Authorization: `Bearer ${token}`
+                                },
+                                body: JSON.stringify({ content: newContent })
+                            }).then(res => res.ok ? fetchGroupPosts() : alert("Failed to edit reply."));
+                        }
+                    });
+                });
+
+                postDiv.querySelectorAll(".delete-reply-btn").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        const replyId = btn.dataset.replyId;
+                        if (confirm("Delete this reply?")) {
+                            fetch(`https://ultramarathon-finder-backend.onrender.com/api/groups/group-posts/${post._id}/reply/${replyId}`, {
+                                method: "DELETE",
+                                headers: {
+                                    Authorization: `Bearer ${token}`
+                                }
+                            }).then(res => res.ok ? fetchGroupPosts() : alert("Failed to delete reply."));
+                        }
+                    });
+                });
+
+                postDiv.querySelectorAll(".reply-to-reply-btn").forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        replyBox.style.display = "block";
+                        const textarea = replyBox.querySelector("textarea");
+                        textarea.value = `@${btn.dataset.username} `;
+                        textarea.focus();
+                    });
+                });
+
                 postsEl.appendChild(postDiv);
             });
         } catch (err) {
@@ -107,8 +158,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
     fetchGroupPosts();
 
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const title = document.getElementById("group-post-title").value.trim();
+        const message = document.getElementById("group-post-message").value.trim();
+        errorMsg.textContent = "";
+
+        if (!token) {
+            errorMsg.textContent = "You must be logged in to post.";
+            return;
+        }
+
+        if (!title || !message) {
+            errorMsg.textContent = "All fields are required.";
+            return;
+        }
+
+        try {
+            const response = await fetch("https://ultramarathon-finder-backend.onrender.com/api/groups/group-posts", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ title, message, groupName: decodedGroup })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                errorMsg.textContent = data.message || "Error submitting post.";
+            } else {
+                form.reset();
+                fetchGroupPosts();
+            }
+        } catch (err) {
+            console.error("Error submitting post:", err);
+            errorMsg.textContent = "Failed to submit post.";
+        }
+    });
+
     document.addEventListener("click", async (e) => {
         const postId = e.target.dataset.id;
+
         if (e.target.classList.contains("edit-btn")) {
             const oldTitle = e.target.dataset.title;
             const oldMessage = e.target.dataset.message;
@@ -147,48 +239,4 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     });
-
-    form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const title = document.getElementById("group-post-title").value.trim();
-        const message = document.getElementById("group-post-message").value.trim();
-        errorMsg.textContent = "";
-
-        if (!token) {
-            errorMsg.textContent = "You must be logged in to post.";
-            return;
-        }
-
-        if (!title || !message) {
-            errorMsg.textContent = "All fields are required.";
-            return;
-        }
-
-        try {
-            const response = await fetch(
-                "https://ultramarathon-finder-backend.onrender.com/api/groups/group-posts",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ title, message, groupName: decodedGroup })
-                }
-            );
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                errorMsg.textContent = data.message || "Error submitting post.";
-            } else {
-                form.reset();
-                fetchGroupPosts();
-            }
-        } catch (err) {
-            console.error("Error submitting post:", err);
-            errorMsg.textContent = "Failed to submit post.";
-        }
-    });
-    
 });
