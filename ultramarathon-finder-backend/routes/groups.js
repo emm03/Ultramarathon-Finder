@@ -229,4 +229,55 @@ router.post('/group-posts/:id/reply', authenticateToken, async (req, res) => {
     }
 });
 
+// EDIT a reply to a group post
+router.put('/group-posts/:postId/reply/:replyId', authenticateToken, async (req, res) => {
+    const { postId, replyId } = req.params;
+    const { content } = req.body;
+
+    if (!content) return res.status(400).json({ message: 'Reply content is required.' });
+
+    try {
+        const post = await ForumPost.findById(postId);
+        if (!post) return res.status(404).json({ message: 'Post not found.' });
+
+        const reply = post.replies.id(replyId);
+        if (!reply) return res.status(404).json({ message: 'Reply not found.' });
+
+        if (reply.username !== req.user.username) {
+            return res.status(403).json({ message: 'You can only edit your own replies.' });
+        }
+
+        reply.content = content;
+        await post.save();
+        res.status(200).json({ message: 'Reply updated successfully.' });
+    } catch (err) {
+        console.error('❌ Error editing reply:', err.message);
+        res.status(500).json({ message: 'Server error editing reply.' });
+    }
+});
+
+// DELETE a reply to a group post
+router.delete('/group-posts/:postId/reply/:replyId', authenticateToken, async (req, res) => {
+    const { postId, replyId } = req.params;
+
+    try {
+        const post = await ForumPost.findById(postId);
+        if (!post) return res.status(404).json({ message: 'Post not found.' });
+
+        const reply = post.replies.id(replyId);
+        if (!reply) return res.status(404).json({ message: 'Reply not found.' });
+
+        if (reply.username !== req.user.username) {
+            return res.status(403).json({ message: 'You can only delete your own replies.' });
+        }
+
+        post.replies = post.replies.filter(r => r._id.toString() !== replyId);
+        await post.save();
+        res.status(200).json({ message: 'Reply deleted successfully.' });
+    } catch (err) {
+        console.error('❌ Error deleting reply:', err.message);
+        res.status(500).json({ message: 'Server error deleting reply.' });
+    }
+});
+
 export default router;
