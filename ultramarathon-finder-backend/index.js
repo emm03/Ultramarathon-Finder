@@ -16,7 +16,6 @@ import User from './models/User.js';
 import loadRaceData from './utils/loadRaceData.js';
 import stravaRoutes from './routes/strava.js';
 import groupRoutes from './routes/groups.js';
-import groupForumRoutes from './routes/groupForum.js';
 
 const app = express();
 
@@ -83,7 +82,6 @@ app.use('/api/forum', forumRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/alan', alanRoute);
 app.use('/api/groups', groupRoutes);
-app.use('/api/groups', groupForumRoutes);
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 app.use('/static', express.static(path.join(process.cwd(), 'public')));
 
