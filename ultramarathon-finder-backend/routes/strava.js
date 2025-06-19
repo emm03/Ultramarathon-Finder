@@ -115,10 +115,19 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                     })
                 ]);
 
+                // 🧕 DEBUG: Log photo URLs returned by Strava
+                console.log(`▶️ RAW photoRes.data for activity ${activity.id}:`);
+                photoRes.data.forEach((p, idx) => {
+                    const urls = p?.urls || {};
+                    console.log(`  [${idx}]`, Object.entries(urls).map(([k, v]) => `${k}: ${v}`).join(', '));
+                });
+
+                const primaryUrls = fullActivityRes.data.photos?.primary?.urls || {};
+                console.log(`🏜️ Primary photo urls for activity ${activity.id}:`, primaryUrls);
+
                 const fullActivity = fullActivityRes.data;
                 const description = fullActivity.description || '';
 
-                // 📸 Deduplicate by photo ID and get best available size
                 const photoUrls = Array.isArray(photoRes.data)
                     ? photoRes.data
                         .filter((p, index, self) =>
@@ -133,7 +142,6 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                         .filter(Boolean)
                     : [];
 
-                const primaryUrls = fullActivity.photos?.primary?.urls || {};
                 const primarySet = new Set(
                     Object.values(primaryUrls).filter(url => typeof url === 'string')
                 );
