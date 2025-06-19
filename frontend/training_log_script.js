@@ -61,6 +61,9 @@ document.getElementById("connect-strava")?.addEventListener("click", () => {
 });
 
 async function fetchActivities() {
+    const loading = document.getElementById('loading-indicator');
+    if (loading) loading.style.display = 'block';
+
     try {
         const res = await fetch('https://ultramarathon-finder-backend.onrender.com/api/strava/activities', {
             headers: {
@@ -89,7 +92,13 @@ async function fetchActivities() {
                 totalDistance += act.distance;
                 totalTime += act.elapsed_time;
 
-                const uniquePhotos = [...new Set((act.photos || []).filter(url => url.includes('http') && !url.includes('placeholder-photo')))];
+                const uniquePhotos = [...new Set(
+                    (act.photos || []).filter(url =>
+                        url.includes('http') &&
+                        !url.includes('placeholder') &&
+                        !url.includes('medium.jpg')
+                    )
+                )];
 
                 const div = document.createElement('div');
                 div.className = 'activity-card';
@@ -121,6 +130,8 @@ async function fetchActivities() {
     } catch (err) {
         console.error("Error fetching activities:", err);
         document.getElementById('connect-strava').style.display = 'inline-block';
+    } finally {
+        if (loading) loading.style.display = 'none';
     }
 }
 
