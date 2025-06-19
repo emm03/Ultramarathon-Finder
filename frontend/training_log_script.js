@@ -1,5 +1,6 @@
 const clientId = 162687;
 const redirectUri = 'https://ultramarathon-finder-backend.onrender.com/strava-auth';
+
 let userToken = null;
 
 fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/status', {
@@ -62,7 +63,9 @@ document.getElementById("connect-strava")?.addEventListener("click", () => {
 async function fetchActivities() {
     try {
         const res = await fetch('https://ultramarathon-finder-backend.onrender.com/api/strava/activities', {
-            headers: { 'Authorization': `Bearer ${userToken}` },
+            headers: {
+                'Authorization': `Bearer ${userToken}`
+            },
             credentials: 'include'
         });
 
@@ -86,26 +89,10 @@ async function fetchActivities() {
                 totalDistance += act.distance;
                 totalTime += act.elapsed_time;
 
+                const uniquePhotos = [...new Set(act.photos || [])]; // remove duplicates
+
                 const div = document.createElement('div');
                 div.className = 'activity-card';
-
-                // Extract and dedupe images
-                let photoHTML = '';
-                if (act.photos) {
-                    const seen = new Set();
-                    const photoUrls = Array.isArray(act.photos) ? act.photos : [act.photos];
-                    const validPhotos = photoUrls.filter(url => {
-                        if (!url || seen.has(url)) return false;
-                        seen.add(url);
-                        return true;
-                    });
-                    if (validPhotos.length > 0) {
-                        photoHTML = `<div class="photo-carousel">
-                            ${validPhotos.map(url => `<img src="${url}" class="carousel-photo" alt="Activity photo" />`).join('')}
-                        </div>`;
-                    }
-                }
-
                 div.innerHTML = `
                     <h3 class="activity-title">${act.name}</h3>
                     <div class="activity-meta">${new Date(act.start_date).toLocaleString()} | ${act.type}</div>
@@ -115,7 +102,11 @@ async function fetchActivities() {
                         Time: ${(act.elapsed_time / 60).toFixed(1)} mins<br>
                         Pace: ${(act.elapsed_time / 60 / (act.distance / 1000)).toFixed(1)} min/km
                     </div>
-                    ${photoHTML}
+                    ${uniquePhotos.length > 0 ? `
+                        <div class="photo-carousel">
+                            ${uniquePhotos.map(url => `<img src="${url}" class="carousel-photo" alt="Activity photo" />`).join('')}
+                        </div>
+                    ` : ''}
                 `;
                 list.appendChild(div);
             });
