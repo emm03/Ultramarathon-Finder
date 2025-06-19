@@ -118,37 +118,37 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                 const fullActivity = fullActivityRes.data;
                 const description = fullActivity.description || '';
 
-                // 📸 Filter out placeholders and deduplicate
-                const photoUrls = Array.isArray(photoRes.data)
-                    ? photoRes.data
-                        .filter((p, index, self) =>
-                            p.type === 'photo' &&
-                            p.urls &&
-                            self.findIndex(o => o.id === p.id) === index
-                        )
-                        .map(p => {
-                            const best = p.urls['1200'] || p.urls['600'] || p.urls['100'];
-                            return typeof best === 'string' ? best.split('?')[0] : null;
-                        })
-                        .filter(url =>
-                            typeof url === 'string' &&
-                            !url.includes('placeholder') &&
-                            !url.includes('assets/media') &&
-                            url.startsWith('http')
-                        )
-                    : [];
+                function isValidPhoto(url) {
+                    return (
+                        typeof url === 'string' &&
+                        url.startsWith('http') &&
+                        !url.includes('placeholder-photo') &&
+                        !url.includes('placeholder-video') &&
+                        !url.includes('cloudfront.net/assets/media')
+                    );
+                }
+
+                function extractFilename(url) {
+                    try {
+                        return new URL(url).pathname.split('/').pop().split('?')[0];
+                    } catch {
+                        return '';
+                    }
+                }
 
                 const primaryUrls = fullActivity.photos?.primary?.urls || {};
-                const primarySet = new Set(
-                    Object.values(primaryUrls).filter(url =>
-                        typeof url === 'string' &&
-                        !url.includes('placeholder') &&
-                        !url.includes('assets/media')
-                    )
-                );
+                const primaryPhotoUrls = Object.values(primaryUrls).filter(isValidPhoto);
+                const primaryFilenames = new Set(primaryPhotoUrls.map(extractFilename));
 
-                const filteredGallery = photoUrls.filter(url => !primarySet.has(url));
-                const photos = [...primarySet, ...filteredGallery];
+                const galleryPhotoUrls = (Array.isArray(photoRes.data) ? photoRes.data : [])
+                    .filter(p => p.type === 'photo' && p.urls)
+                    .map(p => {
+                        const best = p.urls['1200'] || p.urls['600'] || p.urls['100'];
+                        return typeof best === 'string' ? best.split('?')[0] : null;
+                    })
+                    .filter(url => isValidPhoto(url) && !primaryFilenames.has(extractFilename(url)));
+
+                const photos = [...primaryPhotoUrls, ...galleryPhotoUrls];
 
                 console.log(`📸 Activity ${activity.id}: ${photos.length} photo(s) returned`);
 
@@ -160,7 +160,6 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                     username: req.user.username,
                     profile_picture: req.user.profilePicture
                 };
-
             } catch (err) {
                 console.error(`⚠️ Error enriching activity ${activity.id}:`, err.message);
                 return { ...activity, description: '', photos: [] };
