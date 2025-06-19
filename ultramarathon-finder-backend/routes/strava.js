@@ -43,7 +43,6 @@ router.get('/strava-auth', async (req, res) => {
     }
 });
 
-// -------------------- Middleware to Require Auth --------------------
 const requireUser = async (req, res, next) => {
     const auth = req.headers.authorization;
     if (!auth) return res.status(401).json({ error: 'Unauthorized' });
@@ -61,7 +60,6 @@ const requireUser = async (req, res, next) => {
     }
 };
 
-// -------------------- Token Auto-Refresh Helper --------------------
 async function getValidAccessToken(user) {
     const now = Math.floor(Date.now() / 1000);
     if (user.stravaAccessToken && user.stravaTokenExpiresAt && now < user.stravaTokenExpiresAt) {
@@ -118,37 +116,35 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                 const fullActivity = fullActivityRes.data;
                 const description = fullActivity.description || '';
 
-                function isValidPhoto(url) {
-                    return (
-                        typeof url === 'string' &&
-                        url.startsWith('http') &&
-                        !url.includes('placeholder-photo') &&
-                        !url.includes('placeholder-video') &&
-                        !url.includes('cloudfront.net/assets/media')
-                    );
-                }
+                const placeholderHosts = [
+                    'd3nn82uaxijpm6.cloudfront.net',
+                    'dgtzuqphqg23d.cloudfront.net'
+                ];
 
-                function extractFilename(url) {
+                const isValidPhoto = (url) => {
                     try {
-                        return new URL(url).pathname.split('/').pop().split('?')[0];
+                        const u = new URL(url);
+                        return !placeholderHosts.includes(u.hostname);
                     } catch {
-                        return '';
+                        return false;
                     }
-                }
+                };
 
                 const primaryUrls = fullActivity.photos?.primary?.urls || {};
-                const primaryPhotoUrls = Object.values(primaryUrls).filter(isValidPhoto);
-                const primaryFilenames = new Set(primaryPhotoUrls.map(extractFilename));
+                const primarySet = new Set(
+                    Object.values(primaryUrls).filter(url => typeof url === 'string' && isValidPhoto(url))
+                );
 
-                const galleryPhotoUrls = (Array.isArray(photoRes.data) ? photoRes.data : [])
-                    .filter(p => p.type === 'photo' && p.urls)
-                    .map(p => {
-                        const best = p.urls['1200'] || p.urls['600'] || p.urls['100'];
-                        return typeof best === 'string' ? best.split('?')[0] : null;
-                    })
-                    .filter(url => isValidPhoto(url) && !primaryFilenames.has(extractFilename(url)));
+                const photoUrls = Array.isArray(photoRes.data)
+                    ? photoRes.data.map(p => p.urls?.['1200'] || p.urls?.['600'] || p.urls?.['100'])
+                        .filter(url => typeof url === 'string' && isValidPhoto(url))
+                    : [];
 
-                const photos = [...primaryPhotoUrls, ...galleryPhotoUrls];
+                const gallerySet = new Set(photoUrls);
+
+                // Remove primary images from gallery
+                const filteredGallery = [...gallerySet].filter(url => !primarySet.has(url));
+                const photos = [...primarySet, ...filteredGallery];
 
                 console.log(`📸 Activity ${activity.id}: ${photos.length} photo(s) returned`);
 
@@ -160,6 +156,7 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                     username: req.user.username,
                     profile_picture: req.user.profilePicture
                 };
+
             } catch (err) {
                 console.error(`⚠️ Error enriching activity ${activity.id}:`, err.message);
                 return { ...activity, description: '', photos: [] };
