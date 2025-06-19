@@ -118,23 +118,38 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                 const fullActivity = fullActivityRes.data;
                 const description = fullActivity.description || '';
 
-                // 📸 Extract full-size photo URLs only (skip placeholders)
-                const photoUrls = (Array.isArray(photoRes.data) ? photoRes.data : [])
-                    .filter(p => p.type === 'photo' && p.urls)
-                    .map(p => {
-                        const best = p.urls['1200'] || p.urls['600'] || p.urls['100'];
-                        return typeof best === 'string' ? best : null;
-                    })
-                    .filter(Boolean);
+                // 📸 Extract full-size photo URLs (including non-primary, skip placeholders)
+                const photoUrls = [];
 
-                const uniquePhotos = [...new Set(photoUrls)];
+                if (Array.isArray(photoRes.data)) {
+                    photoRes.data.forEach(photo => {
+                        if (photo.urls && typeof photo.urls === 'object') {
+                            Object.values(photo.urls).forEach(url => {
+                                if (typeof url === 'string' && url.startsWith('http')) {
+                                    photoUrls.push(url);
+                                }
+                            });
+                        } else if (typeof photo === 'object') {
+                            const fallbackUrl = photo?.source || photo?.default_url || photo?.url;
+                            if (typeof fallbackUrl === 'string' && fallbackUrl.startsWith('http')) {
+                                photoUrls.push(fallbackUrl);
+                            }
+                        }
+                    });
+                }
 
-                console.log(`📸 Activity ${activity.id}: ${uniquePhotos.length} photo(s) returned`);
+                const primaryUrls = fullActivity.photos?.primary?.urls || {};
+                const photos = [...new Set([
+                    ...Object.values(primaryUrls).filter(url => typeof url === 'string' && url.startsWith('http')),
+                    ...photoUrls
+                ])];
+
+                console.log(`📸 Activity ${activity.id}: ${photos.length} photo(s) returned`);
 
                 return {
                     ...activity,
                     description,
-                    photos: uniquePhotos,
+                    photos,
                     embed_token: fullActivity.embed_token || null,
                     username: req.user.username,
                     profile_picture: req.user.profilePicture
