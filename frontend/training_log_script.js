@@ -100,17 +100,20 @@ async function fetchActivities() {
                     )
                 )];
 
-                const mediaContent = uniquePhotos.length > 0
-                    ? `<div class="photo-carousel">
-                         ${uniquePhotos.map(url => `<img src="${url}" class="carousel-photo" alt="Activity photo" />`).join('')}
-                       </div>`
-                    : act.embed_token
-                        ? `<div class="map-embed">
-                             <iframe height="405" width="100%" frameborder="0" allowtransparency="true" scrolling="no"
-                                 src="https://www.strava.com/activities/${act.id}/embed/${act.embed_token}">
-                             </iframe>
-                           </div>`
-                        : '';
+                const mediaContent = `
+                    ${act.embed_token ? `
+                        <div class="map-embed">
+                            <iframe height="405" width="100%" frameborder="0" allowtransparency="true" scrolling="no"
+                                src="https://www.strava.com/activities/${act.id}/embed/${act.embed_token}">
+                            </iframe>
+                        </div>` : ''
+                    }
+                    ${uniquePhotos.length > 0 ? `
+                        <div class="photo-carousel">
+                            ${uniquePhotos.map(url => `<img src="${url}" class="carousel-photo" alt="Activity photo" />`).join('')}
+                        </div>` : ''
+                    }
+                `;
 
                 const div = document.createElement('div');
                 div.className = 'activity-card';
