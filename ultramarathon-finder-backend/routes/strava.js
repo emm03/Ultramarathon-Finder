@@ -1,4 +1,3 @@
-// routes/strava.js
 import express from 'express';
 import axios from 'axios';
 import dotenv from 'dotenv';
@@ -117,31 +116,27 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                 ]);
 
                 const fullActivity = fullActivityRes.data;
-                console.log(`📝 Full activity ${activity.id}:`, fullActivity); // ✅ Logging full object
-                console.log(`🔍 Photos API response for activity ${activity.id}:`, JSON.stringify(photoRes.data, null, 2));
-
                 const description = fullActivity.description || '';
 
-                const primaryUrls = fullActivity.photos?.primary?.urls || {};
-                const photos = [
-                    ...Object.values(primaryUrls),
-                    ...photoRes.data
-                        .flatMap(p => Object.values(p.urls || {}))
-                        .filter(url =>
-                            typeof url === 'string' &&
-                            /\.(jpe?g|png|webp)$/i.test(url)
-                        )
-                ];
+                // 📸 Extract full-size photo URLs only (skip placeholders)
+                const photoUrls = photoRes.data
+                    .map(p => {
+                        const best = p.urls?.['600'] || p.urls?.['1200'] || p.urls?.['100'];
+                        return (typeof best === 'string' && /\.(jpe?g|png|webp)$/i.test(best)) ? best : null;
+                    })
+                    .filter(Boolean);
 
-                const uniquePhotos = [...new Set(photos)].filter(url =>
-                    typeof url === 'string' && url.startsWith('http')
-                );
+                const uniquePhotos = [...new Set(photoUrls)];
+
+                console.log(`📸 Activity ${activity.id}: ${uniquePhotos.length} photo(s) returned`);
 
                 return {
                     ...activity,
                     description,
                     photos: uniquePhotos,
-                    embed_token: fullActivity.embed_token || null
+                    embed_token: fullActivity.embed_token || null,
+                    username: req.user.username,
+                    profile_picture: req.user.profilePicture
                 };
 
             } catch (err) {
