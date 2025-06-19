@@ -1,5 +1,3 @@
-// routes/strava.js
-
 import express from 'express';
 import axios from 'axios';
 import dotenv from 'dotenv';
@@ -121,35 +119,43 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                 const description = fullActivity.description || '';
 
                 const photoSet = new Set();
+                const videos = [];
 
-                // Add primary photo URLs
+                // Collect primary photo(s)
                 const primaryUrls = fullActivity.photos?.primary?.urls || {};
                 Object.values(primaryUrls).forEach(url => {
-                    if (typeof url === 'string' && /\.(jpe?g|png|webp)$/i.test(url)) {
-                        photoSet.add(url);
+                    if (typeof url === 'string') {
+                        if (/\.(jpe?g|png|webp)$/i.test(url)) {
+                            photoSet.add(url);
+                        } else if (/\.mp4$|video/.test(url)) {
+                            videos.push(url);
+                        }
                     }
                 });
 
-                // Add additional photo URLs
-                if (Array.isArray(photoRes.data)) {
-                    photoRes.data.forEach(photo => {
-                        if (photo.urls) {
-                            Object.values(photo.urls).forEach(url => {
-                                if (typeof url === 'string' && /\.(jpe?g|png|webp)$/i.test(url)) {
-                                    photoSet.add(url);
-                                }
-                            });
+                // Collect from photo endpoint
+                photoRes.data.forEach(p => {
+                    const mediaType = p.type?.toLowerCase();
+                    Object.values(p.urls || {}).forEach(url => {
+                        if (typeof url === 'string') {
+                            if (mediaType === 'video') {
+                                videos.push(url);
+                            } else if (/\.(jpe?g|png|webp)$/i.test(url)) {
+                                photoSet.add(url);
+                            }
                         }
                     });
-                }
+                });
 
-                const uniquePhotos = Array.from(photoSet);
+                const uniquePhotos = Array.from(photoSet).filter(url =>
+                    typeof url === 'string' && url.startsWith('http')
+                );
 
-                console.log(`✅ Activity ${activity.id} - ${uniquePhotos.length} photo(s) found.`);
-                return { ...activity, description, photos: uniquePhotos };
+                console.log(`✅ Activity ${activity.id} - ${uniquePhotos.length} photo(s), ${videos.length} video(s) found.`);
+                return { ...activity, description, photos: uniquePhotos, videos };
             } catch (err) {
                 console.error(`⚠️ Error enriching activity ${activity.id}:`, err.message);
-                return { ...activity, description: '', photos: [] };
+                return { ...activity, description: '', photos: [], videos: [] };
             }
         }));
 
