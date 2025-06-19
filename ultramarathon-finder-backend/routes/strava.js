@@ -140,7 +140,8 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
 
                 function extractFilename(url) {
                     try {
-                        return new URL(url).pathname.split('/').pop().split('?')[0];
+                        const base = new URL(url).pathname.split('/').pop();
+                        return base.split('?')[0].replace(/(\.jpe?g|\.png|\.webp).*/, '$1'); // keep extension only once
                     } catch {
                         return '';
                     }
