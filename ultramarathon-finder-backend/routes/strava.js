@@ -1,3 +1,5 @@
+// routes/strava.js
+
 import express from 'express';
 import axios from 'axios';
 import dotenv from 'dotenv';
@@ -118,21 +120,30 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                 const fullActivity = fullActivityRes.data;
                 const description = fullActivity.description || '';
 
+                const photoSet = new Set();
+
+                // Add primary photo URLs
                 const primaryUrls = fullActivity.photos?.primary?.urls || {};
+                Object.values(primaryUrls).forEach(url => {
+                    if (typeof url === 'string' && /\.(jpe?g|png|webp)$/i.test(url)) {
+                        photoSet.add(url);
+                    }
+                });
 
-                const photos = [
-                    ...Object.values(primaryUrls),
-                    ...photoRes.data
-                        .flatMap(p => Object.values(p.urls || {}))
-                        .filter(url =>
-                            typeof url === 'string' &&
-                            /\.(jpe?g|png|webp)$/i.test(url)
-                        )
-                ];
+                // Add additional photo URLs
+                if (Array.isArray(photoRes.data)) {
+                    photoRes.data.forEach(photo => {
+                        if (photo.urls) {
+                            Object.values(photo.urls).forEach(url => {
+                                if (typeof url === 'string' && /\.(jpe?g|png|webp)$/i.test(url)) {
+                                    photoSet.add(url);
+                                }
+                            });
+                        }
+                    });
+                }
 
-                const uniquePhotos = [...new Set(photos)].filter(url =>
-                    typeof url === 'string' && url.startsWith('http')
-                );
+                const uniquePhotos = Array.from(photoSet);
 
                 console.log(`✅ Activity ${activity.id} - ${uniquePhotos.length} photo(s) found.`);
                 return { ...activity, description, photos: uniquePhotos };
