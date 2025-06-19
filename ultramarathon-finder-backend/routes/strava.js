@@ -115,19 +115,10 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                     })
                 ]);
 
-                // 🧕 DEBUG: Log photo URLs returned by Strava
-                console.log(`▶️ RAW photoRes.data for activity ${activity.id}:`);
-                photoRes.data.forEach((p, idx) => {
-                    const urls = p?.urls || {};
-                    console.log(`  [${idx}]`, Object.entries(urls).map(([k, v]) => `${k}: ${v}`).join(', '));
-                });
-
-                const primaryUrls = fullActivityRes.data.photos?.primary?.urls || {};
-                console.log(`🏜️ Primary photo urls for activity ${activity.id}:`, primaryUrls);
-
                 const fullActivity = fullActivityRes.data;
                 const description = fullActivity.description || '';
 
+                // 📸 Filter out placeholders and deduplicate
                 const photoUrls = Array.isArray(photoRes.data)
                     ? photoRes.data
                         .filter((p, index, self) =>
@@ -139,11 +130,21 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                             const best = p.urls['1200'] || p.urls['600'] || p.urls['100'];
                             return typeof best === 'string' ? best.split('?')[0] : null;
                         })
-                        .filter(Boolean)
+                        .filter(url =>
+                            typeof url === 'string' &&
+                            !url.includes('placeholder') &&
+                            !url.includes('assets/media') &&
+                            url.startsWith('http')
+                        )
                     : [];
 
+                const primaryUrls = fullActivity.photos?.primary?.urls || {};
                 const primarySet = new Set(
-                    Object.values(primaryUrls).filter(url => typeof url === 'string')
+                    Object.values(primaryUrls).filter(url =>
+                        typeof url === 'string' &&
+                        !url.includes('placeholder') &&
+                        !url.includes('assets/media')
+                    )
                 );
 
                 const filteredGallery = photoUrls.filter(url => !primarySet.has(url));
