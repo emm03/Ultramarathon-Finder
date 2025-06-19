@@ -14,7 +14,6 @@ fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/status', {
             userToken = data.token;
             localStorage.setItem("token", userToken);
 
-            // 🟠 Inject profile header section
             const profilePic = document.getElementById("strava-profile-pic");
             const profileName = document.getElementById("strava-name");
             const summaryText = document.getElementById("strava-summary");
@@ -111,6 +110,16 @@ async function fetchActivities() {
                     )
                 )];
 
+                const profileImg = `<img src="${act.profile_picture || 'default_profile.png'}" class="profile-pic" alt="Profile photo" />`;
+                const userInfoBlock = `
+                    <div class="activity-header">
+                        ${profileImg}
+                        <div class="activity-user-info">
+                            <strong>${act.username || 'Strava User'}</strong><br>
+                            <span>${new Date(act.start_date).toLocaleString()}</span>
+                        </div>
+                    </div>`;
+
                 const mediaContent = `
                     ${act.embed_token ? `
                         <div class="map-embed">
@@ -129,13 +138,13 @@ async function fetchActivities() {
                 const div = document.createElement('div');
                 div.className = 'activity-card';
                 div.innerHTML = `
+                    ${userInfoBlock}
                     <h3 class="activity-title">${act.name}</h3>
-                    <div class="activity-meta">${new Date(act.start_date).toLocaleString()} | ${act.type}</div>
                     <div class="activity-description">${act.description || 'No description provided.'}</div>
                     <div class="activity-stats">
-                        Distance: ${(act.distance / 1000).toFixed(2)} km<br>
-                        Time: ${(act.elapsed_time / 60).toFixed(1)} mins<br>
-                        Pace: ${(act.elapsed_time / 60 / (act.distance / 1000)).toFixed(1)} min/km
+                        <span><strong>Distance:</strong> ${(act.distance / 1000).toFixed(2)} km</span>
+                        <span><strong>Time:</strong> ${(act.elapsed_time / 60).toFixed(1)} mins</span>
+                        <span><strong>Pace:</strong> ${(act.elapsed_time / 60 / (act.distance / 1000)).toFixed(1)} min/km</span>
                     </div>
                     ${mediaContent}
                 `;
@@ -145,7 +154,6 @@ async function fetchActivities() {
             summary.innerHTML = `✅ Total distance this week: <strong>${(totalDistance / 1000).toFixed(1)} km</strong> | Time: <strong>${(totalTime / 3600).toFixed(2)} hrs</strong>`;
             summary.style.display = 'block';
 
-            // 🔁 Also update the profile header summary text
             const summaryText = document.getElementById("strava-summary");
             if (summaryText) {
                 summaryText.textContent = `✅ ${(totalDistance / 1000).toFixed(1)} km | ${(totalTime / 3600).toFixed(2)} hrs this week`;

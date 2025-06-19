@@ -3019,6 +3019,40 @@ main.article-content {
     color: #555;
 }
 
+/* ==== Unified Strava-Style Activity Header ==== */
+
+.activity-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.activity-header .profile-pic {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ddd;
+}
+
+.activity-user-info {
+    font-size: 0.95rem;
+    color: #444;
+    line-height: 1.3;
+}
+
+/* Optional: tweak spacing below the title/description */
+.activity-description {
+    margin-top: -0.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.activity-stats span {
+    display: inline-block;
+    min-width: 120px;
+}
+
 .training-groups-section {
     max-width: 800px;
     margin: 3rem auto;
