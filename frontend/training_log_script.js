@@ -89,17 +89,12 @@ async function fetchActivities() {
                 totalDistance += act.distance;
                 totalTime += act.elapsed_time;
 
-                const photos = [...new Set(act.photos || [])].filter(url => url && typeof url === 'string');
-                const videos = [...new Set(act.videos || [])].filter(url => url && typeof url === 'string');
-
-                const shortTitle = act.name.length > 40
-                    ? act.name.substring(0, 37) + '...'
-                    : act.name;
+                const uniquePhotos = [...new Set((act.photos || []).filter(url => url.includes('http') && !url.includes('placeholder-photo')))];
 
                 const div = document.createElement('div');
                 div.className = 'activity-card';
                 div.innerHTML = `
-                    <h3 class="activity-title">${shortTitle}</h3>
+                    <h3 class="activity-title">${act.name}</h3>
                     <div class="activity-meta">${new Date(act.start_date).toLocaleString()} | ${act.type}</div>
                     <div class="activity-description">${act.description || 'No description provided.'}</div>
                     <div class="activity-stats">
@@ -107,14 +102,9 @@ async function fetchActivities() {
                         Time: ${(act.elapsed_time / 60).toFixed(1)} mins<br>
                         Pace: ${(act.elapsed_time / 60 / (act.distance / 1000)).toFixed(1)} min/km
                     </div>
-                    ${(photos.length > 0 || videos.length > 0) ? `
-                        <div class="media-carousel">
-                            ${photos.map(url => `<img src="${url}" class="carousel-photo" alt="Activity photo" />`).join('')}
-                            ${videos.map(url => `
-                                <video class="carousel-video" controls>
-                                    <source src="${url}" type="video/mp4">
-                                    Your browser does not support the video tag.
-                                </video>`).join('')}
+                    ${uniquePhotos.length > 0 ? `
+                        <div class="photo-carousel">
+                            ${uniquePhotos.map(url => `<img src="${url}" class="carousel-photo" alt="Activity photo" />`).join('')}
                         </div>
                     ` : ''}
                 `;
