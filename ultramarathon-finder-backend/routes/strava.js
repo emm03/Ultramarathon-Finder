@@ -43,6 +43,7 @@ router.get('/strava-auth', async (req, res) => {
     }
 });
 
+// -------------------- Middleware to Require Auth --------------------
 const requireUser = async (req, res, next) => {
     const auth = req.headers.authorization;
     if (!auth) return res.status(401).json({ error: 'Unauthorized' });
@@ -60,6 +61,7 @@ const requireUser = async (req, res, next) => {
     }
 };
 
+// -------------------- Token Auto-Refresh Helper --------------------
 async function getValidAccessToken(user) {
     const now = Math.floor(Date.now() / 1000);
     if (user.stravaAccessToken && user.stravaTokenExpiresAt && now < user.stravaTokenExpiresAt) {
@@ -116,43 +118,29 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                 const fullActivity = fullActivityRes.data;
                 const description = fullActivity.description || '';
 
+                const allPhotoEntries = Array.isArray(photoRes.data) ? photoRes.data : [];
+
+                const galleryUrls = allPhotoEntries
+                    .filter(p => p?.type === 'photo' && p.urls)
+                    .map(p => {
+                        const best = p.urls['1200'] || p.urls['600'] || p.urls['100'];
+                        return typeof best === 'string' && !best.includes('placeholder') ? best.split('?')[0] : null;
+                    })
+                    .filter(Boolean);
+
                 const primaryUrls = fullActivity.photos?.primary?.urls || {};
-                const primarySet = new Set(
-                    Object.values(primaryUrls)
-                        .filter(url =>
-                            typeof url === 'string' &&
-                            !url.includes('placeholder') &&
-                            !url.includes('video') &&
-                            url.startsWith('http'))
-                );
+                const primaryList = Object.values(primaryUrls)
+                    .filter(url => typeof url === 'string' && !url.includes('placeholder'))
+                    .map(u => u.split('?')[0]);
 
-                const galleryPhotos = Array.isArray(photoRes.data)
-                    ? photoRes.data
-                        .filter(p =>
-                            p.type === 'photo' &&
-                            p.urls &&
-                            Object.values(p.urls).some(url =>
-                                typeof url === 'string' &&
-                                !url.includes('placeholder') &&
-                                !url.includes('video') &&
-                                url.startsWith('http')
-                            )
-                        )
-                        .flatMap(p => {
-                            const best = p.urls['1200'] || p.urls['600'] || p.urls['100'];
-                            return best && best.startsWith('http') ? [best.split('?')[0]] : [];
-                        })
-                    : [];
+                const combined = [...new Set([...primaryList, ...galleryUrls])];
 
-                const combinedPhotos = [...primarySet, ...galleryPhotos.filter(url => !primarySet.has(url))];
-                const uniquePhotos = [...new Set(combinedPhotos)];
-
-                console.log(`📸 Activity ${activity.id}: ${uniquePhotos.length} photo(s) returned`);
+                console.log(`📸 Activity ${activity.id}: ${combined.length} photo(s) returned`);
 
                 return {
                     ...activity,
                     description,
-                    photos: uniquePhotos,
+                    photos: combined,
                     embed_token: fullActivity.embed_token || null,
                     username: req.user.username,
                     profile_picture: req.user.profilePicture
