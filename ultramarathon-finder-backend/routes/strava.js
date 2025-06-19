@@ -114,6 +114,8 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                         headers: { Authorization: `Bearer ${accessToken}` }
                     })
                 ]);
+                
+                console.log(`🔍 Photos API response for activity ${activity.id}:`, JSON.stringify(photoRes.data, null, 2));
 
                 const fullActivity = fullActivityRes.data;
                 const description = fullActivity.description || '';
