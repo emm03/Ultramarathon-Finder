@@ -139,10 +139,14 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                 }
 
                 const primaryUrls = fullActivity.photos?.primary?.urls || {};
-                const photos = [...new Set([
-                    ...Object.values(primaryUrls).filter(url => typeof url === 'string' && url.startsWith('http')),
-                    ...photoUrls
-                ])];
+                const primaryPhotoSet = new Set(
+                    Object.values(primaryUrls).filter(url => typeof url === 'string' && url.startsWith('http'))
+                );
+
+                const filteredGalleryPhotos = photoUrls.filter(url => !primaryPhotoSet.has(url));
+
+                const photos = [...primaryPhotoSet, ...filteredGalleryPhotos];
+
 
                 console.log(`📸 Activity ${activity.id}: ${photos.length} photo(s) returned`);
 
