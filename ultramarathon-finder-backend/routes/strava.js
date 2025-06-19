@@ -137,7 +137,13 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                     typeof url === 'string' && url.startsWith('http')
                 );
 
-                return { ...activity, description, photos: uniquePhotos };
+                return {
+                    ...activity,
+                    description,
+                    photos: uniquePhotos,
+                    embed_token: fullActivity.embed_token || null
+                };
+
             } catch (err) {
                 console.error(`⚠️ Error enriching activity ${activity.id}:`, err.message);
                 return { ...activity, description: '', photos: [] };
