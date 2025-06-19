@@ -14,6 +14,17 @@ fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/status', {
             userToken = data.token;
             localStorage.setItem("token", userToken);
 
+            // 🟠 Inject profile header section
+            const profilePic = document.getElementById("strava-profile-pic");
+            const profileName = document.getElementById("strava-name");
+            const summaryText = document.getElementById("strava-summary");
+
+            if (profilePic && profileName) {
+                profilePic.src = data.user.profilePicture || "default_profile.png";
+                profileName.textContent = data.user.username || "Strava User";
+                summaryText.textContent = "Strava activities shown below.";
+            }
+
             accountTab.innerHTML = `
                 <div class="dropdown">
                   <img src="${data.user.profilePicture || 'default_profile.png'}" class="profile-pic" />
@@ -133,6 +144,13 @@ async function fetchActivities() {
 
             summary.innerHTML = `✅ Total distance this week: <strong>${(totalDistance / 1000).toFixed(1)} km</strong> | Time: <strong>${(totalTime / 3600).toFixed(2)} hrs</strong>`;
             summary.style.display = 'block';
+
+            // 🔁 Also update the profile header summary text
+            const summaryText = document.getElementById("strava-summary");
+            if (summaryText) {
+                summaryText.textContent = `✅ ${(totalDistance / 1000).toFixed(1)} km | ${(totalTime / 3600).toFixed(2)} hrs this week`;
+            }
+
         } else {
             section.style.display = 'none';
             refresh.style.display = 'none';

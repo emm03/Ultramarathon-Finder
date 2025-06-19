@@ -33,7 +33,15 @@
     </header>
 
     <main class="training-container" style="padding-top: 140px;">
-        <div id="profile-card" class="profile-card" style="display: none;"></div>
+
+        <!-- 👤 Strava Profile Header Section -->
+        <section id="training-header" class="training-header">
+            <img id="strava-profile-pic" class="profile-photo" src="default_profile.png" alt="Strava profile picture" />
+            <div class="profile-text">
+                <h2 id="strava-name">Your Name</h2>
+                <p id="strava-summary">This week's training summary goes here...</p>
+            </div>
+        </section>
 
         <div class="button-bar">
             <a href="#" id="connect-strava" class="button">Connect with Strava</a>
@@ -53,140 +61,6 @@
             <div id="activity-list" class="activity-grid"></div>
         </section>
     </main>
-
-    <style>
-        .training-container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .profile-card {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-            background: #fff;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
-        }
-
-        .profile-card img {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .profile-info h2 {
-            margin: 0 0 0.5rem;
-            font-size: 1.5rem;
-        }
-
-        .profile-info p {
-            margin: 0;
-            color: #444;
-            font-size: 0.95rem;
-        }
-
-        .button-bar {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-bottom: 2rem;
-        }
-
-        .button {
-            background-color: #fc4c02;
-            color: white;
-            padding: 0.75rem 1.5rem;
-            font-size: 1rem;
-            border: none;
-            border-radius: 8px;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .button:hover {
-            background-color: #e54300;
-        }
-
-        .summary-card {
-            background-color: #f9f9f9;
-            border-left: 6px solid #fc4c02;
-            padding: 1rem 1.5rem;
-            margin-bottom: 2rem;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-
-        .section-title {
-            margin-bottom: 1rem;
-        }
-
-        .activity-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .activity-card {
-            background-color: #fff;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
-            text-align: left;
-        }
-
-        .activity-card h3 {
-            margin: 0 0 0.5rem;
-            font-size: 1.25rem;
-        }
-
-        .activity-meta {
-            color: #555;
-            margin-bottom: 0.75rem;
-            font-size: 0.95rem;
-        }
-
-        .activity-description {
-            font-style: italic;
-            color: #444;
-            margin-bottom: 0.5rem;
-        }
-
-        .activity-stats {
-            font-size: 0.95rem;
-            line-height: 1.4;
-        }
-
-        .activity-title {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 90%;
-            display: block;
-        }
-
-        .media-carousel {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .carousel-photo {
-            max-width: 300px;
-            border-radius: 8px;
-        }
-
-        .carousel-video {
-            width: 100%;
-            max-width: 500px;
-            border-radius: 8px;
-        }
-    </style>
 
     <script src="index_script.js"></script>
     <script src="training_log_script.js"></script>
