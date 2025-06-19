@@ -1,3 +1,4 @@
+// routes/strava.js
 import express from 'express';
 import axios from 'axios';
 import dotenv from 'dotenv';
@@ -114,50 +115,32 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                         headers: { Authorization: `Bearer ${accessToken}` }
                     })
                 ]);
-                
-                console.log(`🔍 Photos API response for activity ${activity.id}:`, JSON.stringify(photoRes.data, null, 2));
 
                 const fullActivity = fullActivityRes.data;
+                console.log(`📝 Full activity ${activity.id}:`, fullActivity); // ✅ Logging full object
+                console.log(`🔍 Photos API response for activity ${activity.id}:`, JSON.stringify(photoRes.data, null, 2));
+
                 const description = fullActivity.description || '';
 
-                const photoSet = new Set();
-                const videos = [];
-
-                // Collect primary photo(s)
                 const primaryUrls = fullActivity.photos?.primary?.urls || {};
-                Object.values(primaryUrls).forEach(url => {
-                    if (typeof url === 'string') {
-                        if (/\.(jpe?g|png|webp)$/i.test(url)) {
-                            photoSet.add(url);
-                        } else if (/\.mp4$|video/.test(url)) {
-                            videos.push(url);
-                        }
-                    }
-                });
+                const photos = [
+                    ...Object.values(primaryUrls),
+                    ...photoRes.data
+                        .flatMap(p => Object.values(p.urls || {}))
+                        .filter(url =>
+                            typeof url === 'string' &&
+                            /\.(jpe?g|png|webp)$/i.test(url)
+                        )
+                ];
 
-                // Collect from photo endpoint
-                photoRes.data.forEach(p => {
-                    const mediaType = p.type?.toLowerCase();
-                    Object.values(p.urls || {}).forEach(url => {
-                        if (typeof url === 'string') {
-                            if (mediaType === 'video') {
-                                videos.push(url);
-                            } else if (/\.(jpe?g|png|webp)$/i.test(url)) {
-                                photoSet.add(url);
-                            }
-                        }
-                    });
-                });
-
-                const uniquePhotos = Array.from(photoSet).filter(url =>
+                const uniquePhotos = [...new Set(photos)].filter(url =>
                     typeof url === 'string' && url.startsWith('http')
                 );
 
-                console.log(`✅ Activity ${activity.id} - ${uniquePhotos.length} photo(s), ${videos.length} video(s) found.`);
-                return { ...activity, description, photos: uniquePhotos, videos };
+                return { ...activity, description, photos: uniquePhotos };
             } catch (err) {
                 console.error(`⚠️ Error enriching activity ${activity.id}:`, err.message);
-                return { ...activity, description: '', photos: [], videos: [] };
+                return { ...activity, description: '', photos: [] };
             }
         }));
 
