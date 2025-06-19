@@ -100,6 +100,18 @@ async function fetchActivities() {
                     )
                 )];
 
+                const mediaContent = uniquePhotos.length > 0
+                    ? `<div class="photo-carousel">
+                         ${uniquePhotos.map(url => `<img src="${url}" class="carousel-photo" alt="Activity photo" />`).join('')}
+                       </div>`
+                    : act.embed_token
+                        ? `<div class="map-embed">
+                             <iframe height="405" width="100%" frameborder="0" allowtransparency="true" scrolling="no"
+                                 src="https://www.strava.com/activities/${act.id}/embed/${act.embed_token}">
+                             </iframe>
+                           </div>`
+                        : '';
+
                 const div = document.createElement('div');
                 div.className = 'activity-card';
                 div.innerHTML = `
@@ -111,11 +123,7 @@ async function fetchActivities() {
                         Time: ${(act.elapsed_time / 60).toFixed(1)} mins<br>
                         Pace: ${(act.elapsed_time / 60 / (act.distance / 1000)).toFixed(1)} min/km
                     </div>
-                    ${uniquePhotos.length > 0 ? `
-                        <div class="photo-carousel">
-                            ${uniquePhotos.map(url => `<img src="${url}" class="carousel-photo" alt="Activity photo" />`).join('')}
-                        </div>
-                    ` : ''}
+                    ${mediaContent}
                 `;
                 list.appendChild(div);
             });
