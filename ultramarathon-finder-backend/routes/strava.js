@@ -138,15 +138,30 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                     });
                 }
 
+                function extractFilename(url) {
+                    try {
+                        return new URL(url).pathname.split('/').pop().split('?')[0];
+                    } catch {
+                        return '';
+                    }
+                }
+
                 const primaryUrls = fullActivity.photos?.primary?.urls || {};
-                const primaryPhotoSet = new Set(
-                    Object.values(primaryUrls).filter(url => typeof url === 'string' && url.startsWith('http'))
+                const primaryFilenames = new Set(
+                    Object.values(primaryUrls)
+                        .filter(url => typeof url === 'string' && url.startsWith('http'))
+                        .map(extractFilename)
                 );
 
-                const filteredGalleryPhotos = photoUrls.filter(url => !primaryPhotoSet.has(url));
+                const filteredGalleryPhotos = photoUrls.filter(url => {
+                    const filename = extractFilename(url);
+                    return !primaryFilenames.has(filename);
+                });
 
-                const photos = [...primaryPhotoSet, ...filteredGalleryPhotos];
-
+                const photos = [
+                    ...Object.values(primaryUrls).filter(url => typeof url === 'string' && url.startsWith('http')),
+                    ...filteredGalleryPhotos
+                ];
 
                 console.log(`📸 Activity ${activity.id}: ${photos.length} photo(s) returned`);
 
