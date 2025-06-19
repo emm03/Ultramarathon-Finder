@@ -116,42 +116,43 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                 const fullActivity = fullActivityRes.data;
                 const description = fullActivity.description || '';
 
-                const placeholderHosts = [
-                    'd3nn82uaxijpm6.cloudfront.net',
-                    'dgtzuqphqg23d.cloudfront.net'
-                ];
-
-                const isValidPhoto = (url) => {
-                    try {
-                        const u = new URL(url);
-                        return !placeholderHosts.includes(u.hostname);
-                    } catch {
-                        return false;
-                    }
-                };
-
                 const primaryUrls = fullActivity.photos?.primary?.urls || {};
                 const primarySet = new Set(
-                    Object.values(primaryUrls).filter(url => typeof url === 'string' && isValidPhoto(url))
+                    Object.values(primaryUrls)
+                        .filter(url =>
+                            typeof url === 'string' &&
+                            !url.includes('placeholder') &&
+                            !url.includes('video') &&
+                            url.startsWith('http'))
                 );
 
-                const photoUrls = Array.isArray(photoRes.data)
-                    ? photoRes.data.map(p => p.urls?.['1200'] || p.urls?.['600'] || p.urls?.['100'])
-                        .filter(url => typeof url === 'string' && isValidPhoto(url))
+                const galleryPhotos = Array.isArray(photoRes.data)
+                    ? photoRes.data
+                        .filter(p =>
+                            p.type === 'photo' &&
+                            p.urls &&
+                            Object.values(p.urls).some(url =>
+                                typeof url === 'string' &&
+                                !url.includes('placeholder') &&
+                                !url.includes('video') &&
+                                url.startsWith('http')
+                            )
+                        )
+                        .flatMap(p => {
+                            const best = p.urls['1200'] || p.urls['600'] || p.urls['100'];
+                            return best && best.startsWith('http') ? [best.split('?')[0]] : [];
+                        })
                     : [];
 
-                const gallerySet = new Set(photoUrls);
+                const combinedPhotos = [...primarySet, ...galleryPhotos.filter(url => !primarySet.has(url))];
+                const uniquePhotos = [...new Set(combinedPhotos)];
 
-                // Remove primary images from gallery
-                const filteredGallery = [...gallerySet].filter(url => !primarySet.has(url));
-                const photos = [...primarySet, ...filteredGallery];
-
-                console.log(`📸 Activity ${activity.id}: ${photos.length} photo(s) returned`);
+                console.log(`📸 Activity ${activity.id}: ${uniquePhotos.length} photo(s) returned`);
 
                 return {
                     ...activity,
                     description,
-                    photos,
+                    photos: uniquePhotos,
                     embed_token: fullActivity.embed_token || null,
                     username: req.user.username,
                     profile_picture: req.user.profilePicture
