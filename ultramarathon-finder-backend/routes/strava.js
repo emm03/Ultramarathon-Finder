@@ -118,51 +118,28 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                 const fullActivity = fullActivityRes.data;
                 const description = fullActivity.description || '';
 
-                // 📸 Extract full-size photo URLs (including non-primary, skip placeholders)
-                const photoUrls = [];
-
-                if (Array.isArray(photoRes.data)) {
-                    photoRes.data.forEach(photo => {
-                        if (photo.urls && typeof photo.urls === 'object') {
-                            Object.values(photo.urls).forEach(url => {
-                                if (typeof url === 'string' && url.startsWith('http')) {
-                                    photoUrls.push(url);
-                                }
-                            });
-                        } else if (typeof photo === 'object') {
-                            const fallbackUrl = photo?.source || photo?.default_url || photo?.url;
-                            if (typeof fallbackUrl === 'string' && fallbackUrl.startsWith('http')) {
-                                photoUrls.push(fallbackUrl);
-                            }
-                        }
-                    });
-                }
-
-                function extractFilename(url) {
-                    try {
-                        const base = new URL(url).pathname.split('/').pop();
-                        return base.split('?')[0].replace(/(\.jpe?g|\.png|\.webp).*/, '$1'); // keep extension only once
-                    } catch {
-                        return '';
-                    }
-                }
+                // 📸 Deduplicate by photo ID and get best available size
+                const photoUrls = Array.isArray(photoRes.data)
+                    ? photoRes.data
+                        .filter((p, index, self) =>
+                            p.type === 'photo' &&
+                            p.urls &&
+                            self.findIndex(o => o.id === p.id) === index
+                        )
+                        .map(p => {
+                            const best = p.urls['1200'] || p.urls['600'] || p.urls['100'];
+                            return typeof best === 'string' ? best.split('?')[0] : null;
+                        })
+                        .filter(Boolean)
+                    : [];
 
                 const primaryUrls = fullActivity.photos?.primary?.urls || {};
-                const primaryFilenames = new Set(
-                    Object.values(primaryUrls)
-                        .filter(url => typeof url === 'string' && url.startsWith('http'))
-                        .map(extractFilename)
+                const primarySet = new Set(
+                    Object.values(primaryUrls).filter(url => typeof url === 'string')
                 );
 
-                const filteredGalleryPhotos = photoUrls.filter(url => {
-                    const filename = extractFilename(url);
-                    return !primaryFilenames.has(filename);
-                });
-
-                const photos = [
-                    ...Object.values(primaryUrls).filter(url => typeof url === 'string' && url.startsWith('http')),
-                    ...filteredGalleryPhotos
-                ];
+                const filteredGallery = photoUrls.filter(url => !primarySet.has(url));
+                const photos = [...primarySet, ...filteredGallery];
 
                 console.log(`📸 Activity ${activity.id}: ${photos.length} photo(s) returned`);
 
