@@ -2917,6 +2917,14 @@ main.article-content {
     margin-top: 0.5rem;
 }
 
+.activity-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90%;
+    display: block;
+}
+
 .create-group-btn {
     margin-top: 1.5rem;
 }

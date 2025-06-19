@@ -1,6 +1,5 @@
 const clientId = 162687;
 const redirectUri = 'https://ultramarathon-finder-backend.onrender.com/strava-auth';
-
 let userToken = null;
 
 fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/status', {
@@ -24,7 +23,6 @@ fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/status', {
           </div>
         </div>`;
 
-            // If user already connected Strava, skip connect button
             if (data.user.stravaAccessToken) {
                 document.getElementById('connect-strava').style.display = 'none';
                 document.getElementById('refresh-strava').style.display = 'inline-block';
@@ -55,19 +53,16 @@ document.getElementById("connect-strava")?.addEventListener("click", () => {
         return;
     }
 
-    localStorage.setItem("strava_state_token", userToken);  // Save token securely
+    localStorage.setItem("strava_state_token", userToken);
     const scope = 'activity:read_all';
     const url = `https://www.strava.com/oauth/authorize?client_id=${clientId}&response_type=code&redirect_uri=${redirectUri}&approval_prompt=force&scope=${scope}&state=${userToken}`;
     window.location.href = url;
-
 });
 
 async function fetchActivities() {
     try {
         const res = await fetch('https://ultramarathon-finder-backend.onrender.com/api/strava/activities', {
-            headers: {
-                'Authorization': `Bearer ${userToken}`
-            },
+            headers: { 'Authorization': `Bearer ${userToken}` },
             credentials: 'include'
         });
 
@@ -93,8 +88,26 @@ async function fetchActivities() {
 
                 const div = document.createElement('div');
                 div.className = 'activity-card';
+
+                // Extract and dedupe images
+                let photoHTML = '';
+                if (act.photos) {
+                    const seen = new Set();
+                    const photoUrls = Array.isArray(act.photos) ? act.photos : [act.photos];
+                    const validPhotos = photoUrls.filter(url => {
+                        if (!url || seen.has(url)) return false;
+                        seen.add(url);
+                        return true;
+                    });
+                    if (validPhotos.length > 0) {
+                        photoHTML = `<div class="photo-carousel">
+                            ${validPhotos.map(url => `<img src="${url}" class="carousel-photo" alt="Activity photo" />`).join('')}
+                        </div>`;
+                    }
+                }
+
                 div.innerHTML = `
-                    <h3>${act.name}</h3>
+                    <h3 class="activity-title">${act.name}</h3>
                     <div class="activity-meta">${new Date(act.start_date).toLocaleString()} | ${act.type}</div>
                     <div class="activity-description">${act.description || 'No description provided.'}</div>
                     <div class="activity-stats">
@@ -102,11 +115,7 @@ async function fetchActivities() {
                         Time: ${(act.elapsed_time / 60).toFixed(1)} mins<br>
                         Pace: ${(act.elapsed_time / 60 / (act.distance / 1000)).toFixed(1)} min/km
                     </div>
-                    ${act.photos && act.photos.length > 0 ? `
-                        <div class="photo-carousel">
-                            ${act.photos.map(url => `<img src="${url}" class="carousel-photo" alt="Activity photo" />`).join('')}
-                        </div>
-                    ` : ''}
+                    ${photoHTML}
                 `;
                 list.appendChild(div);
             });
