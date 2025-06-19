@@ -119,10 +119,11 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                 const description = fullActivity.description || '';
 
                 // 📸 Extract full-size photo URLs only (skip placeholders)
-                const photoUrls = photoRes.data
+                const photoUrls = (Array.isArray(photoRes.data) ? photoRes.data : [])
+                    .filter(p => p.type === 'photo' && p.urls)
                     .map(p => {
-                        const best = p.urls?.['600'] || p.urls?.['1200'] || p.urls?.['100'];
-                        return (typeof best === 'string' && /\.(jpe?g|png|webp)$/i.test(best)) ? best : null;
+                        const best = p.urls['1200'] || p.urls['600'] || p.urls['100'];
+                        return typeof best === 'string' ? best : null;
                     })
                     .filter(Boolean);
 
