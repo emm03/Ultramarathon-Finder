@@ -18,15 +18,19 @@ fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/status', {
             const profileName = document.getElementById("strava-name");
             const summaryText = document.getElementById("strava-summary");
 
+            const picSrc = data.user.profilePicture?.includes('gravatar') || data.user.profilePicture?.includes('cloudfront')
+                ? data.user.profilePicture
+                : "default_profile.png";
+
             if (profilePic && profileName) {
-                profilePic.src = data.user.profilePicture || "default_profile.png";
+                profilePic.src = picSrc;
                 profileName.textContent = data.user.username || "Strava User";
                 summaryText.textContent = "Strava activities shown below.";
             }
 
             accountTab.innerHTML = `
                 <div class="dropdown">
-                  <img src="${data.user.profilePicture || 'default_profile.png'}" class="profile-pic" />
+                  <img src="${picSrc}" class="profile-pic" />
                   <div class="dropdown-content">
                     <a href="account.html">Profile</a>
                     <a href="training_log.html" class="active">Training Log</a>
