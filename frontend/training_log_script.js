@@ -18,15 +18,13 @@ fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/status', {
             const profileName = document.getElementById("strava-name");
             const summaryText = document.getElementById("strava-summary");
 
-            const picSrc = data.user.profilePicture?.includes('gravatar') || data.user.profilePicture?.includes('cloudfront')
+            const picSrc = data.user.profilePicture?.includes("cloudfront")
                 ? data.user.profilePicture
                 : "default-profile.png";
 
-            if (profilePic && profileName) {
-                profilePic.src = picSrc;
-                profileName.textContent = data.user.username || "Strava User";
-                summaryText.textContent = "Strava activities shown below.";
-            }
+            if (profilePic) profilePic.src = picSrc;
+            if (profileName) profileName.textContent = data.user.username || "Strava User";
+            if (summaryText) summaryText.textContent = "Strava activities shown below.";
 
             accountTab.innerHTML = `
                 <div class="dropdown">
@@ -98,20 +96,22 @@ async function fetchActivities() {
             section.style.display = 'block';
             refresh.style.display = 'inline-block';
             connect.style.display = 'none';
+            document.getElementById('disconnect-strava').style.display = 'inline-block';
 
             list.innerHTML = '';
             let totalDistance = 0;
             let totalTime = 0;
 
-            if (data.length > 0) {
-                const profilePic = document.getElementById("strava-profile-pic");
-                const profileName = document.getElementById("strava-name");
-                if (profilePic && data[0].profile_picture) {
-                    profilePic.src = data[0].profile_picture;
-                }
-                if (profileName && data[0].username) {
-                    profileName.textContent = data[0].username;
-                }
+            const profilePic = document.getElementById("strava-profile-pic");
+            const profileName = document.getElementById("strava-name");
+            const summaryText = document.getElementById("strava-summary");
+
+            if (profilePic && data[0].profile_picture) {
+                profilePic.src = data[0].profile_picture;
+            }
+
+            if (profileName && data[0].username) {
+                profileName.textContent = data[0].username;
             }
 
             data.forEach(act => {
@@ -126,13 +126,11 @@ async function fetchActivities() {
                             <iframe height="405" width="100%" frameborder="0" allowtransparency="true" scrolling="no"
                                 src="https://www.strava.com/activities/${act.id}/embed/${act.embed_token}">
                             </iframe>
-                        </div>` : ''
-                    }
+                        </div>` : ''}
                     ${primaryPhoto ? `
                         <div class="photo-carousel">
                             <img src="${primaryPhoto}" class="carousel-photo" alt="Activity photo" />
-                        </div>` : ''
-                    }
+                        </div>` : ''}
                     <div class="strava-cta" style="margin-top: 5px;">
                         <a href="https://www.strava.com/activities/${act.id}" target="_blank">Want to see all your media? View this activity on Strava</a>
                     </div>
@@ -140,14 +138,13 @@ async function fetchActivities() {
 
                 const div = document.createElement('div');
                 div.className = 'activity-card';
-                div.innerHTML = `${mediaContent}`;
+                div.innerHTML = mediaContent;
                 list.appendChild(div);
             });
 
             summary.innerHTML = `✅ Total distance this week: <strong>${(totalDistance / 1000).toFixed(1)} km</strong> | Time: <strong>${(totalTime / 3600).toFixed(2)} hrs</strong>`;
             summary.style.display = 'block';
 
-            const summaryText = document.getElementById("strava-summary");
             if (summaryText) {
                 summaryText.textContent = `✅ ${(totalDistance / 1000).toFixed(1)} km | ${(totalTime / 3600).toFixed(2)} hrs this week`;
             }
