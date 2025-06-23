@@ -18,6 +18,7 @@ router.get('/strava-auth', async (req, res) => {
         const userId = decoded.userId;
         if (!userId) return res.status(401).send("Invalid token");
 
+        // Step 1: Get access token
         const tokenRes = await axios.post('https://www.strava.com/oauth/token', null, {
             params: {
                 client_id: process.env.STRAVA_CLIENT_ID,
@@ -29,25 +30,25 @@ router.get('/strava-auth', async (req, res) => {
 
         const { access_token, refresh_token, expires_at } = tokenRes.data;
 
-        // ✅ Fetch athlete profile to get profile pic
+        // Step 2: Fetch athlete profile with access token
         const athleteRes = await axios.get('https://www.strava.com/api/v3/athlete', {
             headers: { Authorization: `Bearer ${access_token}` }
         });
 
-        const profilePic = athleteRes.data?.profile;
-        const cleanedPic = (profilePic && !profilePic.includes('placeholder')) ? profilePic : null;
+        const stravaProfilePic = athleteRes.data?.profile || null;
 
+        // Step 3: Update user with tokens + profile picture
         await User.findByIdAndUpdate(userId, {
             stravaAccessToken: access_token,
             stravaRefreshToken: refresh_token,
             stravaTokenExpiresAt: expires_at,
-            profilePicture: cleanedPic
+            profilePicture: stravaProfilePic || undefined
         });
 
-        console.log(`✅ Stored Strava tokens and profile pic for user ${userId}`);
+        console.log(`✅ Stored Strava tokens + profile for user ${userId}`);
         res.redirect('https://ultramarathonconnect.com/training_log.html');
     } catch (err) {
-        console.error("❌ Error during Strava OAuth:", err);
+        console.error("❌ Error during Strava OAuth:", err.message);
         res.status(500).send("Failed to connect to Strava.");
     }
 });
