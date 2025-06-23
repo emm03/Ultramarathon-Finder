@@ -42,7 +42,7 @@ router.get('/strava-auth', async (req, res) => {
             stravaAccessToken: access_token,
             stravaRefreshToken: refresh_token,
             stravaTokenExpiresAt: expires_at,
-            profilePicture: stravaProfilePic || undefined // ✅ overwrite only if present
+            stravaProfilePicture: stravaProfilePic || undefined
         });
 
         console.log(`✅ Stored Strava tokens and profile picture for user ${userId}`);

@@ -157,7 +157,7 @@ router.post('/login', async (req, res) => {
 router.get('/account', authenticateToken, async (req, res) => {
     try {
         const user = await User.findById(req.user.userId)
-            .select('username email createdAt profilePicture joinedGroups stravaAccessToken');
+            .select('username email createdAt profilePicture joinedGroups stravaAccessToken stravaProfilePicture');
 
         console.log("✅ /api/account user:", user); // 🧪 debug log
 
