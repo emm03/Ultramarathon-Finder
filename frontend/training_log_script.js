@@ -105,8 +105,7 @@ async function fetchActivities() {
                 const uniquePhotos = [...new Set(
                     (act.photos || []).filter(url =>
                         url.includes('http') &&
-                        !url.includes('placeholder') &&
-                        !url.includes('medium.jpg')
+                        !url.includes('placeholder')
                     )
                 )];
 
