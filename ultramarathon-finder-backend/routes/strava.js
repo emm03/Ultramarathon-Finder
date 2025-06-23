@@ -38,14 +38,19 @@ router.get('/strava-auth', async (req, res) => {
         const stravaProfilePic = athleteRes.data?.profile || null;
         console.log("👤 Saving Strava profile picture:", stravaProfilePic);
 
-        await User.findByIdAndUpdate(userId, {
-            stravaAccessToken: access_token,
-            stravaRefreshToken: refresh_token,
-            stravaTokenExpiresAt: expires_at,
-            stravaProfilePicture: stravaProfilePic || undefined
-        });
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).send("User not found");
+
+        user.stravaAccessToken = access_token;
+        user.stravaRefreshToken = refresh_token;
+        user.stravaTokenExpiresAt = expires_at;
+        user.stravaProfilePicture = stravaProfilePic || undefined;
+
+        await user.save();
 
         console.log(`✅ Stored Strava tokens and profile picture for user ${userId}`);
+        console.log("🧪 Saved access token:", user.stravaAccessToken);
+
         res.redirect('https://ultramarathonconnect.com/training_log.html');
     } catch (err) {
         console.error("❌ Error during Strava OAuth:", err);
