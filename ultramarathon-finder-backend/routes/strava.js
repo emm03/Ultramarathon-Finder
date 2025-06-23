@@ -3,6 +3,7 @@ import axios from 'axios';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import { authenticateToken } from '../middleware/auth.js';
 
 dotenv.config();
 const router = express.Router();
