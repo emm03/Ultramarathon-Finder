@@ -115,11 +115,13 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
 
                 // ✅ Grab just one clean primary photo if available
                 const primaryUrls = fullActivity.photos?.primary?.urls || {};
-                const primary = Object.values(primaryUrls)
-                    .filter(url => typeof url === 'string' && !url.includes('placeholder'))
-                    .map(url => url.split('?')[0])[0] || null;
+                const highResPrimary = primaryUrls['1200'] || primaryUrls['600'] || primaryUrls['100'];
+                const primary = (typeof highResPrimary === 'string' && !highResPrimary.includes('placeholder'))
+                    ? highResPrimary.split('?')[0]
+                    : null;
 
                 console.log(`📸 Activity ${activity.id}: ${primary ? '1 photo returned' : 'No photos'}`);
+
 
                 return {
                     ...activity,
