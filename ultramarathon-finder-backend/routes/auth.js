@@ -156,7 +156,11 @@ router.post('/login', async (req, res) => {
 // -------------------- ACCOUNT --------------------
 router.get('/account', authenticateToken, async (req, res) => {
     try {
-        const user = await User.findById(req.user.userId).select('username email createdAt profilePicture joinedGroups stravaAccessToken')
+        const user = await User.findById(req.user.userId)
+            .select('username email createdAt profilePicture joinedGroups stravaAccessToken');
+
+        console.log("✅ /api/account user:", user); // 🧪 debug log
+
         if (!user) return res.status(404).json({ message: 'User not found' });
         res.json({ user });
     } catch (error) {
