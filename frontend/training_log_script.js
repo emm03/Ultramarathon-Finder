@@ -41,6 +41,7 @@ fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/status', {
             if (data.user.stravaAccessToken) {
                 document.getElementById('connect-strava').style.display = 'none';
                 document.getElementById('refresh-strava').style.display = 'inline-block';
+                document.getElementById('disconnect-strava').style.display = 'inline-block';
             }
 
             fetchActivities();
@@ -154,3 +155,32 @@ async function fetchActivities() {
 }
 
 document.getElementById('refresh-strava')?.addEventListener('click', fetchActivities);
+
+document.getElementById('disconnect-strava')?.addEventListener('click', async () => {
+    if (!userToken) return;
+
+    const confirmed = confirm("Are you sure you want to disconnect your Strava account?");
+    if (!confirmed) return;
+
+    try {
+        const res = await fetch('https://ultramarathon-finder-backend.onrender.com/api/strava/disconnect', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${userToken}`,
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
+
+        const result = await res.json();
+        if (res.ok) {
+            alert('Strava disconnected!');
+            location.reload();
+        } else {
+            alert('Failed to disconnect: ' + result.error);
+        }
+    } catch (err) {
+        console.error("Error disconnecting Strava:", err);
+        alert("Error disconnecting Strava");
+    }
+});
