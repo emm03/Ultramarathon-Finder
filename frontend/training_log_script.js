@@ -20,7 +20,7 @@ fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/status', {
 
             const picSrc = data.user.profilePicture?.includes('gravatar') || data.user.profilePicture?.includes('cloudfront')
                 ? data.user.profilePicture
-                : "default_profile.png";
+                : "default-profile.png";
 
             if (profilePic && profileName) {
                 profilePic.src = picSrc;
@@ -102,6 +102,17 @@ async function fetchActivities() {
             list.innerHTML = '';
             let totalDistance = 0;
             let totalTime = 0;
+
+            if (data.length > 0) {
+                const profilePic = document.getElementById("strava-profile-pic");
+                const profileName = document.getElementById("strava-name");
+                if (profilePic && data[0].profile_picture) {
+                    profilePic.src = data[0].profile_picture;
+                }
+                if (profileName && data[0].username) {
+                    profileName.textContent = data[0].username;
+                }
+            }
 
             data.forEach(act => {
                 totalDistance += act.distance;
