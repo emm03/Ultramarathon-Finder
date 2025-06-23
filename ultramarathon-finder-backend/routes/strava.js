@@ -97,6 +97,13 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
     try {
         const accessToken = await getValidAccessToken(req.user);
 
+        // 🔍 Fetch Strava athlete profile for their real profile picture
+        const athleteRes = await axios.get('https://www.strava.com/api/v3/athlete', {
+            headers: { Authorization: `Bearer ${accessToken}` }
+        });
+        const stravaProfilePic = athleteRes.data.profile || null;
+
+
         const activityRes = await axios.get('https://www.strava.com/api/v3/athlete/activities', {
             headers: { Authorization: `Bearer ${accessToken}` },
             params: { per_page: 5 }
@@ -129,7 +136,7 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                     photos: primary ? [primary] : [],
                     embed_token: fullActivity.embed_token || null,
                     username: req.user.username,
-                    profile_picture: req.user.profilePicture
+                    profile_picture: req.user.profilePicture || stravaProfilePic
                 };
 
             } catch (err) {
