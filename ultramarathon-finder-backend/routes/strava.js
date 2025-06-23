@@ -108,6 +108,12 @@ router.post('/api/strava/disconnect', requireUser, async (req, res) => {
         user.stravaAccessToken = null;
         user.stravaRefreshToken = null;
         user.stravaTokenExpiresAt = null;
+
+        // 🔄 Optional: Remove Strava profile pic if it's a Strava-hosted image
+        if (user.profilePicture?.includes('gravatar') || user.profilePicture?.includes('cloudfront')) {
+            user.profilePicture = undefined;
+        }
+
         await user.save();
         res.status(200).json({ message: 'Strava disconnected successfully.' });
     } catch (err) {
