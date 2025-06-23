@@ -18,7 +18,6 @@ router.get('/strava-auth', async (req, res) => {
         const userId = decoded.userId;
         if (!userId) return res.status(401).send("Invalid token");
 
-        // Step 1: Get access token
         const tokenRes = await axios.post('https://www.strava.com/oauth/token', null, {
             params: {
                 client_id: process.env.STRAVA_CLIENT_ID,
@@ -30,25 +29,25 @@ router.get('/strava-auth', async (req, res) => {
 
         const { access_token, refresh_token, expires_at } = tokenRes.data;
 
-        // Step 2: Fetch athlete profile with access token
+        // 🔍 Fetch Strava profile info (including photo)
         const athleteRes = await axios.get('https://www.strava.com/api/v3/athlete', {
             headers: { Authorization: `Bearer ${access_token}` }
         });
 
         const stravaProfilePic = athleteRes.data?.profile || null;
+        console.log("👤 Saving Strava profile picture:", stravaProfilePic);
 
-        // Step 3: Update user with tokens + profile picture
         await User.findByIdAndUpdate(userId, {
             stravaAccessToken: access_token,
             stravaRefreshToken: refresh_token,
             stravaTokenExpiresAt: expires_at,
-            profilePicture: stravaProfilePic || undefined
+            profilePicture: stravaProfilePic || undefined // ✅ overwrite only if present
         });
 
-        console.log(`✅ Stored Strava tokens + profile for user ${userId}`);
+        console.log(`✅ Stored Strava tokens and profile picture for user ${userId}`);
         res.redirect('https://ultramarathonconnect.com/training_log.html');
     } catch (err) {
-        console.error("❌ Error during Strava OAuth:", err.message);
+        console.error("❌ Error during Strava OAuth:", err);
         res.status(500).send("Failed to connect to Strava.");
     }
 });
@@ -101,6 +100,21 @@ async function getValidAccessToken(user) {
         throw new Error("Unable to refresh Strava token.");
     }
 }
+
+// -------------------- Disconnect Strava --------------------
+router.post('/api/strava/disconnect', requireUser, async (req, res) => {
+    try {
+        const user = req.user;
+        user.stravaAccessToken = null;
+        user.stravaRefreshToken = null;
+        user.stravaTokenExpiresAt = null;
+        await user.save();
+        res.status(200).json({ message: 'Strava disconnected successfully.' });
+    } catch (err) {
+        console.error("❌ Error disconnecting Strava:", err.message);
+        res.status(500).json({ error: 'Failed to disconnect Strava' });
+    }
+});
 
 // -------------------- Fetch Strava Activities --------------------
 router.get('/api/strava/activities', requireUser, async (req, res) => {

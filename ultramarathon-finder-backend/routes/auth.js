@@ -297,4 +297,22 @@ router.get('/status', (req, res) => {
     }
 });
 
+// -------------------- Disconnect Strava --------------------
+router.post('/strava/disconnect', authenticateToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.userId);
+        if (!user) return res.status(404).json({ error: 'User not found' });
+
+        user.stravaAccessToken = undefined;
+        user.stravaRefreshToken = undefined;
+        user.stravaTokenExpiresAt = undefined;
+        await user.save();
+
+        res.status(200).json({ message: 'Strava disconnected successfully.' });
+    } catch (err) {
+        console.error("❌ Error disconnecting Strava:", err.message);
+        res.status(500).json({ error: 'Failed to disconnect Strava.' });
+    }
+});
+
 export default router;
