@@ -77,6 +77,7 @@ mongoose.connect(process.env.MONGO_URI, {
   });
 
 // ✅ Routes
+app.use('/api', authRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/forum', forumRoutes);
 app.use('/api/contact', contactRoutes);
