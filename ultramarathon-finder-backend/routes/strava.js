@@ -106,47 +106,25 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
 
         const enrichedActivities = await Promise.all(activities.map(async (activity) => {
             try {
-                const [fullActivityRes, photoRes] = await Promise.all([
-                    axios.get(`https://www.strava.com/api/v3/activities/${activity.id}`, {
-                        headers: { Authorization: `Bearer ${accessToken}` }
-                    }),
-                    axios.get(`https://www.strava.com/api/v3/activities/${activity.id}/photos`, {
-                        headers: { Authorization: `Bearer ${accessToken}` }
-                    })
-                ]);
+                const fullActivityRes = await axios.get(`https://www.strava.com/api/v3/activities/${activity.id}`, {
+                    headers: { Authorization: `Bearer ${accessToken}` }
+                });
 
                 const fullActivity = fullActivityRes.data;
                 const description = fullActivity.description || '';
 
-                // 🏞️ Primary photo(s)
+                // ✅ Grab just one clean primary photo if available
                 const primaryUrls = fullActivity.photos?.primary?.urls || {};
                 const primary = Object.values(primaryUrls)
                     .filter(url => typeof url === 'string' && !url.includes('placeholder'))
-                    .map(url => url.split('?')[0]);
+                    .map(url => url.split('?')[0])[0] || null;
 
-                // 🖼️ Gallery photo(s)
-                const gallery = Array.isArray(photoRes.data) ? photoRes.data
-                    .filter(p => p?.type === 'photo' && p.urls)
-                    .map(p => {
-                        const best = p.urls['1200'] || p.urls['600'] || p.urls['100'];
-                        return typeof best === 'string' && !best.includes('placeholder') ? best.split('?')[0] : null;
-                    }).filter(Boolean) : [];
-
-                // 🧹 Deduplicate using filenames
-                const seen = new Set();
-                const photos = [...primary, ...gallery].filter(url => {
-                    const filename = url.split('/').pop();
-                    if (seen.has(filename)) return false;
-                    seen.add(filename);
-                    return true;
-                });
-
-                console.log(`📸 Activity ${activity.id}: ${photos.length} photo(s) returned`);
+                console.log(`📸 Activity ${activity.id}: ${primary ? '1 photo returned' : 'No photos'}`);
 
                 return {
                     ...activity,
                     description,
-                    photos,
+                    photos: primary ? [primary] : [],
                     embed_token: fullActivity.embed_token || null,
                     username: req.user.username,
                     profile_picture: req.user.profilePicture
