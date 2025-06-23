@@ -180,4 +180,38 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
     }
 });
 
+// GET /api/strava/ultras
+router.get('/ultras', authenticateToken, async (req, res) => {
+    const accessToken = req.user?.stravaAccessToken;
+
+    if (!accessToken) {
+        return res.status(401).json({ error: 'Strava access token not found' });
+    }
+
+    try {
+        const response = await axios.get('https://www.strava.com/api/v3/athlete/activities', {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+            params: {
+                per_page: 200, // you can paginate later if needed
+                page: 1,
+            },
+        });
+
+        const allActivities = response.data;
+
+        // Filter for runs over 42195 meters
+        const ultraRuns = allActivities.filter(
+            (activity) =>
+                activity.type === 'Run' && activity.distance > 42195
+        );
+
+        res.json(ultraRuns);
+    } catch (error) {
+        console.error('Error fetching ultra runs:', error);
+        res.status(500).json({ error: 'Failed to fetch ultra runs' });
+    }
+});
+
 export default router;
