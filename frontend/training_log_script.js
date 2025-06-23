@@ -18,9 +18,7 @@ fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/status', {
             const profileName = document.getElementById("strava-name");
             const summaryText = document.getElementById("strava-summary");
 
-            const picSrc = data.user.profilePicture?.includes("cloudfront")
-                ? data.user.profilePicture
-                : "default-profile.png";
+            const picSrc = data.user.stravaProfilePicture || "default-profile.png";
 
             if (profilePic) profilePic.src = picSrc;
             if (profileName) profileName.textContent = data.user.username || "Strava User";
