@@ -118,29 +118,35 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                 const fullActivity = fullActivityRes.data;
                 const description = fullActivity.description || '';
 
-                const allPhotoEntries = Array.isArray(photoRes.data) ? photoRes.data : [];
+                // 🏞️ Primary photo(s)
+                const primaryUrls = fullActivity.photos?.primary?.urls || {};
+                const primary = Object.values(primaryUrls)
+                    .filter(url => typeof url === 'string' && !url.includes('placeholder'))
+                    .map(url => url.split('?')[0]);
 
-                const galleryUrls = allPhotoEntries
+                // 🖼️ Gallery photo(s)
+                const gallery = Array.isArray(photoRes.data) ? photoRes.data
                     .filter(p => p?.type === 'photo' && p.urls)
                     .map(p => {
                         const best = p.urls['1200'] || p.urls['600'] || p.urls['100'];
                         return typeof best === 'string' && !best.includes('placeholder') ? best.split('?')[0] : null;
-                    })
-                    .filter(Boolean);
+                    }).filter(Boolean) : [];
 
-                const primaryUrls = fullActivity.photos?.primary?.urls || {};
-                const primaryList = Object.values(primaryUrls)
-                    .filter(url => typeof url === 'string' && !url.includes('placeholder'))
-                    .map(u => u.split('?')[0]);
+                // 🧹 Deduplicate using filenames
+                const seen = new Set();
+                const photos = [...primary, ...gallery].filter(url => {
+                    const filename = url.split('/').pop();
+                    if (seen.has(filename)) return false;
+                    seen.add(filename);
+                    return true;
+                });
 
-                const combined = [...new Set([...primaryList, ...galleryUrls])];
-
-                console.log(`📸 Activity ${activity.id}: ${combined.length} photo(s) returned`);
+                console.log(`📸 Activity ${activity.id}: ${photos.length} photo(s) returned`);
 
                 return {
                     ...activity,
                     description,
-                    photos: combined,
+                    photos,
                     embed_token: fullActivity.embed_token || null,
                     username: req.user.username,
                     profile_picture: req.user.profilePicture
