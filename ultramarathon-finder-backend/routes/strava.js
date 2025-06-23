@@ -29,20 +29,22 @@ router.get('/strava-auth', async (req, res) => {
 
         const { access_token, refresh_token, expires_at } = tokenRes.data;
 
+        // ✅ Fetch athlete profile to get profile pic
         const athleteRes = await axios.get('https://www.strava.com/api/v3/athlete', {
             headers: { Authorization: `Bearer ${access_token}` }
         });
 
-        const stravaProfilePic = athleteRes.data?.profile || null;
+        const profilePic = athleteRes.data?.profile;
+        const cleanedPic = (profilePic && !profilePic.includes('placeholder')) ? profilePic : null;
 
         await User.findByIdAndUpdate(userId, {
             stravaAccessToken: access_token,
             stravaRefreshToken: refresh_token,
             stravaTokenExpiresAt: expires_at,
-            profilePicture: stravaProfilePic || undefined
+            profilePicture: cleanedPic
         });
 
-        console.log(`✅ Stored Strava tokens and profile for user ${userId}`);
+        console.log(`✅ Stored Strava tokens and profile pic for user ${userId}`);
         res.redirect('https://ultramarathonconnect.com/training_log.html');
     } catch (err) {
         console.error("❌ Error during Strava OAuth:", err);
