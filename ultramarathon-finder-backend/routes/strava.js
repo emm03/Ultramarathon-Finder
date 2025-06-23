@@ -143,15 +143,15 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                     ? highResPrimary.split('?')[0]
                     : null;
 
-                console.log(`📸 Activity ${activity.id}: ${primary ? '1 photo returned' : 'No photos'}`);
+                const latestUser = await User.findById(req.user._id);
 
                 return {
                     ...activity,
                     description,
                     photos: primary ? [primary] : [],
                     embed_token: fullActivity.embed_token || null,
-                    username: req.user.username,
-                    profile_picture: req.user.profilePicture || null
+                    username: latestUser.username,
+                    profile_picture: latestUser.profilePicture || null
                 };
 
             } catch (err) {
