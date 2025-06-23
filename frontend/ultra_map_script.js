@@ -8,7 +8,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     }).addTo(map);
 
     try {
-        const res = await fetch('/api/strava/ultras');
+        const res = await fetch('/api/strava/ultras', {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            }
+        });
         const data = await res.json();
         if (!Array.isArray(data)) throw new Error('Invalid data format from backend');
 
