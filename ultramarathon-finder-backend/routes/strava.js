@@ -29,13 +29,20 @@ router.get('/strava-auth', async (req, res) => {
 
         const { access_token, refresh_token, expires_at } = tokenRes.data;
 
+        const athleteRes = await axios.get('https://www.strava.com/api/v3/athlete', {
+            headers: { Authorization: `Bearer ${access_token}` }
+        });
+
+        const stravaProfilePic = athleteRes.data?.profile || null;
+
         await User.findByIdAndUpdate(userId, {
             stravaAccessToken: access_token,
             stravaRefreshToken: refresh_token,
-            stravaTokenExpiresAt: expires_at
+            stravaTokenExpiresAt: expires_at,
+            profilePicture: stravaProfilePic || undefined
         });
 
-        console.log(`✅ Stored Strava tokens for user ${userId}`);
+        console.log(`✅ Stored Strava tokens and profile for user ${userId}`);
         res.redirect('https://ultramarathonconnect.com/training_log.html');
     } catch (err) {
         console.error("❌ Error during Strava OAuth:", err);
@@ -97,13 +104,6 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
     try {
         const accessToken = await getValidAccessToken(req.user);
 
-        // 👤 Fetch Strava athlete profile photo
-        const athleteRes = await axios.get('https://www.strava.com/api/v3/athlete', {
-            headers: { Authorization: `Bearer ${accessToken}` }
-        });
-        const stravaProfilePic = athleteRes.data?.profile || null;
-
-        // 🏃‍♀️ Fetch activities
         const activityRes = await axios.get('https://www.strava.com/api/v3/athlete/activities', {
             headers: { Authorization: `Bearer ${accessToken}` },
             params: { per_page: 5 }
@@ -120,7 +120,6 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                 const fullActivity = fullActivityRes.data;
                 const description = fullActivity.description || '';
 
-                // ✅ Grab one high-res primary photo if available
                 const primaryUrls = fullActivity.photos?.primary?.urls || {};
                 const highResPrimary = primaryUrls['1200'] || primaryUrls['600'] || primaryUrls['100'];
                 const primary = (typeof highResPrimary === 'string' && !highResPrimary.includes('placeholder'))
@@ -135,7 +134,7 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                     photos: primary ? [primary] : [],
                     embed_token: fullActivity.embed_token || null,
                     username: req.user.username,
-                    profile_picture: req.user.profilePicture || stravaProfilePic
+                    profile_picture: req.user.profilePicture || null
                 };
 
             } catch (err) {
@@ -146,7 +145,7 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                     photos: [],
                     embed_token: null,
                     username: req.user.username,
-                    profile_picture: req.user.profilePicture || stravaProfilePic
+                    profile_picture: req.user.profilePicture || null
                 };
             }
         }));
