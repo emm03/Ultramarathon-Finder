@@ -97,13 +97,13 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
     try {
         const accessToken = await getValidAccessToken(req.user);
 
-        // 🔍 Fetch Strava athlete profile for their real profile picture
+        // 👤 Fetch Strava athlete profile photo
         const athleteRes = await axios.get('https://www.strava.com/api/v3/athlete', {
             headers: { Authorization: `Bearer ${accessToken}` }
         });
-        const stravaProfilePic = athleteRes.data.profile || null;
+        const stravaProfilePic = athleteRes.data?.profile || null;
 
-
+        // 🏃‍♀️ Fetch activities
         const activityRes = await axios.get('https://www.strava.com/api/v3/athlete/activities', {
             headers: { Authorization: `Bearer ${accessToken}` },
             params: { per_page: 5 }
@@ -120,7 +120,7 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                 const fullActivity = fullActivityRes.data;
                 const description = fullActivity.description || '';
 
-                // ✅ Grab just one clean primary photo if available
+                // ✅ Grab one high-res primary photo if available
                 const primaryUrls = fullActivity.photos?.primary?.urls || {};
                 const highResPrimary = primaryUrls['1200'] || primaryUrls['600'] || primaryUrls['100'];
                 const primary = (typeof highResPrimary === 'string' && !highResPrimary.includes('placeholder'))
@@ -128,7 +128,6 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                     : null;
 
                 console.log(`📸 Activity ${activity.id}: ${primary ? '1 photo returned' : 'No photos'}`);
-
 
                 return {
                     ...activity,
@@ -141,7 +140,14 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
 
             } catch (err) {
                 console.error(`⚠️ Error enriching activity ${activity.id}:`, err.message);
-                return { ...activity, description: '', photos: [] };
+                return {
+                    ...activity,
+                    description: '',
+                    photos: [],
+                    embed_token: null,
+                    username: req.user.username,
+                    profile_picture: req.user.profilePicture || stravaProfilePic
+                };
             }
         }));
 
