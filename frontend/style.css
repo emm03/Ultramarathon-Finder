@@ -3151,3 +3151,25 @@ main.article-content {
     height: 160px;
     border-radius: 8px;
 }
+
+/* Ultra Map Code */
+
+.ultra-map-link {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.map-button {
+    display: inline-block;
+    background-color: #1e90ff;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.map-button:hover {
+    background-color: #0d74d1;
+}

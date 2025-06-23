@@ -32,6 +32,10 @@
         </div>
     </header>
 
+    <div id="ultra-map-button" class="ultra-map-link" style="display: none;">
+        <a href="ultra_map.html" class="map-button">📍 View My Ultra Map</a>
+    </div>
+
     <main class="training-container" style="padding-top: 140px;">
 
         <!-- 👤 Strava Profile Header Section -->
@@ -46,7 +50,8 @@
         <div class="button-bar">
             <a href="#" id="connect-strava" class="button">Connect with Strava</a>
             <button id="refresh-strava" class="button" style="display:none;">Refresh Activities</button>
-            <button id="disconnect-strava" class="button" style="display:none; background-color: #999;">Disconnect Strava</button>
+            <button id="disconnect-strava" class="button" style="display:none; background-color: #999;">Disconnect
+                Strava</button>
         </div>
 
         <div id="loading-indicator" style="display: none; margin-top: 10px; text-align: center; color: #fc4c02;">
@@ -66,6 +71,28 @@
     <script src="index_script.js"></script>
     <script src="training_log_script.js"></script>
     <script src="forum/inject_account_dropdown.js"></script>
+
+    <script>
+        // Show Ultra Map button only if user is logged in + connected to Strava
+        async function checkStravaConnection() {
+            try {
+                const res = await fetch('/api/account', {
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('token'),
+                    },
+                });
+
+                const data = await res.json();
+                if (res.ok && data.user && data.user.stravaAccessToken) {
+                    document.getElementById('ultra-map-button').style.display = 'block';
+                }
+            } catch (err) {
+                console.error('Error checking Strava connection:', err);
+            }
+        }
+
+        checkStravaConnection();
+    </script>
 </body>
 
 </html>
