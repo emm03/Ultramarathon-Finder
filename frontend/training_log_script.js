@@ -102,22 +102,7 @@ async function fetchActivities() {
                 totalDistance += act.distance;
                 totalTime += act.elapsed_time;
 
-                const uniquePhotos = [...new Set(
-                    (act.photos || []).filter(url =>
-                        url.includes('http') &&
-                        !url.includes('placeholder')
-                    )
-                )];
-
-                const profileImg = `<img src="${act.profile_picture || 'default_profile.png'}" class="profile-pic" alt="Profile photo" />`;
-                const userInfoBlock = `
-                    <div class="activity-header">
-                        ${profileImg}
-                        <div class="activity-user-info">
-                            <strong>${act.username || 'Strava User'}</strong><br>
-                            <span>${new Date(act.start_date).toLocaleString()}</span>
-                        </div>
-                    </div>`;
+                const primaryPhoto = (act.photos || []).find(url => !url.includes('placeholder') && url.includes('cloudfront')) || null;
 
                 const mediaContent = `
                     ${act.embed_token ? `
@@ -127,26 +112,19 @@ async function fetchActivities() {
                             </iframe>
                         </div>` : ''
                     }
-                    ${uniquePhotos.length > 0 ? `
+                    ${primaryPhoto ? `
                         <div class="photo-carousel">
-                            ${uniquePhotos.map(url => `<img src="${url}" class="carousel-photo" alt="Activity photo" />`).join('')}
+                            <img src="${primaryPhoto}" class="carousel-photo" alt="Activity photo" />
                         </div>` : ''
                     }
+                    <div class="strava-cta" style="margin-top: 5px;">
+                        <a href="https://www.strava.com/activities/${act.id}" target="_blank">Want to see all your media? View this activity on Strava</a>
+                    </div>
                 `;
 
                 const div = document.createElement('div');
                 div.className = 'activity-card';
-                div.innerHTML = `
-                    ${userInfoBlock}
-                    <h3 class="activity-title">${act.name}</h3>
-                    <div class="activity-description">${act.description || 'No description provided.'}</div>
-                    <div class="activity-stats">
-                        <span><strong>Distance:</strong> ${(act.distance / 1000).toFixed(2)} km</span>
-                        <span><strong>Time:</strong> ${(act.elapsed_time / 60).toFixed(1)} mins</span>
-                        <span><strong>Pace:</strong> ${(act.elapsed_time / 60 / (act.distance / 1000)).toFixed(1)} min/km</span>
-                    </div>
-                    ${mediaContent}
-                `;
+                div.innerHTML = `${mediaContent}`;
                 list.appendChild(div);
             });
 
