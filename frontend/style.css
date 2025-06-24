@@ -129,21 +129,22 @@ main.category-container {
     background-color: #333;
 }
 
-/* --- Auth Tab Dropdown --- */
-.auth-tab {
+/* --- Unified Dropdown Styling --- */
+.auth-tab,
+#account-wrapper {
     position: relative;
 }
 
-/* Wrapper for consistent dropdown hover */
-.auth-dropdown {
-    position: relative;
+.auth-dropdown,
+.account-dropdown {
     display: flex;
     align-items: center;
     cursor: pointer;
+    position: relative;
 }
 
-/* Profile image inside dropdown */
-.auth-dropdown .profile-icon {
+.auth-dropdown .profile-icon,
+.account-dropdown .profile-picture-nav {
     width: 36px;
     height: 36px;
     border-radius: 50%;
@@ -151,20 +152,21 @@ main.category-container {
     border: 2px solid white;
 }
 
-/* Username next to profile pic */
-.auth-dropdown span {
+.auth-dropdown span,
+.account-dropdown span {
     font-weight: bold;
     color: white;
     margin-left: 0.5rem;
 }
 
-/* Dropdown content */
-.auth-dropdown .dropdown-content {
+/* Shared dropdown content */
+.auth-dropdown .dropdown-content,
+.account-dropdown .dropdown-content {
     position: absolute;
     top: 40px;
     right: 0;
-    background-color: white;
-    color: black;
+    background-color: white !important;
+    color: black !important;
     border: 1px solid #ccc;
     border-radius: 6px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
@@ -174,116 +176,34 @@ main.category-container {
     pointer-events: auto;
 }
 
-/* Keep dropdown visible on hover of wrapper */
-.auth-dropdown:hover .dropdown-content {
+/* Hover logic for both */
+.auth-dropdown:hover .dropdown-content,
+.auth-dropdown .dropdown-content:hover,
+.account-dropdown:hover .dropdown-content,
+.account-dropdown .dropdown-content:hover {
     display: block;
 }
 
 /* Dropdown links */
-.auth-dropdown .dropdown-content a {
-    display: block;
-    padding: 10px;
-    text-decoration: none;
-    color: #333;
-}
-
-.auth-dropdown .dropdown-content a:hover {
-    background-color: #f0f0f0;
-}
-
-/* =================== Account Dropdown Styling =================== */
-#account-wrapper {
-    position: relative;
-    margin-left: 1rem;
-}
-
-.account-dropdown {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    position: relative;
-}
-
-.account-dropdown span {
-    font-weight: bold;
-    color: white;
-    margin-left: 0.5rem;
-}
-
-.account-dropdown .profile-picture-nav {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid white;
-}
-
-/* Dropdown Menu */
-.account-dropdown .dropdown-content {
-    display: none;
-    position: absolute;
-    right: 0;
-    top: 120%;
-    background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    border-radius: 6px;
-    min-width: 180px;
-    z-index: 999;
-    padding: 0.8rem 0;
-}
-
+.auth-dropdown .dropdown-content a,
 .account-dropdown .dropdown-content a {
     display: block;
     padding: 10px 16px;
-    color: black;
     text-decoration: none;
+    color: black;
     font-weight: 500;
     font-size: 0.95rem;
 }
 
+.auth-dropdown .dropdown-content a:hover,
 .account-dropdown .dropdown-content a:hover {
     background-color: #f0f0f0;
 }
 
-/* Hover dropdown on desktop */
-@media (min-width: 769px) {
-
-    .account-dropdown:hover .dropdown-content,
-    .account-dropdown .dropdown-content:hover {
-        display: block;
-    }
-}
-
-/* Toggle dropdown manually on mobile */
+/* Manual mobile toggle */
+.auth-dropdown .dropdown-content.show,
 .account-dropdown .dropdown-content.show {
     display: block;
-}
-
-.account-hover-container {
-    position: relative;
-    display: inline-block;
-}
-
-.account-hover-container:hover .dropdown-content,
-.account-hover-container .dropdown-content:hover {
-    display: block;
-}
-
-/* ✅ Final unifying dropdown style across all pages */
-.auth-dropdown .dropdown-content,
-.account-dropdown .dropdown-content {
-    background-color: white !important;
-    color: black !important;
-}
-
-.auth-dropdown .dropdown-content a,
-.account-dropdown .dropdown-content a {
-    color: black !important;
-}
-
-.auth-dropdown .dropdown-content a:hover,
-.account-dropdown .dropdown-content a:hover {
-    background-color: #f0f0f0 !important;
 }
 
 /* Account Actions */
