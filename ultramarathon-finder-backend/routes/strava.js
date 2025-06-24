@@ -168,6 +168,7 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
 });
 
 // -------------------- Fetch Ultra-Distance Activities --------------------
+// GET /api/strava/ultras
 router.get('/ultras', authenticateToken, async (req, res) => {
     const accessToken = req.user?.stravaAccessToken;
 
@@ -176,17 +177,27 @@ router.get('/ultras', authenticateToken, async (req, res) => {
     }
 
     try {
-        const response = await axios.get('https://www.strava.com/api/v3/athlete/activities', {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-            },
-            params: {
-                per_page: 200,
-                page: 1,
-            },
-        });
+        let page = 1;
+        const allActivities = [];
 
-        const allActivities = response.data;
+        while (true) {
+            const response = await axios.get('https://www.strava.com/api/v3/athlete/activities', {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+                params: {
+                    per_page: 200,
+                    page,
+                },
+            });
+
+            const pageActivities = response.data;
+            if (pageActivities.length === 0) break;
+
+            allActivities.push(...pageActivities);
+            page++;
+        }
+
         const ultraRuns = allActivities.filter(
             (activity) =>
                 activity.type === 'Run' && activity.distance > 42195
@@ -194,7 +205,7 @@ router.get('/ultras', authenticateToken, async (req, res) => {
 
         res.json(ultraRuns);
     } catch (error) {
-        console.error('Error fetching ultra runs:', error);
+        console.error('❌ Error fetching ultra runs:', error.message);
         res.status(500).json({ error: 'Failed to fetch ultra runs' });
     }
 });
