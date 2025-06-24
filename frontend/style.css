@@ -269,34 +269,6 @@ main.category-container {
     display: block;
 }
 
-/* ✅ Final unifying dropdown style across all pages */
-.auth-dropdown .dropdown-content,
-.account-dropdown .dropdown-content {
-    background-color: white !important;
-    color: black !important;
-}
-
-.auth-dropdown .dropdown-content a,
-.account-dropdown .dropdown-content a {
-    color: black !important;
-}
-
-.auth-dropdown .dropdown-content a:hover,
-.account-dropdown .dropdown-content a:hover {
-    background-color: white !important;
-}
-
-/* ✅ FINAL dropdown unification override */
-.auth-dropdown .dropdown-content,
-.auth-dropdown .dropdown-content a,
-.auth-dropdown .dropdown-content a:hover,
-.account-dropdown .dropdown-content,
-.account-dropdown .dropdown-content a,
-.account-dropdown .dropdown-content a:hover {
-    background-color: white !important;
-    color: black !important;
-}
-
 /* Account Actions */
 .account-actions {
     margin-top: 20px;
