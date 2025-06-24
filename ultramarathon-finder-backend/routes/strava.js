@@ -30,27 +30,16 @@ router.get('/strava-auth', async (req, res) => {
 
         const { access_token, refresh_token, expires_at } = tokenRes.data;
 
-        // 🔍 Fetch Strava profile info (including photo)
-        const athleteRes = await axios.get('https://www.strava.com/api/v3/athlete', {
-            headers: { Authorization: `Bearer ${access_token}` }
-        });
-
-        const stravaProfilePic = athleteRes.data?.profile || null;
-        console.log("👤 Saving Strava profile picture:", stravaProfilePic);
-
         const user = await User.findById(userId);
         if (!user) return res.status(404).send("User not found");
 
         user.stravaAccessToken = access_token;
         user.stravaRefreshToken = refresh_token;
         user.stravaTokenExpiresAt = expires_at;
-        user.stravaProfilePicture = stravaProfilePic || undefined;
 
         await user.save();
 
-        console.log(`✅ Stored Strava tokens and profile picture for user ${userId}`);
-        console.log("🧪 Saved access token:", user.stravaAccessToken);
-
+        console.log(`✅ Stored Strava tokens for user ${userId}`);
         res.redirect('https://ultramarathonconnect.com/training_log.html');
     } catch (err) {
         console.error("❌ Error during Strava OAuth:", err);
@@ -114,12 +103,6 @@ router.post('/api/strava/disconnect', requireUser, async (req, res) => {
         user.stravaAccessToken = null;
         user.stravaRefreshToken = null;
         user.stravaTokenExpiresAt = null;
-
-        // 🔄 Optional: Remove Strava profile pic if it's a Strava-hosted image
-        if (user.profilePicture?.includes('gravatar') || user.profilePicture?.includes('cloudfront')) {
-            user.profilePicture = undefined;
-        }
-
         await user.save();
         res.status(200).json({ message: 'Strava disconnected successfully.' });
     } catch (err) {
@@ -155,15 +138,13 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                     ? highResPrimary.split('?')[0]
                     : null;
 
-                const latestUser = await User.findById(req.user._id);
-
                 return {
                     ...activity,
                     description,
                     photos: primary ? [primary] : [],
                     embed_token: fullActivity.embed_token || null,
-                    username: latestUser.username,
-                    profile_picture: latestUser.profilePicture || null
+                    username: req.user.username,
+                    profile_picture: req.user.profilePicture || null
                 };
 
             } catch (err) {
@@ -186,7 +167,7 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
     }
 });
 
-// GET /api/strava/ultras
+// -------------------- Fetch Ultra-Distance Activities --------------------
 router.get('/ultras', authenticateToken, async (req, res) => {
     const accessToken = req.user?.stravaAccessToken;
 
@@ -200,14 +181,12 @@ router.get('/ultras', authenticateToken, async (req, res) => {
                 Authorization: `Bearer ${accessToken}`,
             },
             params: {
-                per_page: 200, // you can paginate later if needed
+                per_page: 200,
                 page: 1,
             },
         });
 
         const allActivities = response.data;
-
-        // Filter for runs over 42195 meters
         const ultraRuns = allActivities.filter(
             (activity) =>
                 activity.type === 'Run' && activity.distance > 42195
