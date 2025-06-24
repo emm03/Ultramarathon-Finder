@@ -145,3 +145,54 @@ document.addEventListener("DOMContentLoaded", () => {
         return div.innerHTML;
     }
 });
+
+// ✅ Allow sending a message into Alan from external buttons
+window.AlanAI = {
+    sendMessage: async (userMessage) => {
+        const windowBox = document.getElementById("alan-window");
+        const messages = document.getElementById("alan-messages");
+
+        if (!windowBox.classList.contains("open")) {
+            document.getElementById("alan-bubble").click();
+        }
+
+        messages.innerHTML += `<div class="alan-msg user-msg"><strong>You:</strong> ${userMessage}</div>`;
+
+        const typingEl = document.createElement("div");
+        typingEl.className = "alan-msg alan-typing";
+        typingEl.innerHTML = `<em>Alan is typing<span class="dots">...</span></em>`;
+        messages.appendChild(typingEl);
+        messages.scrollTop = messages.scrollHeight;
+
+        try {
+            const response = await fetch("https://ultramarathon-finder-backend.onrender.com/api/alan", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-session-id": sessionStorage.getItem("alanSession")
+                },
+                body: JSON.stringify({ message: userMessage, sessionId: sessionStorage.getItem("alanSession") })
+            });
+            const data = await response.json();
+            typingEl.remove();
+
+            const replies = data.reply.split("||");
+            replies.forEach(reply => {
+                const clean = escapeHtml(reply.trim());
+                const linked = convertLinks(clean);
+                messages.innerHTML += `
+                    <div class="alan-msg alan-reply">
+                        <div class="alan-box">
+                            <strong>Alan:</strong><br>${linked}
+                        </div>
+                    </div>`;
+            });
+
+            messages.scrollTop = messages.scrollHeight;
+        } catch (error) {
+            typingEl.remove();
+            messages.innerHTML += `<div class="alan-msg alan-reply"><strong>Alan:</strong> Sorry, there was an error.</div>`;
+            messages.scrollTop = messages.scrollHeight;
+        }
+    }
+};

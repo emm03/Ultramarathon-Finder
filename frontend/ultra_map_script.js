@@ -98,13 +98,9 @@ function askAlanBasedOnMap() {
 
     const message = `Based on my ultra runs (${count} total, ${distance} in total, longest run was ${longest}), what races should I try next?`;
 
-    const alanInput = document.getElementById('alan-input');
-    const alanForm = document.getElementById('alan-form');
-
-    if (alanInput && alanForm) {
-        alanInput.value = message;
-        alanForm.dispatchEvent(new Event('submit'));
+    if (window.AlanAI && typeof window.AlanAI.sendMessage === "function") {
+        window.AlanAI.sendMessage(message);
     } else {
-        console.warn("⚠️ Alan input or form not found.");
+        console.warn("Alan AI not available.");
     }
 }
