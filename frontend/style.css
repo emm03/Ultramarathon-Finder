@@ -137,7 +137,9 @@ main.category-container {
 /* Wrapper for consistent dropdown hover */
 .auth-dropdown {
     position: relative;
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
 }
 
 /* Profile image inside dropdown */
@@ -147,7 +149,13 @@ main.category-container {
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid white;
-    cursor: pointer;
+}
+
+/* Username next to profile pic */
+.auth-dropdown span {
+    font-weight: bold;
+    color: white;
+    margin-left: 0.5rem;
 }
 
 /* Dropdown content */
@@ -181,6 +189,13 @@ main.category-container {
 
 .auth-dropdown .dropdown-content a:hover {
     background-color: #f0f0f0;
+}
+
+/* Enable dropdown toggle on mobile tap */
+@media (max-width: 768px) {
+    .auth-dropdown .dropdown-content.show {
+        display: block;
+    }
 }
 
 /* Account Actions */
@@ -368,84 +383,6 @@ button:hover {
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     /* Subtle shadow */
-}
-
-/* =================== Account Dropdown Styling =================== */
-#account-wrapper {
-    position: relative;
-    margin-left: 1rem;
-}
-
-.account-dropdown {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    position: relative;
-}
-
-.account-dropdown span {
-    font-weight: bold;
-    color: white;
-    margin-left: 0.5rem;
-}
-
-.account-dropdown .profile-picture-nav {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 2px solid white;
-}
-
-/* Dropdown Menu */
-.account-dropdown .dropdown-content {
-    display: none;
-    position: absolute;
-    right: 0;
-    top: 120%;
-    background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    border-radius: 6px;
-    min-width: 180px;
-    z-index: 999;
-    padding: 0.8rem 0;
-}
-
-.account-dropdown .dropdown-content a {
-    display: block;
-    padding: 10px 16px;
-    color: black;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 0.95rem;
-}
-
-.account-dropdown .dropdown-content a:hover {
-    background-color: #f0f0f0;
-}
-
-/* Hover dropdown on desktop */
-@media (min-width: 769px) {
-
-    .account-dropdown:hover .dropdown-content,
-    .account-dropdown .dropdown-content:hover {
-        display: block;
-    }
-}
-
-/* Toggle dropdown manually on mobile */
-.account-dropdown .dropdown-content.show {
-    display: block;
-}
-
-.account-hover-container {
-    position: relative;
-    display: inline-block;
-}
-
-.account-hover-container:hover .dropdown-content,
-.account-hover-container .dropdown-content:hover {
-    display: block;
 }
 
 /* Desktop menu */
