@@ -83,16 +83,19 @@
                 });
 
                 const data = await res.json();
-                console.log("🧪 /api/account result:", data);
+                console.log("✅ Account check:", data);
 
-                if (res.ok && data.user && data.user.stravaAccessToken) {
-                    document.getElementById('ultra-map-button').style.display = 'block';
+                // ✅ Only check data.user + access token
+                if (data.user && data.user.stravaAccessToken) {
+                    const ultraMapButton = document.getElementById('ultra-map-button');
+                    if (ultraMapButton) ultraMapButton.style.display = 'block';
                 }
             } catch (err) {
                 console.error('Error checking Strava connection:', err);
             }
         });
     </script>
+
 </body>
 
 </html>
