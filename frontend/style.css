@@ -269,10 +269,21 @@ main.category-container {
     display: block;
 }
 
+/* ✅ Final unifying dropdown style across all pages */
 .auth-dropdown .dropdown-content,
 .account-dropdown .dropdown-content {
     background-color: white !important;
     color: black !important;
+}
+
+.auth-dropdown .dropdown-content a,
+.account-dropdown .dropdown-content a {
+    color: black !important;
+}
+
+.auth-dropdown .dropdown-content a:hover,
+.account-dropdown .dropdown-content a:hover {
+    background-color: #f0f0f0 !important;
 }
 
 /* Account Actions */
