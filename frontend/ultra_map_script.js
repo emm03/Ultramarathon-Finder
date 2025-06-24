@@ -1,10 +1,10 @@
 // ultra_map_script.js
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const map = L.map('ultra-map').setView([37.8, -96], 4);
+    const map = L.map('ultra-map').setView([37.8, -96], 4); // Center USA
 
+    // Restrict scroll zoom unless holding cmd/ctrl
     map.scrollWheelZoom.disable();
-
     map.getContainer().addEventListener('wheel', function (e) {
         if (e.ctrlKey || e.metaKey) {
             map.scrollWheelZoom.enable();
@@ -17,13 +17,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         attribution: '&copy; OpenStreetMap contributors',
     }).addTo(map);
 
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+        console.warn("⚠️ No token found in localStorage. User likely not logged in.");
+        return;
+    }
+
     try {
         const res = await fetch('/api/strava/ultras', {
             headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('token')
+                'Authorization': `Bearer ${token}`
             }
         });
+
+        if (!res.ok) {
+            throw new Error(`Server responded with status ${res.status}`);
+        }
+
         const data = await res.json();
+
         if (!Array.isArray(data)) throw new Error('Invalid data format from backend');
 
         let totalDistance = 0;
@@ -47,33 +60,33 @@ document.addEventListener('DOMContentLoaded', async () => {
             totalDistance += parseFloat(miles);
             longestRun = Math.max(longestRun, parseFloat(miles));
 
-            if (location_country) locations.add(location_country + (location_state ? `, ${location_state}` : ''));
+            if (location_country) {
+                locations.add(location_country + (location_state ? `, ${location_state}` : ''));
+            }
 
-            // Default icon
             const marker = L.marker([
                 activity.start_latlng?.[0] || 37.773972,
                 activity.start_latlng?.[1] || -122.431297
             ]).addTo(map);
 
             const popupContent = `
-          <strong>${name}</strong><br/>
-          📏 ${miles} miles<br/>
-          🕒 ${(moving_time / 3600).toFixed(2)} hrs<br/>
-          ⛰️ Elevation: ${total_elevation_gain || 0} m<br/>
-          📍 ${location_state || 'Unknown'}, ${location_country || ''}<br/>
-          📅 ${new Date(start_date).toLocaleDateString()}<br/>
-          <a href="https://www.strava.com/activities/${id}" target="_blank">View on Strava</a>
-        `;
+                <strong>${name}</strong><br/>
+                📏 ${miles} miles<br/>
+                🕒 ${(moving_time / 3600).toFixed(2)} hrs<br/>
+                ⛰️ Elevation: ${total_elevation_gain || 0} m<br/>
+                📍 ${location_state || 'Unknown'}, ${location_country || ''}<br/>
+                📅 ${new Date(start_date).toLocaleDateString()}<br/>
+                <a href="https://www.strava.com/activities/${id}" target="_blank">View on Strava</a>
+            `;
             marker.bindPopup(popupContent);
         });
 
-        // Update summary stats
         document.getElementById('ultra-count').textContent = data.length;
         document.getElementById('ultra-distance').textContent = totalDistance.toFixed(2) + ' mi';
         document.getElementById('longest-run').textContent = longestRun.toFixed(2) + ' mi';
         document.getElementById('unique-locations').textContent = locations.size;
 
     } catch (err) {
-        console.error('Failed to load ultra data:', err);
+        console.error('❌ Failed to load ultra data:', err.message || err);
     }
 });
