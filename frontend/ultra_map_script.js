@@ -1,7 +1,17 @@
 // ultra_map_script.js
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const map = L.map('ultra-map').setView([37.773972, -122.431297], 5); // Default center: California
+    const map = L.map('ultra-map').setView([37.8, -96], 4);
+
+    map.scrollWheelZoom.disable();
+
+    map.getContainer().addEventListener('wheel', function (e) {
+        if (e.ctrlKey || e.metaKey) {
+            map.scrollWheelZoom.enable();
+        } else {
+            map.scrollWheelZoom.disable();
+        }
+    });
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors',
