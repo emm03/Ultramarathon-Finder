@@ -134,30 +134,24 @@ main.category-container {
     position: relative;
 }
 
-/* Account layout */
-.auth-tab .auth-dropdown {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
+/* Wrapper for consistent dropdown hover */
+.auth-dropdown {
     position: relative;
+    display: inline-block;
 }
 
-.auth-tab .auth-dropdown span {
-    font-weight: bold;
-    color: white;
-    margin-left: 0.5rem;
-}
-
-.auth-tab .auth-dropdown .profile-icon {
+/* Profile image inside dropdown */
+.auth-dropdown .profile-icon {
     width: 36px;
     height: 36px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid white;
+    cursor: pointer;
 }
 
-/* Dropdown Menu */
-.auth-tab .auth-dropdown .dropdown-content {
+/* Dropdown content */
+.auth-dropdown .dropdown-content {
     position: absolute;
     top: 40px;
     right: 0;
@@ -169,22 +163,23 @@ main.category-container {
     display: none;
     min-width: 160px;
     z-index: 1001;
+    pointer-events: auto;
 }
 
-/* ✅ FIX: Keep dropdown open on hover */
-.auth-tab .auth-dropdown:hover .dropdown-content {
+/* Keep dropdown visible on hover of wrapper */
+.auth-dropdown:hover .dropdown-content {
     display: block;
 }
 
 /* Dropdown links */
-.auth-tab .auth-dropdown .dropdown-content a {
+.auth-dropdown .dropdown-content a {
     display: block;
     padding: 10px;
     text-decoration: none;
     color: #333;
 }
 
-.auth-tab .auth-dropdown .dropdown-content a:hover {
+.auth-dropdown .dropdown-content a:hover {
     background-color: #f0f0f0;
 }
 
