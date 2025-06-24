@@ -187,8 +187,9 @@ main.category-container {
     color: #333;
 }
 
-.auth-dropdown .dropdown-content a:hover {
-    background-color: white;
+.auth-dropdown .dropdown-content a:hover,
+.account-dropdown .dropdown-content a:hover {
+    background-color: #f0f0f0 !important;
 }
 
 /* =================== Account Dropdown Styling =================== */
