@@ -189,6 +189,12 @@ main.category-container {
     background-color: #f0f0f0;
 }
 
+/* Fix for dropdown disappearing on hover */
+.account-dropdown:hover .dropdown-content,
+.dropdown-content:hover {
+    display: block;
+}
+
 /* Account Actions */
 .account-actions {
     margin-top: 20px;
