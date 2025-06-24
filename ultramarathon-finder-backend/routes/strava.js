@@ -169,7 +169,7 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
 
 // -------------------- Fetch Ultra-Distance Activities --------------------
 // GET /api/strava/ultras
-router.get('/ultras', authenticateToken, async (req, res) => {
+router.get('/api/strava/ultras', authenticateToken, async (req, res) => {
     const accessToken = req.user?.stravaAccessToken;
 
     if (!accessToken) {
