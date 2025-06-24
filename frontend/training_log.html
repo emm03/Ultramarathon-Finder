@@ -74,7 +74,7 @@
 
     <script>
         // Show Ultra Map button only if user is logged in + connected to Strava
-        async function checkStravaConnection() {
+        document.addEventListener('DOMContentLoaded', async () => {
             try {
                 const res = await fetch('/api/account', {
                     headers: {
@@ -83,15 +83,15 @@
                 });
 
                 const data = await res.json();
+                console.log("🧪 /api/account result:", data);
+
                 if (res.ok && data.user && data.user.stravaAccessToken) {
                     document.getElementById('ultra-map-button').style.display = 'block';
                 }
             } catch (err) {
                 console.error('Error checking Strava connection:', err);
             }
-        }
-
-        checkStravaConnection();
+        });
     </script>
 </body>
 
