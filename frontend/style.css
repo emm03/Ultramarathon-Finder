@@ -171,9 +171,7 @@ main.category-container {
     z-index: 1001;
 }
 
-/* Keep dropdown visible when hovering over the tab or the dropdown itself */
-.auth-tab:hover .dropdown-content,
-.auth-tab .dropdown-content:hover {
+.auth-dropdown:hover .dropdown-content {
     display: block;
 }
 
