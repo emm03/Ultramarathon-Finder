@@ -168,15 +168,10 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
 });
 
 // -------------------- Fetch Ultra-Distance Activities --------------------
-// GET /api/strava/ultras
-router.get('/api/strava/ultras', authenticateToken, async (req, res) => {
-    const accessToken = req.user?.stravaAccessToken;
-
-    if (!accessToken) {
-        return res.status(401).json({ error: 'Strava access token not found' });
-    }
-
+router.get('/api/strava/ultras', requireUser, async (req, res) => {
     try {
+        const accessToken = await getValidAccessToken(req.user);
+
         let page = 1;
         const allActivities = [];
 
