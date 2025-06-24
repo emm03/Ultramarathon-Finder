@@ -269,6 +269,12 @@ main.category-container {
     display: block;
 }
 
+.auth-dropdown .dropdown-content,
+.account-dropdown .dropdown-content {
+    background-color: white !important;
+    color: black !important;
+}
+
 /* Account Actions */
 .account-actions {
     margin-top: 20px;
