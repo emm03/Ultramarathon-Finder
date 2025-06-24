@@ -47,18 +47,24 @@ document.addEventListener('DOMContentLoaded', async () => {
                 location_country,
                 location_state,
                 id,
-                total_elevation_gain
+                total_elevation_gain,
+                start_latlng
             } = activity;
 
             const miles = (distance / 1609.34).toFixed(2);
             totalDistance += parseFloat(miles);
             longestRun = Math.max(longestRun, parseFloat(miles));
 
-            if (location_country) locations.add(location_country + (location_state ? `, ${location_state}` : ''));
+            // ✅ Use rounded lat/lng as unique location key
+            if (start_latlng && start_latlng.length === 2) {
+                const roundedLat = start_latlng[0].toFixed(2);
+                const roundedLng = start_latlng[1].toFixed(2);
+                locations.add(`${roundedLat},${roundedLng}`);
+            }
 
             const marker = L.marker([
-                activity.start_latlng?.[0] || 37.773972,
-                activity.start_latlng?.[1] || -122.431297
+                start_latlng?.[0] || 37.773972,
+                start_latlng?.[1] || -122.431297
             ]).addTo(map);
 
             const popupContent = `
