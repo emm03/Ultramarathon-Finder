@@ -1,4 +1,3 @@
-<!-- ultra_map.html -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,51 +8,76 @@
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="alanai_chatbot/chat-widget.css" />
+    <link rel="icon" href="ultra_favicon.ico" type="image/x-icon" />
 </head>
 
-<body>
-    <header class="sticky-header">
-        <div class="header-inner">
-            <div class="header-left">
-                <img src="ultra.png" alt="Ultramarathon Connect Logo" class="logo" />
-                <span class="site-title">Ultramarathon Connect</span>
-                <button class="menu-toggle"
-                    onclick="document.querySelector('.menu').classList.toggle('show')">☰</button>
+<body class="forum-page">
+    <header class="sticky-header dual-row-header">
+        <div class="header-top-row">
+            <div class="mobile-header-container">
+                <div class="header-left">
+                    <img src="ultra.png" alt="Ultramarathon Connect Logo" class="logo" />
+                    <span class="site-title">UltramarathonConnect</span>
+                </div>
+                <button class="menu-toggle">☰</button>
             </div>
+            <div id="account-tab" class="auth-tab mobile-account-tab"></div>
+        </div>
+
+        <div class="header-bottom-row">
             <nav class="header-right">
                 <ul class="menu">
                     <li><a href="index.html">Home</a></li>
                     <li><a href="race_directory.html">Race Directory</a></li>
                     <li><a href="forum.html">Runner Community</a></li>
-                    <li><a href="training_log.html">Training Log</a></li>
-                    <li><a href="ultra_map.html" class="active">My Ultra Map</a></li>
-                    <li id="account-tab"><a href="account.html">Login</a></li>
+                    <li><a href="articles.html">Articles</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <main class="ultra-map-container">
-        <section class="summary-stats">
-            <h1>My Ultra Map</h1>
-            <p>Every run over 26 miles — visualized.</p>
-            <div class="stats-grid">
-                <div class="stat-box"><strong>Total Ultra Runs:</strong> <span id="ultra-count">0</span></div>
-                <div class="stat-box"><strong>Total Distance:</strong> <span id="ultra-distance">0 mi</span></div>
-                <div class="stat-box">
-                    <strongLongest Run:</strong> <span id="longest-run">0 mi</span>
-                </div>
-                <div class="stat-box"><strong>Unique Locations:</strong> <span id="unique-locations">0</span></div>
-            </div>
-        </section>
+    <main class="training-container" style="padding-top: 140px;">
+        <h2 class="section-title">My Ultra Map</h2>
+        <p style="text-align: center; margin-bottom: 1rem;">Every run over 26 miles — visualized.</p>
 
-        <section id="ultra-map" style="height: 600px; width: 100%; margin-top: 20px;"></section>
+        <div class="map-summary" style="text-align: center; margin-bottom: 1rem;">
+            <strong>Total Ultra Runs:</strong> <span id="ultra-count">0</span><br />
+            <strong>Total Distance:</strong> <span id="ultra-distance">0 mi</span><br />
+            <strong>Longest Run:</strong> <span id="longest-run">0 mi</span><br />
+            <strong>Unique Locations:</strong> <span id="unique-locations">0</span>
+        </div>
+
+        <div id="ultra-map" style="height: 600px; width: 100%; border: 2px solid #ccc; border-radius: 10px;"></div>
     </main>
 
+    <!-- Alan Chat Widget -->
+    <div id="alan-bubble">💬</div>
+    <div id="alan-window">
+        <div id="alan-messages"></div>
+        <form id="alan-form">
+            <input id="alan-input" type="text" placeholder="Ask Alan about races..." />
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-links">
+            <a href="contact.html">Contact Us</a> |
+            <a href="privacy.html">Privacy Policy</a> |
+            <a href="termsofservice.html">Terms of Service</a> |
+            <a href="faq.html">FAQ</a> |
+            <span>Email: <a href="mailto:ultramarathonconnect@gmail.com">ultramarathonconnect@gmail.com</a></span>
+        </div>
+        <p class="footer-copy">&copy; 2025 Ultramarathon Connect. All rights reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="/forum/inject_account_dropdown.js"></script>
     <script src="ultra_map_script.js"></script>
-    <script src="alanai_chatbot/chat-widget.js"></script>
+    <script src="index_script.js"></script>
+    <script src="alanai_chatbot/alan.js"></script>
+    <script src="forum/inject_account_dropdown.js"></script>
 </body>
 
 </html>
