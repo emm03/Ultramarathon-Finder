@@ -242,7 +242,7 @@ main.category-container {
 }
 
 .account-dropdown .dropdown-content a:hover {
-    background-color: #f0f0f0;
+    background-color: white !important;
 }
 
 /* Hover dropdown on desktop */
