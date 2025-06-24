@@ -7,6 +7,8 @@
     <title>My Ultra Map - Ultramarathon Connect</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
     <link rel="stylesheet" href="alanai_chatbot/chat-widget.css" />
     <link rel="icon" href="ultra_favicon.ico" type="image/x-icon" />
 </head>
@@ -36,18 +38,22 @@
         </div>
     </header>
 
-    <main class="training-container" style="padding-top: 140px;">
-        <h2 class="section-title">My Ultra Map</h2>
-        <p style="text-align: center; margin-bottom: 1rem;">Every run over 26 miles — visualized.</p>
+    <main style="padding-top: 140px;">
+        <!-- 🧭 Hero Header Section -->
+        <section class="ultra-map-hero">
+            <div class="hero-content">
+                <h1>📍 My Ultra Map</h1>
+                <p>Every run over 26.2 miles — visualized across the globe.</p>
+            </div>
+            <div class="ultra-stats-card">
+                <p><strong>Total Ultra Runs:</strong> <span id="ultra-count">0</span></p>
+                <p><strong>Total Distance:</strong> <span id="ultra-distance">0 mi</span></p>
+                <p><strong>Longest Run:</strong> <span id="longest-run">0 mi</span></p>
+                <p><strong>Unique Locations:</strong> <span id="unique-locations">0</span></p>
+            </div>
+        </section>
 
-        <div class="map-summary" style="text-align: center; margin-bottom: 1rem;">
-            <strong>Total Ultra Runs:</strong> <span id="ultra-count">0</span><br />
-            <strong>Total Distance:</strong> <span id="ultra-distance">0 mi</span><br />
-            <strong>Longest Run:</strong> <span id="longest-run">0 mi</span><br />
-            <strong>Unique Locations:</strong> <span id="unique-locations">0</span>
-        </div>
-
-        <div id="ultra-map" style="height: 600px; width: 100%; border: 2px solid #ccc; border-radius: 10px;"></div>
+        <div id="ultra-map" style="height: 500px;"></div>
     </main>
 
     <!-- Alan Chat Widget -->
@@ -72,10 +78,9 @@
         <p class="footer-copy">&copy; 2025 Ultramarathon Connect. All rights reserved.</p>
     </footer>
 
-    <!-- Scripts -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script src="ultra_map_script.js"></script>
-    <script src="index_script.js"></script>
     <script src="alanai_chatbot/alan.js"></script>
     <script src="forum/inject_account_dropdown.js"></script>
 </body>
