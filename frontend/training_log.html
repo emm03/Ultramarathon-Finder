@@ -73,27 +73,25 @@
     <script src="forum/inject_account_dropdown.js"></script>
 
     <script>
-        // Show Ultra Map button only if user is logged in + connected to Strava
-        document.addEventListener('DOMContentLoaded', async () => {
+        async function checkStravaConnection() {
             try {
-                const res = await fetch('/api/account', {
+                const res = await fetch('https://ultramarathon-finder-backend.onrender.com/api/account', {
                     headers: {
                         Authorization: 'Bearer ' + localStorage.getItem('token'),
                     },
+                    credentials: 'include',
                 });
 
                 const data = await res.json();
-                console.log("✅ Account check:", data);
-
-                // ✅ Only check data.user + access token
                 if (data.user && data.user.stravaAccessToken) {
-                    const ultraMapButton = document.getElementById('ultra-map-button');
-                    if (ultraMapButton) ultraMapButton.style.display = 'block';
+                    document.getElementById('ultra-map-button').style.display = 'block';
                 }
             } catch (err) {
                 console.error('Error checking Strava connection:', err);
             }
-        });
+        }
+
+        checkStravaConnection();
     </script>
 
 </body>
