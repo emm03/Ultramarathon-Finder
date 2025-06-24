@@ -135,20 +135,20 @@ main.category-container {
 }
 
 /* Account layout */
-.auth-tab .account-dropdown {
+.auth-tab .auth-dropdown {
     display: flex;
     align-items: center;
     cursor: pointer;
     position: relative;
 }
 
-.auth-tab .account-dropdown span {
+.auth-tab .auth-dropdown span {
     font-weight: bold;
     color: white;
     margin-left: 0.5rem;
 }
 
-.auth-tab .account-dropdown .profile-picture-nav {
+.auth-tab .auth-dropdown .profile-icon {
     width: 36px;
     height: 36px;
     border-radius: 50%;
@@ -156,8 +156,8 @@ main.category-container {
     border: 2px solid white;
 }
 
-/* Dropdown Menu (hidden by default) */
-.auth-tab .dropdown-content {
+/* Dropdown Menu */
+.auth-tab .auth-dropdown .dropdown-content {
     position: absolute;
     top: 40px;
     right: 0;
@@ -171,26 +171,21 @@ main.category-container {
     z-index: 1001;
 }
 
-.auth-dropdown:hover .dropdown-content {
+/* ✅ FIX: Keep dropdown open on hover */
+.auth-tab .auth-dropdown:hover .dropdown-content {
     display: block;
 }
 
 /* Dropdown links */
-.auth-tab .dropdown-content a {
+.auth-tab .auth-dropdown .dropdown-content a {
     display: block;
     padding: 10px;
     text-decoration: none;
     color: #333;
 }
 
-.auth-tab .dropdown-content a:hover {
+.auth-tab .auth-dropdown .dropdown-content a:hover {
     background-color: #f0f0f0;
-}
-
-/* Fix for dropdown disappearing on hover */
-.account-dropdown:hover .dropdown-content,
-.dropdown-content:hover {
-    display: block;
 }
 
 /* Account Actions */
