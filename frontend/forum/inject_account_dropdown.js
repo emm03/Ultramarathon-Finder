@@ -7,8 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!tab || !token || !username) return;
 
     tab.innerHTML = `
-        <div class="account-dropdown">
-            <img src="${profilePic || '/images/default-profile.png'}" class="profile-picture-nav" alt="Profile" />
+        <div class="auth-dropdown">
+            <img src="${profilePic || '/images/default-profile.png'}" class="profile-icon" alt="Profile" />
             <span>${username}'s Account Info</span>
             <div class="dropdown-content">
                 <a href="/account.html">Profile</a>
