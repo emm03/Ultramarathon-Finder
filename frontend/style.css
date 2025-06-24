@@ -188,7 +188,7 @@ main.category-container {
 }
 
 .auth-dropdown .dropdown-content a:hover {
-    background-color: #f0f0f0;
+    background-color: white;
 }
 
 /* =================== Account Dropdown Styling =================== */
@@ -283,7 +283,7 @@ main.category-container {
 
 .auth-dropdown .dropdown-content a:hover,
 .account-dropdown .dropdown-content a:hover {
-    background-color: #f0f0f0 !important;
+    background-color: white !important;
 }
 
 /* Account Actions */
