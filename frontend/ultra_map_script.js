@@ -89,3 +89,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('❌ Failed to load ultra data:', err.message || err);
     }
 });
+
+// 🧠 Ask Alan for suggestions based on user's ultra stats
+function askAlanBasedOnMap() {
+    const count = document.getElementById('ultra-count').textContent;
+    const distance = document.getElementById('ultra-distance').textContent;
+    const longest = document.getElementById('longest-run').textContent;
+
+    const message = `Based on my ultra runs (${count} total, ${distance} in total, longest run was ${longest}), what races should I try next?`;
+
+    const alanInput = document.getElementById('alan-input');
+    const alanForm = document.getElementById('alan-form');
+
+    if (alanInput && alanForm) {
+        alanInput.value = message;
+        alanForm.dispatchEvent(new Event('submit'));
+    } else {
+        console.warn("⚠️ Alan input or form not found.");
+    }
+}
