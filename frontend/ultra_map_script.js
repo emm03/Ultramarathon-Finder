@@ -1,9 +1,8 @@
 // ultra_map_script.js
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const map = L.map('ultra-map').setView([37.8, -96], 4); // Center USA
+    const map = L.map('ultra-map').setView([37.8, -96], 4);
 
-    // Restrict scroll zoom unless holding cmd/ctrl
     map.scrollWheelZoom.disable();
     map.getContainer().addEventListener('wheel', function (e) {
         if (e.ctrlKey || e.metaKey) {
@@ -13,22 +12,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+    const token = localStorage.getItem('token');
+    if (!token) {
+        console.warn("⚠️ No token found. User not authenticated.");
+        return;
+    }
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors',
     }).addTo(map);
 
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-        console.warn("⚠️ No token found in localStorage. User likely not logged in.");
-        return;
-    }
-
     try {
         const res = await fetch('/api/strava/ultras', {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
+            headers: { Authorization: 'Bearer ' + token }
         });
 
         if (!res.ok) {
@@ -36,7 +32,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const data = await res.json();
-
         if (!Array.isArray(data)) throw new Error('Invalid data format from backend');
 
         let totalDistance = 0;
@@ -49,7 +44,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 distance,
                 moving_time,
                 start_date,
-                map: mapData,
                 location_country,
                 location_state,
                 id,
@@ -60,9 +54,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             totalDistance += parseFloat(miles);
             longestRun = Math.max(longestRun, parseFloat(miles));
 
-            if (location_country) {
-                locations.add(location_country + (location_state ? `, ${location_state}` : ''));
-            }
+            if (location_country) locations.add(location_country + (location_state ? `, ${location_state}` : ''));
 
             const marker = L.marker([
                 activity.start_latlng?.[0] || 37.773972,
@@ -81,6 +73,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             marker.bindPopup(popupContent);
         });
 
+        // Update summary stats
         document.getElementById('ultra-count').textContent = data.length;
         document.getElementById('ultra-distance').textContent = totalDistance.toFixed(2) + ' mi';
         document.getElementById('longest-run').textContent = longestRun.toFixed(2) + ' mi';
