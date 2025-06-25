@@ -1,3 +1,5 @@
+// backend/routes/alan.js
+
 import express from 'express';
 import dotenv from 'dotenv';
 import OpenAI from 'openai';
@@ -9,6 +11,27 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const memory = new Map(); // 🧠 Temporary session memory (sessionId → [history])
 
+// ✅ Store Ultra Map context for the session
+router.post('/context', (req, res) => {
+    const { sessionId, context } = req.body;
+    if (!sessionId || !context) {
+        return res.status(400).json({ error: 'Missing sessionId or context' });
+    }
+
+    const userMemory = memory.get(sessionId) || [];
+    const contextSummary = `
+This user has run ${context.count} ultramarathons, totaling ${context.distance}. 
+Their longest run is ${context.longest}, across ${context.unique} unique locations.
+`;
+
+    userMemory.unshift({ role: 'system', content: contextSummary });
+    if (userMemory.length > 10) userMemory.pop();
+    memory.set(sessionId, userMemory);
+
+    res.json({ success: true });
+});
+
+// 💬 Main Alan chat route
 router.post('/', async (req, res) => {
     try {
         const { message, sessionId } = req.body;
