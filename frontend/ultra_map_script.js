@@ -92,15 +92,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // 🧠 Ask Alan for suggestions based on user's ultra stats
 function askAlanBasedOnMap() {
-    const count = document.getElementById('ultra-count').textContent;
-    const distance = document.getElementById('ultra-distance').textContent;
-    const longest = document.getElementById('longest-run').textContent;
+    const bubble = document.getElementById('alan-bubble');
+    const windowBox = document.getElementById('alan-window');
 
-    const message = `Based on my ultra runs (${count} total, ${distance} in total, longest run was ${longest}), what races should I try next?`;
-
-    if (window.AlanAI && typeof window.AlanAI.sendMessage === "function") {
-        window.AlanAI.sendMessage(message);
-    } else {
-        console.warn("Alan AI not available.");
+    if (bubble && windowBox && !windowBox.classList.contains('open')) {
+        bubble.click();
     }
 }
