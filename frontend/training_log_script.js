@@ -116,7 +116,7 @@ async function fetchActivities() {
                 totalDistance += act.distance;
                 totalTime += act.elapsed_time;
 
-                const allPhotos = (act.photos || []).filter(url => url.includes('cloudfront') && !url.includes('placeholder'));
+                const allPhotos = [...new Set((act.photos || []).filter(url => url.includes('cloudfront') && !url.includes('placeholder')))];
                 const carousel = allPhotos.map(photo => `<img src="${photo}" class="carousel-photo" alt="Activity photo" />`).join('');
 
                 const mediaContent = `
