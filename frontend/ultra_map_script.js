@@ -44,8 +44,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 distance,
                 moving_time,
                 start_date,
-                location_country,
-                location_state,
                 id,
                 total_elevation_gain,
                 start_latlng
@@ -55,7 +53,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             totalDistance += parseFloat(miles);
             longestRun = Math.max(longestRun, parseFloat(miles));
 
-            // ✅ Use rounded lat/lng as unique location key
             if (start_latlng && start_latlng.length === 2) {
                 const roundedLat = start_latlng[0].toFixed(2);
                 const roundedLng = start_latlng[1].toFixed(2);
@@ -72,27 +69,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                 📏 ${miles} miles<br/>
                 🕒 ${(moving_time / 3600).toFixed(2)} hrs<br/>
                 ⛰️ Elevation: ${total_elevation_gain || 0} m<br/>
-                📍 ${location_state || 'Unknown'}, ${location_country || ''}<br/>
                 📅 ${new Date(start_date).toLocaleDateString()}<br/>
                 <a href="https://www.strava.com/activities/${id}" target="_blank">View on Strava</a>
             `;
             marker.bindPopup(popupContent);
         });
 
-        // Update summary stats
         document.getElementById('ultra-count').textContent = data.length;
         document.getElementById('ultra-distance').textContent = totalDistance.toFixed(2) + ' mi';
         document.getElementById('longest-run').textContent = longestRun.toFixed(2) + ' mi';
         document.getElementById('unique-locations').textContent = locations.size;
 
-        // ✅ Save ultra stats globally for Alan AI
         window.alanUltraData = {
             count: data.length,
             distance: totalDistance.toFixed(2),
             longest: longestRun.toFixed(2)
         };
 
-        // Draw timeline and visited states
         drawUltraTimelineChart(data);
         drawVisitedStatesOverlay(map, data);
 
@@ -101,17 +94,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-// 🧠 Ask Alan for suggestions based on user's ultra stats
+// Ask Alan suggestion trigger
 function askAlanBasedOnMap() {
     const bubble = document.getElementById('alan-bubble');
     const windowBox = document.getElementById('alan-window');
-
     if (bubble && windowBox && !windowBox.classList.contains('open')) {
         bubble.click();
     }
 }
 
-// 📈 Draw Race Completion Timeline Chart
+// Timeline Chart
 function drawUltraTimelineChart(activities) {
     const ultras = activities
         .filter(act => act.distance / 1609.34 >= 26.2)
@@ -138,68 +130,49 @@ function drawUltraTimelineChart(activities) {
         options: {
             responsive: true,
             plugins: {
-                legend: {
-                    display: true,
-                    position: 'top'
-                }
+                legend: { display: true, position: 'top' }
             },
             scales: {
                 y: {
                     beginAtZero: false,
-                    title: {
-                        display: true,
-                        text: "Distance (miles)"
-                    }
+                    title: { display: true, text: "Distance (miles)" }
                 },
                 x: {
-                    title: {
-                        display: true,
-                        text: "Date"
-                    }
+                    title: { display: true, text: "Date" }
                 }
             }
         }
     });
 }
 
-// 🌎 Overlay visited states onto main map
+// Visited States via lat/lng
 function drawVisitedStatesOverlay(map, activities) {
-    const stateAbbrevToFull = {
-        AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California",
-        CO: "Colorado", CT: "Connecticut", DE: "Delaware", FL: "Florida", GA: "Georgia",
-        HI: "Hawaii", ID: "Idaho", IL: "Illinois", IN: "Indiana", IA: "Iowa",
-        KS: "Kansas", KY: "Kentucky", LA: "Louisiana", ME: "Maine", MD: "Maryland",
-        MA: "Massachusetts", MI: "Michigan", MN: "Minnesota", MS: "Mississippi", MO: "Missouri",
-        MT: "Montana", NE: "Nebraska", NV: "Nevada", NH: "New Hampshire", NJ: "New Jersey",
-        NM: "New Mexico", NY: "New York", NC: "North Carolina", ND: "North Dakota", OH: "Ohio",
-        OK: "Oklahoma", OR: "Oregon", PA: "Pennsylvania", RI: "Rhode Island", SC: "South Carolina",
-        SD: "South Dakota", TN: "Tennessee", TX: "Texas", UT: "Utah", VT: "Vermont",
-        VA: "Virginia", WA: "Washington", WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming",
-        DC: "District of Columbia"
-    };
-
     const visitedStates = new Set();
-
-    activities.forEach(act => {
-        console.log("🌍 FROM STRAVA:", act.location_country, act.location_state);
-        if (act.location_country === "United States" && act.location_state) {
-            const input = act.location_state.trim();
-            const full = stateAbbrevToFull[input] || input; // Handle both abbrev & full names
-            visitedStates.add(full.trim().toLowerCase());
-        }
-    });
-
-    console.log("✅ VISITED STATES (normalized):", [...visitedStates]);
 
     fetch("https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json")
         .then(res => res.json())
         .then(geoData => {
+            activities.forEach(act => {
+                const coords = act.start_latlng;
+                if (!coords || coords.length !== 2) return;
+
+                const lat = coords[0];
+                const lng = coords[1];
+
+                geoData.features.forEach(feature => {
+                    const polygon = feature.geometry;
+                    if (isPointInPolygon([lng, lat], polygon)) {
+                        visitedStates.add(feature.properties.name.toLowerCase());
+                    }
+                });
+            });
+
             const visitedCount = { count: 0 };
 
             L.geoJson(geoData, {
                 style: feature => {
-                    console.log("🗺️ CHECKING STATE:", feature.properties.name.trim().toLowerCase());
-                    const isVisited = visitedStates.has(feature.properties.name.trim().toLowerCase());
+                    const name = feature.properties.name.trim().toLowerCase();
+                    const isVisited = visitedStates.has(name);
                     if (isVisited) visitedCount.count += 1;
                     return {
                         fillColor: isVisited ? "#2ecc71" : "#f0f0f0",
@@ -218,4 +191,28 @@ function drawVisitedStatesOverlay(map, activities) {
         .catch(err => {
             console.error("❌ Failed to load state overlay:", err);
         });
+}
+
+// Point-in-Polygon helper
+function isPointInPolygon(point, geometry) {
+    if (geometry.type === "Polygon") {
+        return inside(point, geometry.coordinates[0]);
+    } else if (geometry.type === "MultiPolygon") {
+        return geometry.coordinates.some(polygon => inside(point, polygon[0]));
+    }
+    return false;
+}
+
+function inside(point, vs) {
+    const x = point[0], y = point[1];
+    let inside = false;
+    for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+        const xi = vs[i][0], yi = vs[i][1];
+        const xj = vs[j][0], yj = vs[j][1];
+
+        const intersect = ((yi > y) !== (yj > y)) &&
+            (x < ((xj - xi) * (y - yi)) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+    }
+    return inside;
 }
