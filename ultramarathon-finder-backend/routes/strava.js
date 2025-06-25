@@ -153,15 +153,10 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                     ? highResPrimary.split('?')[0]
                     : null;
 
-                const combinedPhotos = [...extraPhotos];
-                if (primary && !extraPhotos.includes(primary)) {
-                    combinedPhotos.unshift(primary);
-                }
-
                 return {
                     ...activity,
                     description,
-                    photos: combinedPhotos,
+                    photos: extraPhotos.length ? extraPhotos : (primary ? [primary] : []),
                     embed_token: fullActivity.embed_token || null,
                     username: req.user.username,
                     profile_picture: req.user.profilePicture || null
