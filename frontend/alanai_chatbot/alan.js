@@ -42,43 +42,29 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!hasInteracted && windowBox.classList.contains("open")) {
             hasInteracted = true;
 
-            const userMessage = "hello";
-            const typingEl = document.createElement("div");
-            typingEl.className = "alan-msg alan-typing";
-            typingEl.innerHTML = `<em>Alan is typing<span class="dots">...</span></em>`;
-            messages.appendChild(typingEl);
-            messages.scrollTop = messages.scrollHeight;
-
+            // 👇 Ultra Map context injection
             try {
-                const response = await fetch("https://ultramarathon-finder-backend.onrender.com/api/alan", {
+                const context = {
+                    count: document.getElementById('ultra-count')?.textContent,
+                    distance: document.getElementById('ultra-distance')?.textContent,
+                    longest: document.getElementById('longest-run')?.textContent,
+                    unique: document.getElementById('unique-locations')?.textContent
+                };
+
+                await fetch("https://ultramarathon-finder-backend.onrender.com/api/alan/context", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "x-session-id": sessionId
                     },
-                    body: JSON.stringify({ message: userMessage, sessionId })
+                    body: JSON.stringify({ context, sessionId })
                 });
-                const data = await response.json();
-                typingEl.remove();
-
-                const replies = data.reply.split("||");
-                replies.forEach(reply => {
-                    const clean = escapeHtml(reply.trim());
-                    const linked = convertLinks(clean);
-                    messages.innerHTML += `
-                        <div class="alan-msg alan-reply">
-                            <div class="alan-box">
-                                <strong>Alan:</strong><br>${linked}
-                            </div>
-                        </div>`;
-                });
-
-                messages.scrollTop = messages.scrollHeight;
-            } catch (error) {
-                typingEl.remove();
-                messages.innerHTML += `<div class="alan-msg alan-reply"><strong>Alan:</strong> Sorry, there was an error.</div>`;
-                messages.scrollTop = messages.scrollHeight;
+            } catch (e) {
+                console.warn("❌ Failed to inject ultra map context:", e);
             }
+
+            // 👇 Now show welcome
+            showWelcome();
         }
     });
 
@@ -93,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const userMessage = input.value.trim();
         if (!userMessage) return;
 
-        messages.innerHTML += `<div class="alan-msg user-msg"><strong>You:</strong> ${userMessage}</div>`;
+        messages.innerHTML += `<div class="alan-msg user-msg"><strong>You:</strong> ${escapeHtml(userMessage)}</div>`;
         input.value = "";
 
         const typingEl = document.createElement("div");

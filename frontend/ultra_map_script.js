@@ -85,6 +85,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('longest-run').textContent = longestRun.toFixed(2) + ' mi';
         document.getElementById('unique-locations').textContent = locations.size;
 
+        // ✅ Save ultra stats globally for Alan AI
+        window.alanUltraData = {
+            count: data.length,
+            distance: totalDistance.toFixed(2),
+            longest: longestRun.toFixed(2)
+        };
+
     } catch (err) {
         console.error('❌ Failed to load ultra data:', err.message || err);
     }
