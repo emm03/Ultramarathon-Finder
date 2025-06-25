@@ -129,6 +129,21 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                     headers: { Authorization: `Bearer ${accessToken}` }
                 });
 
+                let extraPhotos = [];
+
+                try {
+                    const photosRes = await axios.get(`https://www.strava.com/api/v3/activities/${activity.id}/photos`, {
+                        headers: { Authorization: `Bearer ${accessToken}` },
+                        params: { size: 2048 }
+                    });
+
+                    extraPhotos = (photosRes.data || [])
+                        .map(photo => photo.urls?.['2048'] || photo.urls?.['1000'] || photo.urls?.['600'])
+                        .filter(Boolean);
+                } catch (err) {
+                    console.warn(`⚠️ Couldn’t fetch additional photos for activity ${activity.id}`);
+                }
+
                 const fullActivity = fullActivityRes.data;
                 const description = fullActivity.description || '';
 
@@ -141,7 +156,7 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                 return {
                     ...activity,
                     description,
-                    photos: primary ? [primary] : [],
+                    photos: extraPhotos.length ? extraPhotos : (primary ? [primary] : []),
                     embed_token: fullActivity.embed_token || null,
                     username: req.user.username,
                     profile_picture: req.user.profilePicture || null
@@ -198,7 +213,6 @@ router.get('/api/strava/ultras', requireUser, async (req, res) => {
                 activity.type === 'Run' && activity.distance > 42195
         );
 
-        // ✅ Enrich with photos, username, and profile pic
         const enrichedUltras = await Promise.all(
             ultraRuns.map(async (activity) => {
                 try {
@@ -207,6 +221,21 @@ router.get('/api/strava/ultras', requireUser, async (req, res) => {
                     });
 
                     const full = fullRes.data;
+
+                    let extraPhotos = [];
+
+                    try {
+                        const photosRes = await axios.get(`https://www.strava.com/api/v3/activities/${activity.id}/photos`, {
+                            headers: { Authorization: `Bearer ${accessToken}` },
+                            params: { size: 2048 }
+                        });
+
+                        extraPhotos = (photosRes.data || [])
+                            .map(photo => photo.urls?.['2048'] || photo.urls?.['1000'] || photo.urls?.['600'])
+                            .filter(Boolean);
+                    } catch (err) {
+                        console.warn(`⚠️ Couldn’t fetch additional photos for activity ${activity.id}`);
+                    }
 
                     const primaryUrls = full.photos?.primary?.urls || {};
                     const highResPrimary = primaryUrls['1200'] || primaryUrls['600'] || primaryUrls['100'];
@@ -217,7 +246,7 @@ router.get('/api/strava/ultras', requireUser, async (req, res) => {
                     return {
                         ...activity,
                         description: full.description || '',
-                        photos: primary ? [primary] : [],
+                        photos: extraPhotos.length ? extraPhotos : (primary ? [primary] : []),
                         embed_token: full.embed_token || null,
                         username: req.user.username,
                         profile_picture: req.user.profilePicture || null
