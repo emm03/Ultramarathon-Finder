@@ -32,6 +32,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const data = await res.json();
+        
+        console.log("📸 Ultra Activities with Photos:", data);
+        data.forEach((act, i) => {
+            console.log(`📷 [${i}]`, act.name, act.photos);
+        });
+
         if (!Array.isArray(data)) throw new Error('Invalid data format from backend');
 
         let totalDistance = 0;
