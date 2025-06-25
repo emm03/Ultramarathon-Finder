@@ -188,6 +188,8 @@ function drawVisitedStatesOverlay(map, activities) {
         }
     });
 
+    console.log("✅ VISITED STATES (normalized):", [...visitedStates]);
+
     fetch("https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json")
         .then(res => res.json())
         .then(geoData => {
@@ -195,6 +197,7 @@ function drawVisitedStatesOverlay(map, activities) {
 
             L.geoJson(geoData, {
                 style: feature => {
+                    console.log("🗺️ CHECKING STATE:", feature.properties.name.trim().toLowerCase());
                     const isVisited = visitedStates.has(feature.properties.name.trim().toLowerCase());
                     if (isVisited) visitedCount.count += 1;
                     return {
