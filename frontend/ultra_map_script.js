@@ -184,7 +184,7 @@ function drawVisitedStatesOverlay(map, activities) {
         if (act.location_country === "United States" && act.location_state) {
             const input = act.location_state.trim();
             const full = stateAbbrevToFull[input] || input; // Handle both abbrev & full names
-            visitedStates.add(full);
+            visitedStates.add(full.toLowerCase());
         }
     });
 
@@ -195,7 +195,7 @@ function drawVisitedStatesOverlay(map, activities) {
 
             L.geoJson(geoData, {
                 style: feature => {
-                    const isVisited = visitedStates.has(feature.properties.name);
+                    const isVisited = visitedStates.has(feature.properties.name.toLowerCase());
                     if (isVisited) visitedCount.count += 1;
                     return {
                         fillColor: isVisited ? "#2ecc71" : "#f0f0f0",
