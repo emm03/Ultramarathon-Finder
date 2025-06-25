@@ -32,10 +32,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const data = await res.json();
-        
-        console.log("📸 Ultra Activities with Photos:", data);
-        data.forEach((act, i) => {
-            console.log(`📷 [${i}]`, act.name, act.photos);
+
+        // ✅ Render photo timeline
+        const activitiesWithPhotos = data.filter(act => Array.isArray(act.photos) && act.photos.length > 0);
+        console.log("📸 Ultra Activities with Photos:", activitiesWithPhotos);
+
+        const photoContainer = document.getElementById("photo-scroll-container");
+        activitiesWithPhotos.forEach((act, index) => {
+            act.photos.forEach((url, i) => {
+                const img = document.createElement("img");
+                img.src = url;
+                img.alt = `Ultra ${index + 1} Photo ${i + 1}`;
+                photoContainer.appendChild(img);
+                console.log(`📷 [${index}] ${act.name}`, act.photos);
+            });
         });
 
         if (!Array.isArray(data)) throw new Error('Invalid data format from backend');

@@ -3210,3 +3210,27 @@ main.article-content {
     margin: 0.25rem 0;
     font-size: 1.1rem;
 }
+
+/* 📸 Strava Photo Timeline */
+.photo-scroll {
+    display: flex;
+    overflow-x: auto;
+    gap: 12px;
+    padding: 10px;
+    scroll-behavior: smooth;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #f8f8f8;
+}
+
+.photo-scroll img {
+    height: 160px;
+    border-radius: 10px;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.photo-scroll img:hover {
+    transform: scale(1.05);
+    cursor: pointer;
+}
