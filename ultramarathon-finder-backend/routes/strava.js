@@ -167,7 +167,7 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
     }
 });
 
-// -------------------- Fetch Ultra-Distance Activities --------------------
+// -------------------- Fetch Ultra-Distance Activities with Photos --------------------
 router.get('/api/strava/ultras', requireUser, async (req, res) => {
     try {
         const accessToken = await getValidAccessToken(req.user);
@@ -198,7 +198,45 @@ router.get('/api/strava/ultras', requireUser, async (req, res) => {
                 activity.type === 'Run' && activity.distance > 42195
         );
 
-        res.json(ultraRuns);
+        // ✅ Enrich with photos, username, and profile pic
+        const enrichedUltras = await Promise.all(
+            ultraRuns.map(async (activity) => {
+                try {
+                    const fullRes = await axios.get(`https://www.strava.com/api/v3/activities/${activity.id}`, {
+                        headers: { Authorization: `Bearer ${accessToken}` }
+                    });
+
+                    const full = fullRes.data;
+
+                    const primaryUrls = full.photos?.primary?.urls || {};
+                    const highResPrimary = primaryUrls['1200'] || primaryUrls['600'] || primaryUrls['100'];
+                    const primary = (typeof highResPrimary === 'string' && !highResPrimary.includes('placeholder'))
+                        ? highResPrimary.split('?')[0]
+                        : null;
+
+                    return {
+                        ...activity,
+                        description: full.description || '',
+                        photos: primary ? [primary] : [],
+                        embed_token: full.embed_token || null,
+                        username: req.user.username,
+                        profile_picture: req.user.profilePicture || null
+                    };
+                } catch (err) {
+                    console.error(`⚠️ Error enriching ultra ${activity.id}:`, err.message);
+                    return {
+                        ...activity,
+                        description: '',
+                        photos: [],
+                        embed_token: null,
+                        username: req.user.username,
+                        profile_picture: req.user.profilePicture || null
+                    };
+                }
+            })
+        );
+
+        res.json(enrichedUltras);
     } catch (error) {
         console.error('❌ Error fetching ultra runs:', error.message);
         res.status(500).json({ error: 'Failed to fetch ultra runs' });
