@@ -92,9 +92,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             longest: longestRun.toFixed(2)
         };
 
-        // ➕ Draw the timeline chart
+        // Draw timeline and visited states
         drawUltraTimelineChart(data);
-        drawVisitedStatesMap(data);
+        drawVisitedStatesOverlay(map, data);
 
     } catch (err) {
         console.error('❌ Failed to load ultra data:', err.message || err);
@@ -162,27 +162,35 @@ function drawUltraTimelineChart(activities) {
     });
 }
 
-// 🌎 Draw Visited States Choropleth Map
-function drawVisitedStatesMap(activities) {
+// 🌎 Overlay visited states onto main map
+function drawVisitedStatesOverlay(map, activities) {
+    const stateAbbrevToFull = {
+        AL: "Alabama", AK: "Alaska", AZ: "Arizona", AR: "Arkansas", CA: "California",
+        CO: "Colorado", CT: "Connecticut", DE: "Delaware", FL: "Florida", GA: "Georgia",
+        HI: "Hawaii", ID: "Idaho", IL: "Illinois", IN: "Indiana", IA: "Iowa",
+        KS: "Kansas", KY: "Kentucky", LA: "Louisiana", ME: "Maine", MD: "Maryland",
+        MA: "Massachusetts", MI: "Michigan", MN: "Minnesota", MS: "Mississippi", MO: "Missouri",
+        MT: "Montana", NE: "Nebraska", NV: "Nevada", NH: "New Hampshire", NJ: "New Jersey",
+        NM: "New Mexico", NY: "New York", NC: "North Carolina", ND: "North Dakota", OH: "Ohio",
+        OK: "Oklahoma", OR: "Oregon", PA: "Pennsylvania", RI: "Rhode Island", SC: "South Carolina",
+        SD: "South Dakota", TN: "Tennessee", TX: "Texas", UT: "Utah", VT: "Vermont",
+        VA: "Virginia", WA: "Washington", WV: "West Virginia", WI: "Wisconsin", WY: "Wyoming",
+        DC: "District of Columbia"
+    };
+
     const visitedStates = new Set();
 
     activities.forEach(act => {
         if (act.location_country === "United States" && act.location_state) {
-            visitedStates.add(act.location_state.trim());
+            const input = act.location_state.trim();
+            const full = stateAbbrevToFull[input] || input; // Handle both abbrev & full names
+            visitedStates.add(full);
         }
     });
 
     fetch("https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json")
         .then(res => res.json())
         .then(geoData => {
-            const stateMap = L.map('state-map').setView([37.8, -96], 4);
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors',
-                maxZoom: 6,
-                minZoom: 3
-            }).addTo(stateMap);
-
             const visitedCount = { count: 0 };
 
             L.geoJson(geoData, {
@@ -190,21 +198,20 @@ function drawVisitedStatesMap(activities) {
                     const isVisited = visitedStates.has(feature.properties.name);
                     if (isVisited) visitedCount.count += 1;
                     return {
-                        fillColor: isVisited ? "#2ecc71" : "#e0e0e0",
+                        fillColor: isVisited ? "#2ecc71" : "#f0f0f0",
                         weight: 1,
-                        opacity: 1,
-                        color: 'white',
+                        color: "white",
                         fillOpacity: 0.7
                     };
                 },
                 onEachFeature: (feature, layer) => {
                     layer.bindPopup(`<strong>${feature.properties.name}</strong>`);
                 }
-            }).addTo(stateMap);
+            }).addTo(map);
 
-            document.getElementById('visited-states-count').textContent = visitedCount.count;
+            document.getElementById("visited-states-count").textContent = visitedCount.count;
         })
         .catch(err => {
-            console.error("❌ Failed to load US states GeoJSON:", err);
+            console.error("❌ Failed to load state overlay:", err);
         });
 }
