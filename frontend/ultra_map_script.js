@@ -92,6 +92,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             longest: longestRun.toFixed(2)
         };
 
+        // ➕ Draw the timeline chart
+        drawUltraTimelineChart(data);
+
     } catch (err) {
         console.error('❌ Failed to load ultra data:', err.message || err);
     }
@@ -105,4 +108,55 @@ function askAlanBasedOnMap() {
     if (bubble && windowBox && !windowBox.classList.contains('open')) {
         bubble.click();
     }
+}
+
+// 📈 Draw Race Completion Timeline Chart
+function drawUltraTimelineChart(activities) {
+    const ultras = activities
+        .filter(act => act.distance / 1609.34 >= 26.2)
+        .sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+
+    const labels = ultras.map(act => new Date(act.start_date).toLocaleDateString());
+    const data = ultras.map(act => parseFloat((act.distance / 1609.34).toFixed(2)));
+
+    const ctx = document.getElementById("ultraTimelineChart").getContext("2d");
+
+    new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Ultra Distance (miles)",
+                data: data,
+                fill: false,
+                borderColor: "green",
+                tension: 0.3,
+                pointRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: "Distance (miles)"
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: "Date"
+                    }
+                }
+            }
+        }
+    });
 }
