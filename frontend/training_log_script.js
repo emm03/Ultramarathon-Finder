@@ -116,7 +116,8 @@ async function fetchActivities() {
                 totalDistance += act.distance;
                 totalTime += act.elapsed_time;
 
-                const primaryPhoto = (act.photos || []).find(url => !url.includes('placeholder') && url.includes('cloudfront')) || null;
+                const allPhotos = (act.photos || []).filter(url => url.includes('cloudfront') && !url.includes('placeholder'));
+                const carousel = allPhotos.map(photo => `<img src="${photo}" class="carousel-photo" alt="Activity photo" />`).join('');
 
                 const mediaContent = `
                     ${act.embed_token ? `
@@ -125,10 +126,7 @@ async function fetchActivities() {
                                 src="https://www.strava.com/activities/${act.id}/embed/${act.embed_token}">
                             </iframe>
                         </div>` : ''}
-                    ${primaryPhoto ? `
-                        <div class="photo-carousel">
-                            <img src="${primaryPhoto}" class="carousel-photo" alt="Activity photo" />
-                        </div>` : ''}
+                    ${carousel ? `<div class="photo-carousel">${carousel}</div>` : ''}
                     <div class="strava-cta" style="margin-top: 5px;">
                         <a href="https://www.strava.com/activities/${act.id}" target="_blank">Want to see all your media? View this activity on Strava</a>
                     </div>
