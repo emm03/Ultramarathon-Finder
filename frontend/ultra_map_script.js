@@ -181,6 +181,7 @@ function drawVisitedStatesOverlay(map, activities) {
     const visitedStates = new Set();
 
     activities.forEach(act => {
+        console.log("🌍 FROM STRAVA:", act.location_country, act.location_state);
         if (act.location_country === "United States" && act.location_state) {
             const input = act.location_state.trim();
             const full = stateAbbrevToFull[input] || input; // Handle both abbrev & full names
