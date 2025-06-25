@@ -156,7 +156,7 @@ router.get('/api/strava/activities', requireUser, async (req, res) => {
                 return {
                     ...activity,
                     description,
-                    photos: extraPhotos.length ? extraPhotos : (primary ? [primary] : []),
+                    photos: [...(primary ? [primary] : []), ...extraPhotos],
                     embed_token: fullActivity.embed_token || null,
                     username: req.user.username,
                     profile_picture: req.user.profilePicture || null
