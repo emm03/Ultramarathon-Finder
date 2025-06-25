@@ -94,6 +94,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // ➕ Draw the timeline chart
         drawUltraTimelineChart(data);
+        drawVisitedStatesMap(data);
 
     } catch (err) {
         console.error('❌ Failed to load ultra data:', err.message || err);
@@ -159,4 +160,51 @@ function drawUltraTimelineChart(activities) {
             }
         }
     });
+}
+
+// 🌎 Draw Visited States Choropleth Map
+function drawVisitedStatesMap(activities) {
+    const visitedStates = new Set();
+
+    activities.forEach(act => {
+        if (act.location_country === "United States" && act.location_state) {
+            visitedStates.add(act.location_state.trim());
+        }
+    });
+
+    fetch("https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json")
+        .then(res => res.json())
+        .then(geoData => {
+            const stateMap = L.map('state-map').setView([37.8, -96], 4);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap contributors',
+                maxZoom: 6,
+                minZoom: 3
+            }).addTo(stateMap);
+
+            const visitedCount = { count: 0 };
+
+            L.geoJson(geoData, {
+                style: feature => {
+                    const isVisited = visitedStates.has(feature.properties.name);
+                    if (isVisited) visitedCount.count += 1;
+                    return {
+                        fillColor: isVisited ? "#2ecc71" : "#e0e0e0",
+                        weight: 1,
+                        opacity: 1,
+                        color: 'white',
+                        fillOpacity: 0.7
+                    };
+                },
+                onEachFeature: (feature, layer) => {
+                    layer.bindPopup(`<strong>${feature.properties.name}</strong>`);
+                }
+            }).addTo(stateMap);
+
+            document.getElementById('visited-states-count').textContent = visitedCount.count;
+        })
+        .catch(err => {
+            console.error("❌ Failed to load US states GeoJSON:", err);
+        });
 }
