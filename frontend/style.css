@@ -312,18 +312,15 @@ main.category-container {
 .orange-btn {
     display: inline-block;
     margin: 10px auto;
-    /* Adjusted for spacing */
-    padding: 10px 20px;
-    background-color: #f7931e;
-    /* Orange button color */
-    color: #fff;
-    border-radius: 5px;
+    padding: 10px 20px !important;
+    background-color: #f7931e !important;
+    color: #fff !important;
+    border-radius: 5px !important;
     text-decoration: none;
     font-weight: bold;
-    border: none;
-    font-size: 1rem;
-    cursor: pointer;
-    /* Pointer cursor for buttons */
+    border: none !important;
+    font-size: 1rem !important;
+    cursor: pointer !important;
     text-align: center;
 }
 
