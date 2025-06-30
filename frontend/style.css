@@ -445,9 +445,9 @@ button:hover {
     /* Subtle shadow */
 }
 
-.account-container .profile-pic {
-    width: 150px;
-    height: 150px;
+.account-container .profile-container .profile-pic {
+    width: 150px !important;
+    height: 150px !important;
 }
 
 /* Desktop menu */
