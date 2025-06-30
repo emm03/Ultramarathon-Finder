@@ -43,10 +43,16 @@
             </form>
 
             <form id="profile-form">
+                <label for="username">Change Username:</label>
                 <input type="text" id="username" name="username" placeholder="Username" required />
+
+                <label for="email">Change Email:</label>
                 <input type="email" id="email" name="email" placeholder="Email" required />
+
                 <button type="submit" class="orange-btn">Save Changes</button>
             </form>
+
+            <button id="reset-password-btn" class="orange-btn" style="margin-top: 1rem;">Reset Password</button>
 
             <p id="success-message" class="success-message" style="display: none;">Profile updated successfully!</p>
             <p id="error-message" class="error-message" style="display: none;">Error updating profile.</p>
