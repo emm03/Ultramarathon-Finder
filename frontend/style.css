@@ -2979,6 +2979,8 @@ main.article-content {
     font-size: 1rem;
     height: 50px;
     box-sizing: border-box;
+    vertical-align: middle;
+    margin: 0;
 }
 
 .lock-note {
