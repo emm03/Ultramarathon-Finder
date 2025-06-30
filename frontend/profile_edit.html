@@ -40,6 +40,11 @@
             <h2>Edit Your Profile</h2>
             <img id="profile-pic" src="images/default-profile.png" alt="Profile Picture" class="profile-img" />
 
+            <div class="upload-wrapper">
+                <input type="file" id="profile-picture" accept="image/*" />
+                <button type="button" class="orange-btn" onclick="uploadProfilePicture()">Upload New Picture</button>
+            </div>            
+
             <form id="profile-form">
                 <label for="username">Change Username:</label>
                 <input type="text" id="username" name="username" placeholder="Username" required />

@@ -76,11 +76,36 @@
     </footer>
 
     <script>
+        function loadUserInfo(token) {
+            fetch("https://ultramarathon-finder-backend.onrender.com/api/auth/account", {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+            })
+                .then(res => res.json())
+                .then(({ user }) => {
+                    if (!user) return;
+
+                    document.getElementById("username").textContent = `Welcome, ${user.username}!`;
+                    document.getElementById("email").innerHTML = `<strong>Email:</strong> ${user.email}`;
+                    document.getElementById("profile-pic").src =
+                        user.profilePicture || "images/default-profile.png";
+
+                    localStorage.setItem("profilePicture", user.profilePicture || "images/default-profile.png");
+                })
+                .catch(err => {
+                    console.error("Error loading user info:", err);
+                });
+        }
+
         const token = localStorage.getItem("token");
         if (token) {
-            loadUserInfo(token); // This is the new centralized function
+            loadUserInfo(token);
         }
     </script>
+
     <script src="index_script.js"></script>
     <script src="alanai_chatbot/alan.js"></script>
 </body>
