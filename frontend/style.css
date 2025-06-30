@@ -2952,13 +2952,13 @@ main.article-content {
 }
 
 .training-log-teaser {
-    background-color: #fff7ed;
+    background-color: #e8f5e9;
     text-align: center;
     padding: 2rem;
     margin: 3rem auto 2rem;
     border-radius: 12px;
     max-width: 800px;
-    border-left: 6px solid #ff7a00;
+    border: 2px solid #388e3c;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
@@ -2972,11 +2972,8 @@ main.article-content {
     margin: 0.5rem 0;
 }
 
-.training-log-teaser .teaser-actions {
-    margin-top: 1rem;
-}
-
-.training-log-teaser .teaser-actions a {
+.training-log-teaser .teaser-actions a,
+.training-log-teaser .teaser-actions button {
     margin: 0 0.5rem;
 }
 
