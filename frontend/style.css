@@ -2977,6 +2977,12 @@ main.article-content {
     margin: 0 0.5rem;
 }
 
+.teaser-buttons button,
+.teaser-buttons a {
+    display: inline-block;
+    width: auto;
+}
+
 .lock-note {
     margin-top: 0.8rem;
     color: #666;
