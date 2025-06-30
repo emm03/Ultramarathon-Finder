@@ -2939,6 +2939,10 @@ main.article-content {
     color: #777;
 }
 
+.teaser-buttons:first-of-type {
+    margin-bottom: 1rem;
+}
+
 .training-log-teaser {
     background-color: #e8f5e9;
     text-align: center;
