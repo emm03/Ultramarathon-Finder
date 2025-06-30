@@ -445,6 +445,11 @@ button:hover {
     /* Subtle shadow */
 }
 
+.account-container .profile-pic {
+    width: 150px;
+    height: 150px;
+}
+
 /* Desktop menu */
 .menu {
     display: flex;
