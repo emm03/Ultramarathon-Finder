@@ -76,95 +76,11 @@
     </footer>
 
     <script>
-        async function fetchAccountInfo() {
-            const token = localStorage.getItem('token')?.trim();
-            if (!token) {
-                alert("You are not logged in. Redirecting to login...");
-                window.location.href = 'login.html';
-                return;
-            }
-
-            try {
-                const response = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/account', {
-                    method: 'GET',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (response.ok) {
-                    const { user } = await response.json();
-                    document.getElementById('username').textContent = `Welcome, ${user.username}!`;
-                    document.getElementById('email').innerHTML = `<strong>Email:</strong> ${user.email}`;
-                    if (user.profilePicture) {
-                        document.getElementById('profile-pic').src = user.profilePicture;
-                        localStorage.setItem('profilePicture', user.profilePicture);
-                    }
-                } else {
-                    console.error("Error fetching account info:", await response.text());
-                    alert("Session expired. Redirecting to login...");
-                    localStorage.removeItem('token');
-                    window.location.href = 'login.html';
-                }
-            } catch (error) {
-                console.error("Error fetching account info:", error);
-                alert("An unexpected error occurred.");
-            }
+        const token = localStorage.getItem("token");
+        if (token) {
+            loadUserInfo(token); // This is the new centralized function
         }
-
-        document.getElementById('upload-input').addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const formData = new FormData();
-            formData.append('profilePicture', file);
-
-            const token = localStorage.getItem('token')?.trim();
-            if (!token) {
-                alert("Session expired. Redirecting to login...");
-                window.location.href = 'login.html';
-                return;
-            }
-
-            try {
-                const response = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/upload-profile-picture', {
-                    method: 'POST',
-                    headers: { Authorization: `Bearer ${token}` },
-                    body: formData,
-                });
-
-                if (response.ok) {
-                    const { profilePicture } = await response.json();
-                    document.getElementById('profile-pic').src = profilePicture;
-                    localStorage.setItem('profilePicture', profilePicture);
-                    document.getElementById('upload-message').textContent = "Profile picture updated successfully!";
-                } else {
-                    console.error("Error uploading profile picture:", await response.text());
-                    document.getElementById('upload-message').textContent = "Failed to upload profile picture.";
-                }
-            } catch (error) {
-                console.error("Error uploading profile picture:", error);
-                document.getElementById('upload-message').textContent = "An unexpected error occurred.";
-            }
-        });
-
-        document.getElementById('logout-button').addEventListener('click', () => {
-            localStorage.removeItem('token');
-            localStorage.removeItem('profilePicture');
-            alert("You have successfully logged out.");
-            window.location.href = 'login.html';
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const storedProfilePicture = localStorage.getItem('profilePicture');
-            if (storedProfilePicture) {
-                document.getElementById('profile-pic').src = storedProfilePicture;
-            }
-            fetchAccountInfo();
-        });
     </script>
-
     <script src="index_script.js"></script>
     <script src="alanai_chatbot/alan.js"></script>
 </body>
