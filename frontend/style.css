@@ -411,15 +411,6 @@ footer p {
     color: #666;
 }
 
-button {
-    background: #5cb85c;
-    color: #fff;
-    border: none;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    border-radius: 3px;
-}
-
 button:hover {
     background: #4cae4c;
 }
