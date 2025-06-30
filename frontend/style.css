@@ -2971,6 +2971,13 @@ main.article-content {
     width: auto;
 }
 
+.teaser-buttons button.orange-btn,
+.teaser-buttons a.orange-btn {
+    min-width: 220px;
+    padding: 12px 20px;
+    text-align: center;
+}
+
 .lock-note {
     margin-top: 0.8rem;
     color: #666;
