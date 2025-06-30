@@ -445,14 +445,12 @@ button:hover {
     /* Subtle shadow */
 }
 
-.account-container .profile-container {
-    flex: none !important;
-    max-width: none !important;
-}
-
-.account-container .profile-pic {
-    width: 150px !important;
-    height: 150px !important;
+.account-profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid orange;
 }
 
 /* Desktop menu */
