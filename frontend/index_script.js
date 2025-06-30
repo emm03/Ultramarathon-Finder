@@ -1,31 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     initializeCarousel();
 
-    const token = localStorage.getItem("token")?.trim();
-    const menu = document.querySelector("ul.menu");
-    menu.querySelectorAll(".auth-link").forEach(link => link.remove());
-
-    // Inactivity check
-    const lastActive = localStorage.getItem("lastActive");
-    const now = Date.now();
-
-    if (token && lastActive && now - parseInt(lastActive) > 2 * 60 * 60 * 1000) {
-        logoutUser(true);
-        return;
-    }
-
-    localStorage.setItem("lastActive", now.toString());
-
-    if (token) {
-        setupAuthenticatedMenu(menu, token);
-        loadUserInfo(token);
-        trackUserInactivity();
-    } else {
-        setupUnauthenticatedMenu(menu);
-        setupUnauthenticatedUser();
-    }
-
-    redirectIfUnauthorized(token, ["account.html", "profile_edit.html"]);
+    redirectIfUnauthorized(localStorage.getItem("token"), ["account.html", "profile_edit.html"]);
     loadLatestPosts();
     setupMap();
 
@@ -57,76 +33,6 @@ function initializeCarousel() {
         showSlide(currentIndex);
     }, 5000);
     showSlide(currentIndex);
-}
-
-// -------------------- AUTH HEADER BEHAVIOR --------------------
-function setupAuthenticatedMenu(menu, token) {
-    const tab = document.getElementById("account-tab");
-
-    fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/account', {
-        method: 'GET',
-        headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-        }
-    })
-        .then(res => res.json())
-        .then(data => {
-            const username = data.user?.username || 'User';
-            const profilePic = data.user?.profilePicture || 'images/default-profile.png';
-            localStorage.setItem("profilePicture", profilePic);
-
-            tab.innerHTML = `
-                <div class="account-hover-container">
-                    <div class="account-dropdown">
-                        <img src="${profilePic}" alt="Profile Picture" class="profile-picture-nav" />
-                        <span>${username}'s Account Info</span>
-                    </div>
-                    <div class="dropdown-content">
-                        <a href="account.html">Profile</a>
-                        <a href="training_log.html">Training Log</a>
-                        <a href="#" id="logout-link">Sign Out</a>
-                    </div>
-                </div>
-            `;
-
-            const dropdown = tab.querySelector('.dropdown-content');
-            const container = tab.querySelector('.account-hover-container');
-
-            // Mobile: tap to toggle open/close
-            let dropdownVisible = false;
-            container.addEventListener('click', (e) => {
-                if (window.innerWidth < 769) {
-                    e.stopPropagation();
-                    dropdownVisible = !dropdownVisible;
-                    dropdown.style.display = dropdownVisible ? 'block' : 'none';
-                }
-            });
-
-            // Close dropdown if tapped outside (mobile)
-            document.addEventListener('click', (e) => {
-                if (window.innerWidth < 769 && !tab.contains(e.target)) {
-                    dropdown.style.display = 'none';
-                    dropdownVisible = false;
-                }
-            });
-
-            const logoutBtn = document.getElementById("logout-link");
-            if (logoutBtn) {
-                logoutBtn.addEventListener("click", e => {
-                    e.preventDefault();
-                    logoutUser(false);
-                });
-            }
-        })
-        .catch(err => {
-            console.error("Failed to load user for account tab:", err);
-        });
-}
-
-function setupUnauthenticatedMenu(menu) {
-    const tab = document.getElementById("account-tab");
-    tab.innerHTML = `<a href="login.html" class="orange-signin-btn">Sign In</a>`;
 }
 
 // -------------------- MAP --------------------
@@ -258,65 +164,6 @@ function redirectIfUnauthorized(token, restrictedPages) {
         alert("You must be logged in to view this page.");
         window.location.href = "login.html";
     }
-}
-
-async function fetchUserProfilePicture(token, menu) {
-    try {
-        const stored = localStorage.getItem("profilePicture");
-        const profileImg = document.createElement('img');
-        profileImg.classList.add('profile-picture-nav');
-        const accountNode = menu.querySelector(".auth-tab");
-
-        if (stored) {
-            profileImg.src = stored;
-        } else {
-            const res = await fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/account', {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
-            if (res.ok) {
-                const { user } = await res.json();
-                profileImg.src = user.profilePicture || 'images/default-profile.png';
-                localStorage.setItem("profilePicture", user.profilePicture || 'images/default-profile.png');
-            }
-        }
-
-        profileImg.alt = "Profile Picture";
-        accountNode.prepend(profileImg);
-    } catch { }
-}
-
-function trackUserInactivity() {
-    let inactivityTimer;
-    const maxInactivityTime = 2 * 60 * 60 * 1000;
-
-    function reset() {
-        clearTimeout(inactivityTimer);
-        localStorage.setItem("lastActive", Date.now().toString());
-        inactivityTimer = setTimeout(() => {
-            logoutUser(true);
-        }, maxInactivityTime);
-    }
-
-    ["mousemove", "keydown", "click"].forEach(event =>
-        document.addEventListener(event, reset)
-    );
-
-    reset();
-}
-
-function logoutUser(fromInactivity = false) {
-    localStorage.removeItem("token");
-    localStorage.removeItem("profilePicture");
-
-    if (fromInactivity) {
-        alert("You have been logged out due to inactivity.");
-    }
-
-    window.location.href = "login.html";
 }
 
 // -------------------- FORUM PREVIEW --------------------
