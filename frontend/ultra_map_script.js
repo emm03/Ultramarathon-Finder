@@ -135,7 +135,7 @@ function drawUltraTimelineChart(activities) {
 
     const dataPoints = ultras.map(act => ({
         x: new Date(act.start_date),
-        y: (act.distance / 1609.34).toFixed(2),
+        y: act.distance / 1609.34,  // ✅ Use raw number (not .toFixed)
         title: act.name,
         date: new Date(act.start_date).toLocaleDateString(),
         description: act.description || '',
@@ -165,7 +165,7 @@ function drawUltraTimelineChart(activities) {
                     callbacks: {
                         label: function (context) {
                             const d = context.raw;
-                            return `${d.title} — ${d.date} — ${d.y} miles`;
+                            return `${d.title} — ${d.date} — ${d.y.toFixed(2)} miles`;
                         }
                     }
                 },
