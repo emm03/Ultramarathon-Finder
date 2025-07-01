@@ -155,12 +155,13 @@ function drawUltraTimelineChart(activities) {
             plugins: {
                 tooltip: {
                     callbacks: {
+                        title: function (context) {
+                            const index = context[0].dataIndex;
+                            return titles[index]; // Title only on top
+                        },
                         label: function (context) {
                             const index = context.dataIndex;
-                            return [
-                                `${titles[index]}`,  // Top line: title only
-                                `${labels[index]} — ${data[index].toFixed(2)} miles`  // Second line: date + distance
-                            ];
+                            return `${labels[index]} — ${data[index].toFixed(2)} miles`; // Date + distance
                         }
                     }
                 },
