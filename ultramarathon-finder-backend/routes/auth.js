@@ -301,4 +301,15 @@ router.get('/status', (req, res) => {
     }
 });
 
+// -------------------- GET CURRENT USER INFO --------------------
+router.get('/me', authenticateToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.userId).select('username');
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.json({ username: user.username });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching user info' });
+    }
+});
+
 export default router;
