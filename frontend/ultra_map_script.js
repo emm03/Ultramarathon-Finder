@@ -241,7 +241,6 @@ function inside(point, vs) {
 
 function openLightbox(imageUrl) {
     let modal = document.getElementById("photo-lightbox");
-    let modalImg;
 
     if (!modal) {
         modal = document.createElement("div");
@@ -257,7 +256,7 @@ function openLightbox(imageUrl) {
         modal.style.justifyContent = "center";
         modal.style.zIndex = 1000;
 
-        modalImg = document.createElement("img");
+        const modalImg = document.createElement("img");
         modalImg.id = "lightbox-image";
         modalImg.style.maxWidth = "90%";
         modalImg.style.maxHeight = "90%";
@@ -270,10 +269,11 @@ function openLightbox(imageUrl) {
         });
 
         document.body.appendChild(modal);
-    } else {
-        modalImg = document.getElementById("lightbox-image");
     }
 
-    modalImg.src = imageUrl;
-    modal.style.display = "flex";
+    const modalImg = document.getElementById("lightbox-image");
+    if (modalImg) {
+        modalImg.src = imageUrl;
+        modal.style.display = "flex";
+    }
 }
