@@ -13,6 +13,8 @@
     <link rel="icon" href="ultra_favicon.ico" type="image/x-icon" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <!-- 🔐 Load global login/session logic -->
     <script src="auth_utils.js" defer></script>
 </head>
 
@@ -42,6 +44,7 @@
     </header>
 
     <main style="padding-top: 140px;">
+        <!-- 🧭 Hero Header Section -->
         <section class="ultra-map-hero">
             <div class="hero-content">
                 <h1>📍 My Ultra Map</h1>
@@ -53,21 +56,26 @@
                 <p><strong>Longest Run:</strong> <span id="longest-run">0 mi</span></p>
                 <p><strong>Unique Locations:</strong> <span id="unique-locations">0</span></p>
             </div>
+            <!-- 🔮 Alan AI Suggestion Button -->
             <button onclick="askAlanBasedOnMap()" class="orange-btn">Ask Alan for Race Suggestions</button>
         </section>
 
+        <!-- 🗺️ Ultra Map Display (now also shows visited states) -->
         <div id="ultra-map" style="height: 500px;"></div>
 
+        <!-- 🌎 Visited States Count -->
         <section id="visited-regions" style="margin: 40px 20px;">
             <h2 class="chart-title">🌎 States Where You've Completed Ultras</h2>
             <p><strong>States Completed:</strong> <span id="visited-states-count">0</span></p>
         </section>
 
+        <!-- 🕰️ Ultra Completion Timeline -->
         <section id="ultra-timeline-section" style="margin: 40px 20px;">
             <h2 class="chart-title">📈 Ultra Completion Timeline</h2>
             <canvas id="ultraTimelineChart" width="100%" height="60"></canvas>
         </section>
 
+        <!-- 🖼️ Strava Photo Timeline -->
         <section id="strava-photo-timeline" style="margin: 40px 20px;">
             <h2 class="chart-title">🖼️ My Ultra Photo Timeline</h2>
             <div id="photo-scroll-container" class="photo-scroll"></div>
@@ -84,6 +92,7 @@
         </form>
     </div>
 
+    <!-- Footer -->
     <footer class="site-footer">
         <div class="footer-links">
             <a href="contact.html">Contact Us</a> |
@@ -94,24 +103,14 @@
         <p class="footer-copy">&copy; 2025 Ultramarathon Connect. All rights reserved.</p>
     </footer>
 
-    <!-- 🟢 Ultra Detail Modal (must be above script) -->
-    <div id="ultra-detail-modal" class="ultra-modal" style="display: none;">
-        <div class="ultra-modal-content">
-            <span class="ultra-modal-close" onclick="closeUltraModal()">&times;</span>
-            <div id="ultra-modal-body">
-                <!-- Race details will be injected here -->
-            </div>
-        </div>
-    </div>
-
-    <!-- 🔍 Lightbox Modal -->
+    <!-- 🔍 Lightbox Modal for Enlarged Ultra Photos -->
     <div id="photo-lightbox"
         style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; z-index:1000;">
         <img id="lightbox-image"
             style="max-width:90%; max-height:90%; border-radius:10px; box-shadow:0 0 20px rgba(255,255,255,0.3);" />
     </div>
 
-    <!-- JS Scripts -->
+
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script src="alanai_chatbot/alan.js"></script>
     <script src="forum/inject_account_dropdown.js"></script>
