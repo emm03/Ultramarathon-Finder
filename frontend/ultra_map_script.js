@@ -132,17 +132,26 @@ function drawUltraTimelineChart(activities) {
         .sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
 
     const labels = ultras.map(act => new Date(act.start_date).toLocaleDateString());
-    const data = ultras.map(act => parseFloat((act.distance / 1609.34).toFixed(2)));
+
+    const dataPoints = ultras.map(act => ({
+        x: new Date(act.start_date),
+        y: (act.distance / 1609.34).toFixed(2),
+        title: act.name,
+        date: new Date(act.start_date).toLocaleDateString(),
+        description: act.description || '',
+        photos: act.photos || [],
+        id: act.id,
+        embed: act.embed_token || ''
+    }));
 
     const ctx = document.getElementById("ultraTimelineChart").getContext("2d");
 
     new Chart(ctx, {
         type: "line",
         data: {
-            labels: labels,
             datasets: [{
                 label: "Ultra Distance (miles)",
-                data: data,
+                data: dataPoints,
                 fill: false,
                 borderColor: "green",
                 tension: 0.3,
@@ -152,7 +161,22 @@ function drawUltraTimelineChart(activities) {
         options: {
             responsive: true,
             plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            const d = context.raw;
+                            return `${d.title} — ${d.date} — ${d.y} miles`;
+                        }
+                    }
+                },
                 legend: { display: true, position: 'top' }
+            },
+            onClick: (evt, activeEls) => {
+                if (activeEls.length > 0) {
+                    const pointIndex = activeEls[0].index;
+                    const race = dataPoints[pointIndex];
+                    openUltraModal(race);
+                }
             },
             scales: {
                 y: {
@@ -160,6 +184,10 @@ function drawUltraTimelineChart(activities) {
                     title: { display: true, text: "Distance (miles)" }
                 },
                 x: {
+                    type: "time",
+                    time: {
+                        unit: "month"
+                    },
                     title: { display: true, text: "Date" }
                 }
             }
@@ -253,3 +281,35 @@ function openLightbox(imageUrl) {
     });
 }
 
+function openUltraModal(race) {
+    const modal = document.getElementById("ultra-detail-modal");
+    const body = document.getElementById("ultra-modal-body");
+
+    const photosHTML = race.photos.length
+        ? `<div class="photo-carousel">${race.photos.map(url => `<img src="${url}" class="carousel-photo">`).join('')}</div>`
+        : '';
+
+    const embedHTML = race.embed
+        ? `<iframe height="405" width="100%" frameborder="0" allowtransparency="true" scrolling="no"
+             src="https://www.strava.com/activities/${race.id}/embed/${race.embed}">
+           </iframe>`
+        : '';
+
+    body.innerHTML = `
+        <h2>${race.title}</h2>
+        <p><strong>Date:</strong> ${race.date}</p>
+        ${race.description ? `<p class="activity-description">${race.description}</p>` : ''}
+        ${embedHTML}
+        ${photosHTML}
+        <div style="margin-top: 1rem;">
+            <a href="https://www.strava.com/activities/${race.id}" target="_blank">View on Strava →</a>
+        </div>
+    `;
+
+    modal.style.display = "flex";
+}
+
+function closeUltraModal() {
+    const modal = document.getElementById("ultra-detail-modal");
+    modal.style.display = "none";
+}
