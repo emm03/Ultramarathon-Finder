@@ -111,6 +111,61 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             `;
 
+            // Handle reply actions: edit, delete, reply-to-reply
+            postDiv.querySelectorAll(".edit-reply-btn").forEach(btn => {
+                btn.addEventListener("click", async () => {
+                    const replyId = btn.dataset.replyId;
+                    const postId = btn.dataset.postId;
+                    const replyDiv = postDiv.querySelector(`.reply[data-reply-id="${replyId}"]`);
+                    const currentContent = replyDiv.querySelector("p").textContent;
+                    const newContent = prompt("Edit your reply:", currentContent);
+                    if (newContent && newContent !== currentContent) {
+                        try {
+                            const res = await fetch(`/api/forum/posts/${postId}/reply/${replyId}`, {
+                                method: "PUT",
+                                headers: {
+                                    "Content-Type": "application/json",
+                                    Authorization: `Bearer ${token}`
+                                },
+                                body: JSON.stringify({ content: newContent })
+                            });
+                            if (res.ok) loadPosts();
+                            else alert("Failed to update reply.");
+                        } catch (err) {
+                            console.error("Error updating reply:", err);
+                        }
+                    }
+                });
+            });
+
+            postDiv.querySelectorAll(".delete-reply-btn").forEach(btn => {
+                btn.addEventListener("click", async () => {
+                    const replyId = btn.dataset.replyId;
+                    const postId = btn.dataset.postId;
+                    if (confirm("Delete this reply?")) {
+                        try {
+                            const res = await fetch(`/api/forum/posts/${postId}/reply/${replyId}`, {
+                                method: "DELETE",
+                                headers: { Authorization: `Bearer ${token}` }
+                            });
+                            if (res.ok) loadPosts();
+                            else alert("Failed to delete reply.");
+                        } catch (err) {
+                            console.error("Error deleting reply:", err);
+                        }
+                    }
+                });
+            });
+
+            postDiv.querySelectorAll(".reply-to-reply-btn").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    replyBox.style.display = "block";
+                    const textarea = replyBox.querySelector("textarea");
+                    textarea.value = `@${btn.dataset.username} `;
+                    textarea.focus();
+                });
+            });
+
             // Inline reply logic
             const replyBtn = postDiv.querySelector(".reply-btn");
             const replyBox = postDiv.querySelector(".reply-input");
