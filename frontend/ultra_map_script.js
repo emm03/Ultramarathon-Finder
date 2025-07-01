@@ -239,10 +239,9 @@ function inside(point, vs) {
     return inside;
 }
 
-// 📸 Enlarged image lightbox viewer
 function openLightbox(imageUrl) {
     let modal = document.getElementById("photo-lightbox");
-    let modalImg = document.getElementById("lightbox-image");
+    let modalImg;
 
     if (!modal) {
         modal = document.createElement("div");
@@ -271,6 +270,8 @@ function openLightbox(imageUrl) {
         });
 
         document.body.appendChild(modal);
+    } else {
+        modalImg = document.getElementById("lightbox-image");
     }
 
     modalImg.src = imageUrl;

@@ -1,21 +1,10 @@
 // -------------------- Auth Utility --------------------
-const MAX_SESSION_TIME = 4 * 60 * 60 * 1000; // 4 hours in ms
-
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("token")?.trim();
-    const lastActive = localStorage.getItem("lastActive");
-    const now = Date.now();
-
-    if (token && lastActive && now - parseInt(lastActive) > MAX_SESSION_TIME) {
-        logoutSilently();
-        return;
-    }
-
-    localStorage.setItem("lastActive", now.toString());
 
     if (token) {
         injectAuthenticatedDropdown(token);
-        trackInactivityLogout();
+        trackInactivityLogout(); // Start inactivity logout timer
     } else {
         showLoginButton();
     }
@@ -78,6 +67,14 @@ function injectAuthenticatedDropdown(token) {
                 e.preventDefault();
                 logoutUser();
             });
+
+            // Optional: log token expiry info (for dev/debugging)
+            try {
+                const decoded = JSON.parse(atob(token.split('.')[1]));
+                console.log("🕒 Token expires at:", new Date(decoded.exp * 1000));
+            } catch (err) {
+                console.warn("⚠️ Could not decode JWT:", err);
+            }
         })
         .catch(err => {
             console.error("Failed to load account dropdown:", err);
@@ -107,16 +104,21 @@ function logoutSilently() {
 
 // -------------------- Inactivity Timer --------------------
 function trackInactivityLogout() {
+    const INACTIVITY_LIMIT = 15 * 60 * 1000; // 15 minutes
     let timer;
+
     const resetTimer = () => {
         clearTimeout(timer);
         localStorage.setItem("lastActive", Date.now().toString());
-        timer = setTimeout(() => logoutSilently(), MAX_SESSION_TIME);
+        timer = setTimeout(() => {
+            console.log("🛑 Logging out due to inactivity.");
+            logoutSilently();
+        }, INACTIVITY_LIMIT);
     };
 
-    ["mousemove", "keydown", "click"].forEach(event =>
+    ["mousemove", "keydown", "click", "scroll"].forEach(event =>
         document.addEventListener(event, resetTimer)
     );
 
-    resetTimer();
+    resetTimer(); // Start immediately
 }
