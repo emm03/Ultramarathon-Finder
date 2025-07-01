@@ -2651,6 +2651,12 @@ body.article-page main {
     margin-bottom: 1rem;
 }
 
+.articles-header {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 2rem;
+}
+
 .carousel-container {
     position: relative;
     display: flex;
