@@ -288,7 +288,7 @@ function openUltraModal(race) {
     polylineMap.innerHTML = ""; 
 
     if (race.map && race.map.summary_polyline) {
-        const decoded = L.PolylineUtil.decode(race.map.summary_polyline);
+        const decoded = polyline.decode(race.map.summary_polyline);
 
         const modalMap = L.map("polyline-map", {
             scrollWheelZoom: false,
