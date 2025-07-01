@@ -110,6 +110,23 @@
             style="max-width:90%; max-height:90%; border-radius:10px; box-shadow:0 0 20px rgba(255,255,255,0.3);" />
     </div>
 
+    <!-- 📍 Ultra Detail Modal -->
+    <div id="ultra-detail-modal" class="ultra-modal" style="display: none;">
+        <div class="ultra-modal-content">
+            <span class="ultra-modal-close">&times;</span>
+            <h2 id="modal-title">Race Title</h2>
+            <p id="modal-date">Date</p>
+            <p id="modal-distance">Distance</p>
+            <p id="modal-description">Description</p>
+
+            <div id="modal-photos" class="photo-carousel"></div>
+
+            <label for="user-notes"><strong>Your Notes:</strong></label>
+            <textarea id="user-notes" rows="4"
+                placeholder="Write your thoughts, memories, pain cave moments..."></textarea>
+            <button id="save-notes-btn">Save Notes</button>
+        </div>
+    </div>
 
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script src="alanai_chatbot/alan.js"></script>

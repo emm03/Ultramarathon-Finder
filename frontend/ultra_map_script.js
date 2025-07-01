@@ -111,6 +111,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         drawUltraTimelineChart(data);
         drawVisitedStatesOverlay(map, data);
 
+        document.querySelector(".ultra-modal-close").addEventListener("click", closeUltraModal);
+
     } catch (err) {
         console.error('❌ Failed to load ultra data:', err.message || err);
     }
@@ -155,17 +157,23 @@ function drawUltraTimelineChart(activities) {
             plugins: {
                 tooltip: {
                     callbacks: {
-                        title: function (context) {
-                            const index = context[0].dataIndex;
-                            return titles[index]; // Title only on top
-                        },
                         label: function (context) {
                             const index = context.dataIndex;
-                            return `${labels[index]} — ${data[index].toFixed(2)} miles`; // Date + distance
+                            return [
+                                `${titles[index]}`,
+                                `${labels[index]} — ${data[index].toFixed(2)} miles`
+                            ];
                         }
                     }
                 },
                 legend: { display: true, position: 'top' }
+            },
+            onClick: (evt, activeEls) => {
+                if (activeEls.length > 0) {
+                    const pointIndex = activeEls[0].index;
+                    const race = ultras[pointIndex];
+                    openUltraModal(race);
+                }
             },
             scales: {
                 y: {
@@ -264,4 +272,48 @@ function openLightbox(imageUrl) {
     modal.addEventListener("click", () => {
         modal.style.display = "none";
     });
+}
+
+function openUltraModal(race) {
+    const modal = document.getElementById("ultra-detail-modal");
+    const titleEl = document.getElementById("modal-title");
+    const dateEl = document.getElementById("modal-date");
+    const distEl = document.getElementById("modal-distance");
+    const descEl = document.getElementById("modal-description");
+    const photoContainer = document.getElementById("modal-photos");
+    const notesBox = document.getElementById("user-notes");
+
+    // Fill modal content
+    titleEl.textContent = race.name || "Untitled Ultra";
+    dateEl.textContent = `📅 ${new Date(race.start_date).toLocaleDateString()}`;
+    distEl.textContent = `📏 ${(race.distance / 1609.34).toFixed(2)} miles`;
+    descEl.textContent = race.description || "No description available.";
+
+    // Photos
+    photoContainer.innerHTML = "";
+    if (Array.isArray(race.photos)) {
+        race.photos.forEach(url => {
+            const img = document.createElement("img");
+            img.src = url;
+            img.className = "carousel-photo";
+            photoContainer.appendChild(img);
+        });
+    }
+
+    // Notes (load from localStorage)
+    const notesKey = `ultra-notes-${race.id}`;
+    notesBox.value = localStorage.getItem(notesKey) || "";
+
+    // Save handler
+    document.getElementById("save-notes-btn").onclick = () => {
+        localStorage.setItem(notesKey, notesBox.value);
+        alert("💾 Notes saved!");
+    };
+
+    // Show modal
+    modal.style.display = "flex";
+}
+
+function closeUltraModal() {
+    document.getElementById("ultra-detail-modal").style.display = "none";
 }
