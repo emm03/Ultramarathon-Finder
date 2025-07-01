@@ -133,63 +133,67 @@ function drawUltraTimelineChart(activities) {
 
     const data = ultras.map(act => ({
         x: new Date(act.start_date),
-        y: act.distance / 1609.34,
-        title: act.name,
+        y: parseFloat((act.distance / 1609.34).toFixed(2)),
+        title: act.name || "Untitled Run",
+        date: new Date(act.start_date).toLocaleDateString(),
         description: act.description || '',
         id: act.id,
         embed: act.embed_token || '',
-        photos: act.photos || [],
-        date: new Date(act.start_date).toLocaleDateString()
+        photos: act.photos || []
     }));
 
     const ctx = document.getElementById("ultraTimelineChart").getContext("2d");
 
-    new Chart(ctx, {
-        type: "line",
-        data: {
-            datasets: [{
-                label: "Ultra Distance (miles)",
-                data: data,
-                fill: false,
-                borderColor: "green",
-                tension: 0.3,
-                pointRadius: 5
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function (context) {
-                            const d = context.raw;
-                            return `${d.title} — ${d.date} — ${d.y.toFixed(2)} miles`;
+    try {
+        new Chart(ctx, {
+            type: "line",
+            data: {
+                datasets: [{
+                    label: "Ultra Distance (miles)",
+                    data: data,
+                    borderColor: "green",
+                    tension: 0.3,
+                    pointRadius: 5,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                const d = context.raw;
+                                return `${d.title} — ${d.date} — ${d.y.toFixed(2)} miles`;
+                            }
                         }
+                    },
+                    legend: { display: true, position: 'top' }
+                },
+                onClick: (evt, activeEls) => {
+                    if (activeEls.length > 0) {
+                        const index = activeEls[0].index;
+                        const race = data[index];
+                        console.log("Clicked:", race);
+                        // openUltraModal(race); // we'll enable this later
                     }
                 },
-                legend: { display: true, position: 'top' }
-            },
-            onClick: (evt, activeEls) => {
-                if (activeEls.length > 0) {
-                    const pointIndex = activeEls[0].index;
-                    const race = data[pointIndex];
-                    console.log("🟢 Clicked race data:", race);
-                    // openUltraModal(race); // 🔜 we’ll activate this later
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: false,
-                    title: { display: true, text: "Distance (miles)" }
-                },
-                x: {
-                    type: "time",
-                    time: { unit: "month" },
-                    title: { display: true, text: "Date" }
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: { display: true, text: "Distance (miles)" }
+                    },
+                    x: {
+                        type: "time",
+                        time: { unit: "month" },
+                        title: { display: true, text: "Date" }
+                    }
                 }
             }
-        }
-    });
+        });
+    } catch (err) {
+        console.error("❌ Chart error:", err);
+    }
 }
 
 // Visited States via lat/lng
