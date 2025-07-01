@@ -131,17 +131,15 @@ function drawUltraTimelineChart(activities) {
         .filter(act => act.distance / 1609.34 >= 26.2)
         .sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
 
-    const data = ultras.map(act => ({
-        x: new Date(act.start_date),
-        y: act.distance / 1609.34,
-        title: act.name,
-    }));
+    const labels = ultras.map(act => new Date(act.start_date).toLocaleDateString());
+    const data = ultras.map(act => parseFloat((act.distance / 1609.34).toFixed(2)));
 
     const ctx = document.getElementById("ultraTimelineChart").getContext("2d");
 
     new Chart(ctx, {
         type: "line",
         data: {
+            labels: labels,
             datasets: [{
                 label: "Ultra Distance (miles)",
                 data: data,
@@ -154,14 +152,6 @@ function drawUltraTimelineChart(activities) {
         options: {
             responsive: true,
             plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function (context) {
-                            const d = context.raw;
-                            return `${d.title} — ${d.x.toLocaleDateString()} — ${d.y.toFixed(2)} miles`;
-                        }
-                    }
-                },
                 legend: { display: true, position: 'top' }
             },
             scales: {
