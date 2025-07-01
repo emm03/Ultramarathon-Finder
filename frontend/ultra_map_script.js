@@ -284,16 +284,33 @@ function openUltraModal(race) {
     const photoContainer = document.getElementById("modal-photos");
     const notesBox = document.getElementById("user-notes");
     const mapContainer = document.getElementById("modal-map");
-    mapContainer.innerHTML = `
-    <iframe 
-        src="https://strava-embeds.com/embed/activities/map?polyline=${race.map.summary_polyline}"
-        width="100%" 
-        height="320" 
-        frameborder="0" 
-        allowfullscreen 
-        style="border-radius: 10px;">
-    </iframe>
-`;
+    const polylineMap = document.getElementById("polyline-map");
+    polylineMap.innerHTML = ""; 
+
+    if (race.map && race.map.summary_polyline) {
+        const decoded = L.Polyline.fromEncoded(race.map.summary_polyline).getLatLngs();
+
+        const modalMap = L.map("polyline-map", {
+            scrollWheelZoom: false,
+            dragging: false,
+            zoomControl: false,
+            attributionControl: false
+        }).setView(decoded[0], 13);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 18
+        }).addTo(modalMap);
+
+        L.polyline(decoded, {
+            color: "#007BFF",
+            weight: 4
+        }).addTo(modalMap);
+
+        setTimeout(() => modalMap.invalidateSize(), 200);
+    } else {
+        polylineMap.innerHTML = `<p style="text-align:center; color:#999;">Map unavailable for this activity.</p>`;
+    }
+
     const savedNotesContainer = document.getElementById("saved-notes");
 
     // Fill modal content
