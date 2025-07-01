@@ -157,7 +157,7 @@ function drawUltraTimelineChart(activities) {
                     callbacks: {
                         label: function (context) {
                             const index = context.dataIndex;
-                            return `${titles[index]} — ${labels[index]} — ${data[index].toFixed(2)} miles`;
+                            return `${titles[index]} — ${data[index].toFixed(2)} miles`;
                         }
                     }
                 },

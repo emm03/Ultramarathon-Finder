@@ -18,9 +18,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!res.ok) throw new Error("Token invalid");
 
         const data = await res.json();
-        const username = data.username;
+        const username = data.username?.trim();
 
-        if (!username || username === "User") throw new Error("Invalid username");
+        // ✅ Reject generic or empty usernames
+        if (!username || username.toLowerCase() === "user") {
+            throw new Error("Invalid or generic username");
+        }
 
         tab.innerHTML = `
             <div class="auth-dropdown">
@@ -34,7 +37,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             </div>
         `;
     } catch (err) {
-        // Clear invalid session and show Sign In
+        // ✅ Clear invalid session and fallback to Sign In
         localStorage.removeItem("token");
         localStorage.removeItem("username");
         localStorage.removeItem("profilePicture");
