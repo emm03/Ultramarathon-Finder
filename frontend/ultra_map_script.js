@@ -131,69 +131,49 @@ function drawUltraTimelineChart(activities) {
         .filter(act => act.distance / 1609.34 >= 26.2)
         .sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
 
-    const data = ultras.map(act => ({
-        x: new Date(act.start_date),
-        y: parseFloat((act.distance / 1609.34).toFixed(2)),
-        title: act.name || "Untitled Run",
-        date: new Date(act.start_date).toLocaleDateString(),
-        description: act.description || '',
-        id: act.id,
-        embed: act.embed_token || '',
-        photos: act.photos || []
-    }));
+    const labels = ultras.map(act => new Date(act.start_date).toLocaleDateString());
+    const data = ultras.map(act => parseFloat((act.distance / 1609.34).toFixed(2)));
+    const titles = ultras.map(act => act.name || "Untitled Run");
 
     const ctx = document.getElementById("ultraTimelineChart").getContext("2d");
 
-    try {
-        new Chart(ctx, {
-            type: "line",
-            data: {
-                datasets: [{
-                    label: "Ultra Distance (miles)",
-                    data: data,
-                    borderColor: "green",
-                    tension: 0.3,
-                    pointRadius: 5,
-                    fill: false
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                const d = context.raw;
-                                return `${d.title} — ${d.date} — ${d.y.toFixed(2)} miles`;
-                            }
+    new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Ultra Distance (miles)",
+                data: data,
+                fill: false,
+                borderColor: "green",
+                tension: 0.3,
+                pointRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            const index = context.dataIndex;
+                            return `${titles[index]} — ${labels[index]} — ${data[index].toFixed(2)} miles`;
                         }
-                    },
-                    legend: { display: true, position: 'top' }
-                },
-                onClick: (evt, activeEls) => {
-                    if (activeEls.length > 0) {
-                        const index = activeEls[0].index;
-                        const race = data[index];
-                        console.log("Clicked:", race);
-                        // openUltraModal(race); // we'll enable this later
                     }
                 },
-                scales: {
-                    y: {
-                        beginAtZero: false,
-                        title: { display: true, text: "Distance (miles)" }
-                    },
-                    x: {
-                        type: "time",
-                        time: { unit: "month" },
-                        title: { display: true, text: "Date" }
-                    }
+                legend: { display: true, position: 'top' }
+            },
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    title: { display: true, text: "Distance (miles)" }
+                },
+                x: {
+                    title: { display: true, text: "Date" }
                 }
             }
-        });
-    } catch (err) {
-        console.error("❌ Chart error:", err);
-    }
+        }
+    });
 }
 
 // Visited States via lat/lng
