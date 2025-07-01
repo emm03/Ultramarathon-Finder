@@ -71,6 +71,19 @@ document.getElementById("connect-strava")?.addEventListener("click", () => {
     window.location.href = url;
 });
 
+function formatPace(timeSec, distMeters) {
+    const pace = timeSec / (distMeters / 1609); // sec per mile
+    const min = Math.floor(pace / 60);
+    const sec = Math.round(pace % 60);
+    return `${min}:${sec.toString().padStart(2, '0')}/mi`;
+}
+
+function formatDuration(seconds) {
+    const min = Math.floor(seconds / 60);
+    const sec = seconds % 60;
+    return `${min}m ${sec}s`;
+}
+
 async function fetchActivities() {
     const loading = document.getElementById('loading-indicator');
     if (loading) loading.style.display = 'block';
@@ -134,7 +147,16 @@ async function fetchActivities() {
 
                 const div = document.createElement('div');
                 div.className = 'activity-card';
-                div.innerHTML = mediaContent;
+                div.innerHTML = `
+                    <div class="activity-header">
+                        <h3>${act.name || "Untitled Run"}</h3>
+                        ${act.description ? `<p class="activity-description">${act.description}</p>` : ''}
+                        <p><strong>Distance:</strong> ${(act.distance / 1609).toFixed(2)} mi | 
+                           <strong>Pace:</strong> ${formatPace(act.moving_time, act.distance)} | 
+                           <strong>Time:</strong> ${formatDuration(act.elapsed_time)}</p>
+                    </div>
+                    ${mediaContent}
+                `;
                 list.appendChild(div);
             });
 
