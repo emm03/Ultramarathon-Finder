@@ -275,6 +275,7 @@ function openLightbox(imageUrl) {
 }
 
 function openUltraModal(race) {
+    console.log("🧭 Polyline Check:", race.map);
     const modal = document.getElementById("ultra-detail-modal");
     const titleEl = document.getElementById("modal-title");
     const dateEl = document.getElementById("modal-date");
