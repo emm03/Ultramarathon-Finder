@@ -5,60 +5,113 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Ultra Weekend Recap – June 21–22, 2025</title>
+    <title>Ultra Weekend Highlights — June 21–22</title>
     <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="../alanai_chatbot/chat-widget.css" />
+    <link rel="icon" href="../ultra_favicon.ico" type="image/x-icon" />
+    <script src="../auth_utils.js" defer></script>
 </head>
 
 <body class="article-page">
-    <div class="article-container">
-        <h1>Ultra Weekend Recap: June 21–22, 2025</h1>
-        <div class="hero-image" style="background-image: url('../images/ultra_jun21weekend.jpg');"></div>
+    <header class="sticky-header dual-row-header">
+        <div class="header-top-row">
+            <div class="mobile-header-container">
+                <a href="../index.html" class="header-left" style="text-decoration: none; color: inherit;">
+                    <img src="../ultra.png" alt="Ultramarathon Connect Logo" class="logo" />
+                    <span class="site-title">UltramarathonConnect</span>
+                </a>
+                <button class="menu-toggle">☰</button>
+            </div>
+            <div id="account-tab" class="auth-tab mobile-account-tab"></div>
+        </div>
+        <div class="header-bottom-row">
+            <nav class="header-right">
+                <ul class="menu">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../race_directory.html">Race Directory</a></li>
+                    <li><a href="../forum.html">Runner Community</a></li>
+                    <li><a href="../articles.html">Articles</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-        <p><strong>Summer heat kicked into full gear across the ultrarunning world this weekend, as runners battled sun,
-                hills, and long miles in a series of scenic and challenging events.</strong></p>
+    <!-- Hero Image with Overlay -->
+    <section class="article-hero">
+        <img src="../images/ultra_jun21weekend.jpg" alt="Trail runners during June 21–22 ultramarathon weekend"
+            class="hero-img" />
+        <div class="hero-overlay">
+            <h1>Ultra Weekend Highlights</h1>
+            <p class="hero-date">June 21–22, 2025</p>
+        </div>
+    </section>
 
-        <h2>📍 Bighorn Trail Run – Dayton, Wyoming</h2>
-        <ul>
-            <li>Distances: 100 mi, 52 mi, 32 mi, 18 mi</li>
-            <li>Terrain: Remote single-track trail, jeep roads, 20,500 ft ascent over 76 mi</li>
-            <li>Winners (32 mi): Chad Nauman (4:29:02), Emily Suemitsu was the top female finisher (5:55:14)</li>
-            <li><a href="https://bighorntrailrun.com/" target="_blank">Official Site</a></li>
-        </ul>
-        <p>Known for its community vibe and brutal climbs, Bighorn delivered on all fronts. "It’s got an amazing low
-            key, community vibe…the course is tough (and muddy!)" — Reddit report</p>
+    <main class="article-content">
+        <p class="meta">By Ultramarathon Connect • 06/23/2025</p>
 
-        <h2>🌲 Broken Arrow Skyrace – Olympic Valley, California</h2>
-        <ul>
-            <li>Distances: 46 k, 23 k, 11 k, VK</li>
-            <li>Terrain: Rocky ridgelines, snowfields, alpine roads</li>
-            <li>Weather: Alpine sun with snow at higher elevations</li>
-            <li>46 k winners: Eli Hemming (3:50:48, new course record), Jennifer Lichter (4:42:32), Helen Mino Faukner
-                (4:43:08), Daniella Moreno (4:43:48)</li>
-            <li>Broken Arrow Ascent (VK event): Christian Allen (23:49), Anna Gibson (27:32), qualifying for Mountain
-                Running World Cup</li>
-            <li><a href="https://www.brokenarrowskyrace.com/" target="_blank">Official Site</a></li>
-        </ul>
-        <p>The tough conditions forced high-elevation challenges, including a lightning delay and snow, but elite
-            athletes still smashed records.</p>
+        <p>Summer heat kicked into full gear across the ultrarunning world this weekend, as runners battled sun, hills,
+            and
+            long miles in a series of scenic and challenging events.</p>
 
-        <h2>🏞️ Bears Ears Ultra – Monticello, Utah</h2>
-        <ul>
-            <li>Distances: 50 mi, 50 k, 30 k</li>
-            <li>Terrain: Remote high-elevation trail (up to ~11,000 ft), scenic canyons through Bears Ears National
-                Monument</li>
-            <li>50 mi winners: Brydon Anderson (9:22:32), top female not listed; 50 k winner Sergio Abarca (6:04:53)
-            </li>
-            <li><a href="https://ultrarunning.com/calendar/event/bears-ears-ultra/" target="_blank">UltraRunning
-                    Results</a></li>
-        </ul>
-        <p>This race weaves through Amerindian sacred-land vistas. One participant described it as “spectacular” with
-            6,600 ft elevation gain over ~34 mi for the 50 k.</p>
+        <!-- Race 1 -->
+        <section class="race-highlight">
+            <h2>📍 Bighorn Trail Run — Dayton, WY</h2>
+            <p><strong>Distances:</strong> 100mi, 52mi, 32mi, 18mi • <strong>Elevation:</strong> ~20,500 ft (76mi route)
+            </p>
+            <p>This iconic mountain ultra delivered its classic combo of steep climbs, deep mud, and big wildflower
+                views. In
+                the 32mi event, Chad Nauman (4:29:02) and Emily Suemitsu (5:55:14) led the way. Many runners battled
+                cutoffs and
+                heat in one of the season’s toughest point-to-point challenges.</p>
+            <a href="https://bighorntrailrun.com/" target="_blank" class="race-link">Visit Race Website →</a>
+        </section>
 
-        <p>That wraps up the June 21–22 ultramarathon weekend! From mountains to monuments, runners showed grit and
-            spirit across the globe.</p>
+        <!-- Race 2 -->
+        <section class="race-highlight">
+            <h2>🌲 Broken Arrow Skyrace — Olympic Valley, CA</h2>
+            <p><strong>Distances:</strong> 46k, 23k, 11k, VK • <strong>Conditions:</strong> Alpine snow, lightning
+                delays</p>
+            <p>Lightning and snow led to a partial cancellation of the 46k event — but not before 163 runners crossed
+                the
+                finish line. Eli Hemming won with a blazing 3:50:48 course record. Jennifer Lichter led the women in
+                4:42:32 in
+                an epic showdown, finishing just seconds ahead of Helen Mino Faukner and Daniella Moreno.</p>
+            <a href="https://www.brokenarrowskyrace.com/" target="_blank" class="race-link">Official Race Page →</a>
+        </section>
 
-        <p><a href="../articles.html">← Back to Articles</a></p>
-    </div>
+        <!-- Race 3 -->
+        <section class="race-highlight">
+            <h2>🏞️ Bears Ears Ultra — Monticello, UT</h2>
+            <p><strong>Distances:</strong> 50mi, 50k, 30k • <strong>Course:</strong> Remote, high-elevation alpine trail
+            </p>
+            <p>This lesser-known gem explores the sacred terrain of the Bears Ears National Monument. Brydon Anderson
+                (9:22:32) took the 50mi win, while Sergio Abarca clocked a 6:04:53 in the 50k. Elevation gains reached
+                6,600+
+                ft, with jaw-dropping canyon views at every turn.</p>
+            <a href="https://ultrarunning.com/calendar/event/bears-ears-ultra/" target="_blank" class="race-link">Race
+                Info
+                →</a>
+        </section>
+
+        <p>From snowy ridges to desert plateaus, this weekend showed the wild beauty — and difficulty — that
+            ultrarunning
+            brings every summer solstice.</p>
+
+        <a href="../articles.html" class="button">← Back to Articles</a>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-links">
+            <a href="../contact.html">Contact Us</a> |
+            <a href="../privacy.html">Privacy Policy</a> |
+            <a href="../termsofservice.html">Terms of Service</a> |
+            <a href="../faq.html">FAQ</a> |
+        </div>
+        <p class="footer-copy">&copy; 2025 Ultramarathon Connect. All rights reserved.</p>
+    </footer>
+
+    <script src="../index_script.js"></script>
+    <script src="../alanai_chatbot/alan.js"></script>
 </body>
 
 </html>
