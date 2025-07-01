@@ -3299,6 +3299,12 @@ main.article-content {
     max-height: 160px;
 }
 
+#ultraTimelineChart {
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
+}
+
 /* ==== Saved Notes Styling ==== */
 
 #saved-notes {
