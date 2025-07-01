@@ -286,7 +286,7 @@ function openUltraModal(race) {
     const mapContainer = document.getElementById("modal-map");
     mapContainer.innerHTML = `
     <iframe 
-        src="https://www.strava.com/activities/${race.id}/embed/map" 
+        src="https://strava-embeds.com/embed/activities/map?polyline=${race.map.summary_polyline}"
         width="100%" 
         height="320" 
         frameborder="0" 
