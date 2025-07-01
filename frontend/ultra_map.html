@@ -13,10 +13,12 @@
     <link rel="icon" href="ultra_favicon.ico" type="image/x-icon" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-encoded-polyline/Polyline.encoded.js" defer></script> <!-- ✅ Add this -->
 
     <!-- 🔐 Load global login/session logic -->
     <script src="auth_utils.js" defer></script>
 </head>
+
 
 <body class="forum-page">
     <header class="sticky-header dual-row-header">
@@ -143,7 +145,6 @@
     </div>
 
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-    <script src="https://unpkg.com/leaflet-encoded-polyline/Polyline.encoded.js"></script>
     <script src="alanai_chatbot/alan.js"></script>
     <script src="forum/inject_account_dropdown.js"></script>
     <script src="ultra_map_script.js"></script>
