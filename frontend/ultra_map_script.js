@@ -282,12 +282,16 @@ function openUltraModal(race) {
     const descEl = document.getElementById("modal-description");
     const photoContainer = document.getElementById("modal-photos");
     const notesBox = document.getElementById("user-notes");
+    const savedNotesContainer = document.getElementById("saved-notes");
 
     // Fill modal content
     titleEl.textContent = race.name || "Untitled Ultra";
     dateEl.textContent = `📅 ${new Date(race.start_date).toLocaleDateString()}`;
     distEl.textContent = `📏 ${(race.distance / 1609.34).toFixed(2)} miles`;
-    descEl.textContent = race.description || "No description available.";
+    descEl.innerHTML = (race.description || "No description available.")
+        .split('\n')
+        .map(line => line.trim() !== "" ? `• ${line.trim()}` : "")
+        .join('<br>');
 
     // Photos
     photoContainer.innerHTML = "";
@@ -300,18 +304,37 @@ function openUltraModal(race) {
         });
     }
 
-    // Notes (load from localStorage)
+    // Load and display saved notes
     const notesKey = `ultra-notes-${race.id}`;
-    notesBox.value = localStorage.getItem(notesKey) || "";
+    const savedNotes = JSON.parse(localStorage.getItem(notesKey) || "[]");
+    renderSavedNotes(savedNotes, savedNotesContainer);
 
-    // Save handler
+    // Clear input box
+    notesBox.value = "";
+
+    // Save new note
     document.getElementById("save-notes-btn").onclick = () => {
-        localStorage.setItem(notesKey, notesBox.value);
-        alert("💾 Notes saved!");
+        const newNote = notesBox.value.trim();
+        if (!newNote) return;
+        const updatedNotes = [...savedNotes, newNote];
+        localStorage.setItem(notesKey, JSON.stringify(updatedNotes));
+        renderSavedNotes(updatedNotes, savedNotesContainer);
+        notesBox.value = "";
     };
 
-    // Show modal
     modal.style.display = "flex";
+}
+
+function renderSavedNotes(notes, container) {
+    container.innerHTML = "";
+    if (notes.length === 0) return;
+
+    notes.forEach((note, i) => {
+        const noteEl = document.createElement("div");
+        noteEl.className = "saved-note";
+        noteEl.innerHTML = `<strong>Note ${i + 1}:</strong><br>${note.split('\n').join('<br>')}`;
+        container.appendChild(noteEl);
+    });
 }
 
 function closeUltraModal() {

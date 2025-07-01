@@ -3260,6 +3260,7 @@ main.article-content {
     overflow-y: auto;
     position: relative;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    scroll-behavior: smooth;
 }
 
 .ultra-modal-close {
@@ -3296,6 +3297,26 @@ main.article-content {
     border-radius: 8px;
     object-fit: cover;
     max-height: 160px;
+}
+
+/* ==== Saved Notes Styling ==== */
+
+#saved-notes {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.saved-note {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #28a745;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #333;
 }
 
 /* 📸 Strava Photo Timeline */

@@ -121,10 +121,19 @@
 
             <div id="modal-photos" class="photo-carousel"></div>
 
-            <label for="user-notes"><strong>Your Notes:</strong></label>
-            <textarea id="user-notes" rows="4"
-                placeholder="Write your thoughts, memories, pain cave moments..."></textarea>
-            <button id="save-notes-btn">Save Notes</button>
+            <div id="notes-section" style="margin-top: 2rem;">
+                <h3 style="margin-bottom: 0.5rem;">📝 Add a Note</h3>
+                <textarea id="user-notes" rows="3" placeholder="Write your thoughts..."
+                    style="width: 100%; border-radius: 8px; border: 1px solid #ccc; padding: 10px; font-size: 1rem; resize: vertical;"></textarea>
+                <button id="save-notes-btn"
+                    style="margin-top: 0.5rem; padding: 8px 16px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                    Save Note
+                </button>
+
+                <div id="saved-notes" style="margin-top: 1.5rem;">
+                    <!-- Saved notes will appear here -->
+                </div>
+            </div>
         </div>
     </div>
 
