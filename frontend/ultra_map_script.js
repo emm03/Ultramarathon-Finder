@@ -282,6 +282,17 @@ function openUltraModal(race) {
     const descEl = document.getElementById("modal-description");
     const photoContainer = document.getElementById("modal-photos");
     const notesBox = document.getElementById("user-notes");
+    const mapContainer = document.getElementById("modal-map");
+    mapContainer.innerHTML = `
+    <iframe 
+        src="https://www.strava.com/activities/${race.id}/embed/map" 
+        width="100%" 
+        height="320" 
+        frameborder="0" 
+        allowfullscreen 
+        style="border-radius: 10px;">
+    </iframe>
+`;
     const savedNotesContainer = document.getElementById("saved-notes");
 
     // Fill modal content
