@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const data = await res.json();
 
-        // ✅ Render photo timeline
+        // ✅ Render photo timeline with clickable thumbnails
         const activitiesWithPhotos = data.filter(act => Array.isArray(act.photos) && act.photos.length > 0);
         console.log("📸 Ultra Activities with Photos:", activitiesWithPhotos);
 
@@ -43,8 +43,14 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const img = document.createElement("img");
                 img.src = url;
                 img.alt = `Ultra ${index + 1} Photo ${i + 1}`;
+                img.classList.add("photo-thumb");
+
+                // Lightbox click
+                img.addEventListener("click", () => {
+                    openLightbox(url);
+                });
+
                 photoContainer.appendChild(img);
-                console.log(`📷 [${index}] ${act.name}`, act.photos);
             });
         });
 
@@ -231,4 +237,42 @@ function inside(point, vs) {
         if (intersect) inside = !inside;
     }
     return inside;
+}
+
+// 📸 Enlarged image lightbox viewer
+function openLightbox(imageUrl) {
+    let modal = document.getElementById("photo-lightbox");
+    let modalImg = document.getElementById("lightbox-image");
+
+    if (!modal) {
+        modal = document.createElement("div");
+        modal.id = "photo-lightbox";
+        modal.style.position = "fixed";
+        modal.style.top = 0;
+        modal.style.left = 0;
+        modal.style.width = "100%";
+        modal.style.height = "100%";
+        modal.style.backgroundColor = "rgba(0,0,0,0.8)";
+        modal.style.display = "flex";
+        modal.style.alignItems = "center";
+        modal.style.justifyContent = "center";
+        modal.style.zIndex = 1000;
+
+        modalImg = document.createElement("img");
+        modalImg.id = "lightbox-image";
+        modalImg.style.maxWidth = "90%";
+        modalImg.style.maxHeight = "90%";
+        modalImg.style.borderRadius = "10px";
+        modalImg.style.boxShadow = "0 0 20px rgba(255,255,255,0.3)";
+        modal.appendChild(modalImg);
+
+        modal.addEventListener("click", () => {
+            modal.remove();
+        });
+
+        document.body.appendChild(modal);
+    }
+
+    modalImg.src = imageUrl;
+    modal.style.display = "flex";
 }
