@@ -104,15 +104,17 @@
     </footer>
 
     <!-- 🔍 Lightbox Modal for Enlarged Ultra Photos -->
-    <div id="photo-lightbox" class="lightbox" style="display: none;">
-        <span class="lightbox-close">&times;</span>
-        <img class="lightbox-content" id="lightbox-img" />
+    <div id="photo-lightbox"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; z-index:1000;">
+        <img id="lightbox-image"
+            style="max-width:90%; max-height:90%; border-radius:10px; box-shadow:0 0 20px rgba(255,255,255,0.3);" />
     </div>
 
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script src="alanai_chatbot/alan.js"></script>
     <script src="forum/inject_account_dropdown.js"></script>
     <script src="ultra_map_script.js"></script>
+
 </body>
 
 </html>
