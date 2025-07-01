@@ -13,7 +13,7 @@
     <link rel="icon" href="ultra_favicon.ico" type="image/x-icon" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-encoded-polyline/Polyline.encoded.js" defer></script> <!-- ✅ Add this -->
+    <script src="https://unpkg.com/leaflet-encoded-polyline/Polyline.encoded.js"></script> <!-- ✅ Add this -->
 
     <!-- 🔐 Load global login/session logic -->
     <script src="auth_utils.js" defer></script>
@@ -144,10 +144,20 @@
         </div>
     </div>
 
+    <!-- Load Leaflet core first -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <!-- Load Leaflet Encoded Polyline Plugin right after Leaflet -->
+    <script src="https://unpkg.com/leaflet-encoded-polyline/Polyline.encoded.js"></script>
+
+    <!-- Then MarkerCluster (optional plugin) -->
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
+    <!-- Then your custom scripts -->
     <script src="alanai_chatbot/alan.js"></script>
     <script src="forum/inject_account_dropdown.js"></script>
     <script src="ultra_map_script.js"></script>
+
 
 </body>
 
