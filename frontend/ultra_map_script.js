@@ -306,7 +306,16 @@ function openUltraModal(race) {
 
     // Load and display saved notes
     const notesKey = `ultra-notes-${race.id}`;
-    const savedNotes = JSON.parse(localStorage.getItem(notesKey) || "[]");
+    let savedNotesRaw = localStorage.getItem(notesKey);
+    let savedNotes = [];
+
+    try {
+        const parsed = JSON.parse(savedNotesRaw);
+        savedNotes = Array.isArray(parsed) ? parsed : [parsed];
+    } catch {
+        if (savedNotesRaw) savedNotes = [savedNotesRaw];
+    }
+
     renderSavedNotes(savedNotes, savedNotesContainer);
 
     // Clear input box
