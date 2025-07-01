@@ -2858,14 +2858,12 @@ main.article-content {
 }
 
 .activity-title {
-    font-size: 1.2rem;
-    margin: 0;
+    font-size: 1.4rem;
     font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 90%;
-    display: block;
+    color: #222;
+    margin: 0;
+    white-space: normal;
+    overflow-wrap: break-word;
 }
 
 .activity-meta {
@@ -2879,7 +2877,9 @@ main.article-content {
     font-style: italic;
     font-size: 1rem;
     color: #444;
+    margin-top: 0.5rem;
     margin-bottom: 0.5rem;
+    white-space: pre-line;
 }
 
 .activity-stats {
@@ -2888,6 +2888,11 @@ main.article-content {
     font-size: 1rem;
     margin-top: 0.2rem;
     margin-bottom: 0.2rem;
+}
+
+.activity-header.vertical-layout {
+    display: block;
+    margin-bottom: 1rem;
 }
 
 .map-embed iframe {

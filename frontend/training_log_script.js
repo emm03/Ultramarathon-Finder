@@ -148,16 +148,14 @@ async function fetchActivities() {
                 const div = document.createElement('div');
                 div.className = 'activity-card';
                 div.innerHTML = `
-                    <div class="activity-header">
-                        <h3>${act.name || "Untitled Run"}</h3>
+                    <div class="activity-header vertical-layout">
+                        <h2 class="activity-title">${act.name || "Untitled Run"}</h2>
                         ${act.description ? `<p class="activity-description">${act.description}</p>` : ''}
-                        <p><strong>Distance:</strong> ${(act.distance / 1609).toFixed(2)} mi | 
-                           <strong>Pace:</strong> ${formatPace(act.moving_time, act.distance)} | 
-                           <strong>Time:</strong> ${formatDuration(act.elapsed_time)}</p>
                     </div>
                     ${mediaContent}
                 `;
                 list.appendChild(div);
+
             });
 
             summary.innerHTML = `✅ Total distance this week: <strong>${(totalDistance / 1000).toFixed(1)} km</strong> | Time: <strong>${(totalTime / 3600).toFixed(2)} hrs</strong>`;
