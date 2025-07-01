@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 postDiv.innerHTML = `
                     <div class="post-header">
-                        <img class="avatar" src="${post.profilePicture || '/images/default-profile.png'}" alt="User Avatar" />
+                        <img class="avatar" src="${post.profilePicture || './images/default-profile.png'}" alt="User Avatar" />
                         <div class="meta">
                             <strong>${post.username || "Anonymous"}</strong><br>
                             <small>${new Date(post.createdAt).toLocaleString()}</small>
@@ -78,6 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 `;
 
+                // Inline reply toggle
                 const replyBtn = postDiv.querySelector(".reply-btn");
                 const replyBox = postDiv.querySelector(".reply-input");
                 const submitReplyBtn = postDiv.querySelector(".submit-reply-btn");
@@ -107,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 });
 
-                // Add edit/delete/reply-to-reply handlers
+                // Edit / Delete / Reply-to-Reply logic
                 postDiv.querySelectorAll(".edit-reply-btn").forEach(btn => {
                     btn.addEventListener("click", async () => {
                         const replyId = btn.dataset.replyId;
@@ -142,9 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             try {
                                 const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/groups/group-posts/${postId}/reply/${replyId}`, {
                                     method: "DELETE",
-                                    headers: {
-                                        Authorization: `Bearer ${token}`
-                                    }
+                                    headers: { Authorization: `Bearer ${token}` }
                                 });
                                 if (res.ok) fetchGroupPosts();
                                 else alert("Failed to delete reply.");
@@ -174,6 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     fetchGroupPosts();
 
+    // Edit/Delete Post
     document.addEventListener("click", async (e) => {
         const postId = e.target.dataset.id;
         if (e.target.classList.contains("edit-btn")) {
@@ -215,6 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // Submit New Post
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const title = document.getElementById("group-post-title").value.trim();

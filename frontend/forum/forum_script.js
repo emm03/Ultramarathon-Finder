@@ -143,18 +143,70 @@ document.addEventListener('DOMContentLoaded', () => {
                 <small>${new Date(post.createdAt || post.timestamp).toLocaleString()}</small>
               </div>
             </div>
-            <h4>${post.title}</h4>
-            <p>${post.message}</p>
+            <div class="post-content">
+                <h4 class="post-title">${post.title}</h4>
+                <textarea class="post-title-edit" style="display:none;">${post.title}</textarea>
+                <p class="post-message">${post.message}</p>
+                <textarea class="post-message-edit" style="display:none;">${post.message}</textarea>
+            </div>
             <div class="post-actions">
               <button class="reaction-btn" data-id="${post._id}">🔥 ${post.reactions || 0}</button>
               <button class="comment-btn" onclick="window.location.href='comments.html?postId=${post._id}'">💬 Reply</button>
               ${isOwner ? `
-                <button class="edit-btn" data-id="${post._id}" data-title="${post.title}" data-message="${post.message}">✏️ Edit</button>
+                <button class="edit-btn" data-id="${post._id}">✏️ Edit</button>
+                <button class="save-btn" data-id="${post._id}" style="display:none;">💾 Save</button>
                 <button class="delete-btn" data-id="${post._id}">🗑️ Delete</button>` : ''
             }
             </div>
             <span class="post-meta">Posted in <strong>${post.topic}</strong></span>
         `;
+
+        // Inline editing logic
+        if (isOwner) {
+            const editBtn = div.querySelector(".edit-btn");
+            const saveBtn = div.querySelector(".save-btn");
+            const titleEl = div.querySelector(".post-title");
+            const titleInput = div.querySelector(".post-title-edit");
+            const messageEl = div.querySelector(".post-message");
+            const messageInput = div.querySelector(".post-message-edit");
+
+            editBtn.addEventListener("click", () => {
+                titleEl.style.display = "none";
+                titleInput.style.display = "block";
+                messageEl.style.display = "none";
+                messageInput.style.display = "block";
+                editBtn.style.display = "none";
+                saveBtn.style.display = "inline-block";
+            });
+
+            saveBtn.addEventListener("click", async () => {
+                const newTitle = titleInput.value.trim();
+                const newMessage = messageInput.value.trim();
+                const postId = saveBtn.dataset.id;
+
+                if (!newTitle || !newMessage) return alert("Title and message cannot be empty.");
+
+                try {
+                    const res = await fetch(`https://ultramarathon-finder-backend.onrender.com/api/forum/posts/${postId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ title: newTitle, message: newMessage })
+                    });
+
+                    if (res.ok) {
+                        fetchPosts();
+                    } else {
+                        alert("Failed to update post.");
+                    }
+                } catch (err) {
+                    console.error("Edit post error:", err);
+                }
+            });
+        }
+
         return div;
     }
 
