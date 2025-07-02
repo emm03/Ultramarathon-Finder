@@ -296,7 +296,7 @@ function openUltraModal(race) {
                 dragging: true,
                 zoomControl: true,
                 attributionControl: false
-            }).setView(decoded[0], 13);
+            });
 
             L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
                 maxZoom: 18
@@ -309,7 +309,6 @@ function openUltraModal(race) {
 
             modalMap.fitBounds(path.getBounds());
             setTimeout(() => modalMap.invalidateSize(), 200);
-
         } catch (err) {
             console.error("❌ Error decoding polyline:", err);
             polylineMap.innerHTML = `<p style="text-align:center; color:#999;">Map failed to render.</p>`;
