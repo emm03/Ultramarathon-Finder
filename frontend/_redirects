@@ -12,3 +12,5 @@ http://ultramarathonconnect.com/* https://ultramarathonconnect.com/:splat 301
 /forum/profile_edit.html /profile_edit.html 200
 
 /forum/* /:splat 200
+
+/ultra_map.html /ultra_map.html 200

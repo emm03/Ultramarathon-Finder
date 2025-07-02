@@ -424,3 +424,35 @@ function renderSavedNotes(notes, container, raceId) {
 function closeUltraModal() {
     document.getElementById("ultra-detail-modal").style.display = "none";
 }
+
+function downloadUltraResume() {
+    // Copy stats from visible elements into the résumé section
+    document.getElementById("resume-ultra-count").textContent = document.getElementById("ultra-count").textContent;
+    document.getElementById("resume-ultra-distance").textContent = document.getElementById("ultra-distance").textContent;
+    document.getElementById("resume-longest-run").textContent = document.getElementById("longest-run").textContent;
+    document.getElementById("resume-unique-locations").textContent = document.getElementById("unique-locations").textContent;
+    document.getElementById("resume-states-count").textContent = document.getElementById("visited-states-count").textContent;
+
+    // Add top photo if one exists
+    const topPhoto = document.querySelector("#photo-scroll-container img");
+    const resumePhoto = document.getElementById("resume-photo");
+    resumePhoto.innerHTML = ""; // Clear previous image
+    if (topPhoto) {
+        const img = document.createElement("img");
+        img.src = topPhoto.src;
+        img.style.maxWidth = "100%";
+        img.style.borderRadius = "8px";
+        resumePhoto.appendChild(img);
+    }
+
+    const element = document.getElementById("ultra-resume-content");
+    const opt = {
+        margin: 0.5,
+        filename: 'ultra_resume.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    html2pdf().from(element).set(opt).save();
+}
