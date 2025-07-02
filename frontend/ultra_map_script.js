@@ -654,9 +654,22 @@ function renderMilestoneWall(activities) {
 
         const name = oldest.name || "Unnamed Ultra";
         const dist = (oldest.distance / 1609.34).toFixed(2) + " mi";
-        const location = oldest.location_city && oldest.location_country
-            ? `${oldest.location_city}, ${oldest.location_country}`
-            : oldest.location_city || oldest.location_country || "Location Unknown";
+
+        // Try city first, fallback to state via lat/lng
+        let location = oldest.location_city || "";
+
+        if (!location && oldest.start_latlng && oldest.start_latlng.length === 2 && window.stateGeoData) {
+            const [lat, lng] = oldest.start_latlng;
+            for (const feature of window.stateGeoData.features) {
+                const polygon = feature.geometry;
+                if (isPointInPolygon([lng, lat], polygon)) {
+                    location = feature.properties.name;
+                    break;
+                }
+            }
+        }
+
+        if (!location) location = "Location Unknown";
 
         milestones.push(`🥇 First Ultra Completed: ${name} (${dist}, ${location})`);
     }
