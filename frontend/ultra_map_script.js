@@ -387,6 +387,11 @@ function openUltraModal(race) {
 }
 
 function renderSavedNotes(notes, container) {
+    if (!container) {
+        console.warn("⚠️ Missing saved notes container in modal.");
+        return;
+    }
+
     container.innerHTML = "";
     if (notes.length === 0) return;
 
