@@ -288,6 +288,10 @@ function openUltraModal(race) {
 
     if (race.map && race.map.summary_polyline) {
         try {
+            if (L.DomUtil.get("polyline-map")._leaflet_id) {
+                L.DomUtil.get("polyline-map")._leaflet_id = null;
+            }
+            
             const decoded = polyline.decode(race.map.summary_polyline);
 
             const modalMap = L.map("polyline-map", {
