@@ -285,17 +285,17 @@ function openUltraModal(race) {
     const notesBox = document.getElementById("user-notes");
     const mapContainer = document.getElementById("modal-map");
     const polylineMap = document.getElementById("polyline-map");
-    polylineMap.innerHTML = ""; 
+    polylineMap.innerHTML = "";
 
     if (race.map && race.map.summary_polyline) {
         const decoded = polyline.decode(race.map.summary_polyline);
 
         const modalMap = L.map("polyline-map", {
-            scrollWheelZoom: false,
-            dragging: false,
-            zoomControl: false,
+            scrollWheelZoom: true,         // ✅ enable scroll zoom
+            dragging: true,                // ✅ allow panning
+            zoomControl: true,             // ✅ show zoom buttons
             attributionControl: false
-        }).setView(decoded[0], 13);
+        }).fitBounds(decoded);             // ✅ center based on path
 
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
             maxZoom: 18
