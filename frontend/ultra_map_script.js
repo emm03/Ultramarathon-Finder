@@ -425,47 +425,77 @@ function closeUltraModal() {
     document.getElementById("ultra-detail-modal").style.display = "none";
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+    const btn = document.querySelector('button.green-btn');
+    if (btn) {
+        btn.addEventListener("click", downloadUltraResume);
+    }
+});
+
 function downloadUltraResume() {
-    // Show hidden résumé section
-    const resumeSection = document.getElementById("ultra-resume-content");
-    resumeSection.style.display = "block";
+    const ultraCountEl = document.getElementById("ultra-count");
+    const ultraDistanceEl = document.getElementById("ultra-distance");
+    const longestRunEl = document.getElementById("longest-run");
+    const uniqueLocationsEl = document.getElementById("unique-locations");
+    const visitedStatesEl = document.getElementById("visited-states-count");
 
-    // Copy values
-    document.getElementById("resume-ultra-count").textContent = document.getElementById("ultra-count").textContent;
-    document.getElementById("resume-ultra-distance").textContent = document.getElementById("ultra-distance").textContent;
-    document.getElementById("resume-longest-run").textContent = document.getElementById("longest-run").textContent;
-    document.getElementById("resume-unique-locations").textContent = document.getElementById("unique-locations").textContent;
-    document.getElementById("resume-states-count").textContent = document.getElementById("visited-states-count").textContent;
+    const resumeCount = document.getElementById("resume-ultra-count");
+    const resumeDistance = document.getElementById("resume-ultra-distance");
+    const resumeLongest = document.getElementById("resume-longest-run");
+    const resumeLocations = document.getElementById("resume-unique-locations");
+    const resumeStates = document.getElementById("resume-states-count");
 
-    // Add top photo if available
-    const topPhoto = document.querySelector("#photo-scroll-container img");
-    const resumePhoto = document.getElementById("resume-photo");
-    resumePhoto.innerHTML = "";
-    if (topPhoto) {
-        const img = document.createElement("img");
-        img.src = topPhoto.src;
-        img.style.maxWidth = "100%";
-        img.style.borderRadius = "8px";
-        resumePhoto.appendChild(img);
+    if (!resumeCount || !resumeDistance || !resumeLongest || !resumeLocations || !resumeStates) {
+        console.error("Résumé fields not found. Cannot generate PDF.");
+        return;
     }
 
-    // Add race highlights from timeline if available
-    const highlightContainer = document.getElementById("resume-highlights");
-    highlightContainer.innerHTML = "";
-    const descriptions = document.querySelectorAll(".timeline-description");
-    let count = 0;
-    descriptions.forEach(desc => {
-        if (count >= 3) return;
-        const text = desc.textContent.trim();
-        if (text) {
-            const p = document.createElement("p");
-            p.textContent = `• ${text}`;
-            highlightContainer.appendChild(p);
-            count++;
+    // Copy stats into résumé
+    resumeCount.textContent = ultraCountEl?.textContent || "N/A";
+    resumeDistance.textContent = ultraDistanceEl?.textContent || "N/A";
+    resumeLongest.textContent = longestRunEl?.textContent || "N/A";
+    resumeLocations.textContent = uniqueLocationsEl?.textContent || "N/A";
+    resumeStates.textContent = visitedStatesEl?.textContent || "N/A";
+
+    // Add top photo if it exists
+    const topPhoto = document.querySelector("#photo-scroll-container img");
+    const resumePhoto = document.getElementById("resume-photo");
+    if (resumePhoto) {
+        resumePhoto.innerHTML = "";
+        if (topPhoto) {
+            const img = document.createElement("img");
+            img.src = topPhoto.src;
+            img.style.maxWidth = "100%";
+            img.style.borderRadius = "8px";
+            resumePhoto.appendChild(img);
         }
-    });
+    }
+
+    // Race highlights
+    const raceListContainer = document.getElementById("resume-race-list");
+    if (raceListContainer) {
+        raceListContainer.innerHTML = "";
+
+        const modals = document.querySelectorAll("#ultra-detail-modal[data-id]");
+        if (modals.length === 0) {
+            const raceCards = document.querySelectorAll(".activity-card");
+            raceCards.forEach(card => {
+                const title = card.querySelector(".activity-title")?.textContent || "Untitled Race";
+                const date = card.querySelector(".activity-date")?.textContent || "Unknown Date";
+                const desc = card.querySelector(".activity-description")?.textContent || "";
+                const para = document.createElement("p");
+                para.innerHTML = `<strong>${title} (${date}):</strong> ${desc}`;
+                raceListContainer.appendChild(para);
+            });
+        }
+    }
 
     const element = document.getElementById("ultra-resume-content");
+    if (!element) {
+        console.error("No résumé content found in DOM.");
+        return;
+    }
+
     const opt = {
         margin: 0.5,
         filename: 'ultra_resume.pdf',
@@ -474,10 +504,5 @@ function downloadUltraResume() {
         jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
 
-    // Add brief timeout to ensure DOM is rendered, then hide content again
-    setTimeout(() => {
-        html2pdf().from(element).set(opt).save().then(() => {
-            resumeSection.style.display = "none";
-        });
-    }, 100);
+    html2pdf().set(opt).from(element).save();
 }
