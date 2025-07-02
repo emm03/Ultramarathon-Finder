@@ -433,30 +433,31 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function downloadUltraResume() {
+    const element = document.getElementById("ultra-resume-content");
+
+    // Collect and update résumé stats
     const resumeCount = document.getElementById("resume-ultra-count");
     const resumeDistance = document.getElementById("resume-ultra-distance");
     const resumeLongest = document.getElementById("resume-longest-run");
     const resumeLocations = document.getElementById("resume-unique-locations");
     const resumeStates = document.getElementById("resume-states-count");
-    const resumePhoto = document.getElementById("resume-photo");
-    const resumeList = document.getElementById("resume-race-list");
-    const element = document.getElementById("ultra-resume-content");
 
-    if (!resumeCount || !resumeDistance || !resumeLongest || !resumeLocations || !resumeStates || !element) {
-        console.error("❌ Résumé fields missing in DOM.");
-        return;
-    }
+    const count = document.getElementById("ultra-count")?.textContent;
+    const dist = document.getElementById("ultra-distance")?.textContent;
+    const long = document.getElementById("longest-run")?.textContent;
+    const locs = document.getElementById("unique-locations")?.textContent;
+    const states = document.getElementById("visited-states-count")?.textContent;
 
-    // Copy stats
-    resumeCount.textContent = document.getElementById("ultra-count").textContent;
-    resumeDistance.textContent = document.getElementById("ultra-distance").textContent;
-    resumeLongest.textContent = document.getElementById("longest-run").textContent;
-    resumeLocations.textContent = document.getElementById("unique-locations").textContent;
-    resumeStates.textContent = document.getElementById("visited-states-count").textContent;
+    resumeCount.textContent = count;
+    resumeDistance.textContent = dist;
+    resumeLongest.textContent = long;
+    resumeLocations.textContent = locs;
+    resumeStates.textContent = states;
 
-    // Add photo
-    resumePhoto.innerHTML = "";
+    // Add top photo
     const topPhoto = document.querySelector("#photo-scroll-container img");
+    const resumePhoto = document.getElementById("resume-photo");
+    resumePhoto.innerHTML = "";
     if (topPhoto) {
         const img = document.createElement("img");
         img.src = topPhoto.src;
@@ -465,36 +466,73 @@ function downloadUltraResume() {
         resumePhoto.appendChild(img);
     }
 
-    // Add notes under each race highlight
-    const notesJSON = localStorage.getItem("ultraRaceNotes");
-    resumeList.innerHTML = "";
-    if (notesJSON) {
-        try {
-            const allNotes = JSON.parse(notesJSON);
-            Object.keys(allNotes).forEach((raceId) => {
-                const div = document.createElement("div");
-                div.style.marginBottom = "12px";
-                div.innerHTML = `<strong>Race:</strong> ${raceId}<br/><strong>Note:</strong> ${allNotes[raceId]}`;
-                resumeList.appendChild(div);
-            });
-        } catch (err) {
-            console.error("❌ Error parsing race notes:", err);
-        }
-    }
+    // Add race highlights + Alan’s insights
+    const highlightsContainer = document.getElementById("resume-race-list");
+    highlightsContainer.innerHTML = "";
 
-    // Temporarily show hidden section
+    const races = document.querySelectorAll(".ultra-dot");
+    races.forEach(dot => {
+        const title = dot.getAttribute("data-title");
+        const date = dot.getAttribute("data-date");
+        const desc = dot.getAttribute("data-description") || "";
+
+        if (!title || !date) return;
+
+        const div = document.createElement("div");
+        div.style.marginBottom = "10px";
+
+        const titleLine = document.createElement("p");
+        titleLine.innerHTML = `<strong>${title}</strong> (${date})`;
+        div.appendChild(titleLine);
+
+        if (desc) {
+            const tips = generateAlanTipsFromDescription(desc);
+            const ul = document.createElement("ul");
+            tips.forEach(t => {
+                const li = document.createElement("li");
+                li.textContent = t;
+                ul.appendChild(li);
+            });
+            div.appendChild(ul);
+        }
+
+        highlightsContainer.appendChild(div);
+    });
+
+    // ✅ Temporarily show the résumé container for rendering
     element.style.display = "block";
 
-    // Delay PDF render to ensure DOM is ready
+    // ✨ Auto-height, no extra blank pages
     setTimeout(() => {
-        html2pdf().from(element).set({
+        html2pdf().set({
+            filename: "ultra_resume.pdf",
             margin: 0.5,
-            filename: 'ultra_resume.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2 },
-            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-        }).save().then(() => {
-            element.style.display = "none"; // Hide it again
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+            pagebreak: { avoid: 'div' }
+        }).from(element).save().then(() => {
+            element.style.display = "none";
         });
     }, 100);
+}
+
+// 🧠 Alan's Tips Generator
+function generateAlanTipsFromDescription(desc) {
+    const tips = [];
+
+    if (desc.toLowerCase().includes("hill") || desc.toLowerCase().includes("elevation"))
+        tips.push("Great climbing effort — consider more hill repeats in training.");
+    if (desc.toLowerCase().includes("hot") || desc.toLowerCase().includes("heat"))
+        tips.push("Excellent heat management. Stay hydrated and train with electrolytes.");
+    if (desc.toLowerCase().includes("tough") || desc.toLowerCase().includes("hard"))
+        tips.push("Impressive grit. You’re building mental endurance.");
+    if (desc.toLowerCase().includes("first ultra"))
+        tips.push("Congratulations on your first ultra finish! The journey has begun.");
+    if (desc.toLowerCase().includes("mud") || desc.toLowerCase().includes("trail"))
+        tips.push("Great trail effort — watch foot placement and use poles if needed.");
+
+    if (tips.length === 0)
+        tips.push("Solid performance! Keep building on your strengths.");
+
+    return tips;
 }
