@@ -433,7 +433,7 @@ function downloadUltraResume() {
     document.getElementById("resume-unique-locations").textContent = document.getElementById("unique-locations").textContent;
     document.getElementById("resume-states-count").textContent = document.getElementById("visited-states-count").textContent;
 
-    // Add top photo if available
+    // Add top photo if one exists
     const topPhoto = document.querySelector("#photo-scroll-container img");
     const resumePhoto = document.getElementById("resume-photo");
     resumePhoto.innerHTML = ""; // Clear previous image
@@ -445,17 +445,17 @@ function downloadUltraResume() {
         resumePhoto.appendChild(img);
     }
 
-    // ✅ Wait a tiny bit to ensure content renders before PDF
-    setTimeout(() => {
-        const element = document.getElementById("ultra-resume-content");
-        const opt = {
-            margin: 0.5,
-            filename: 'ultra_resume.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-        };
+    const element = document.getElementById("ultra-resume-content");
+    const opt = {
+        margin: 0.5,
+        filename: 'ultra_resume.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
 
+    // ✅ Delay to allow DOM updates
+    setTimeout(() => {
         html2pdf().from(element).set(opt).save();
-    }, 100); // Wait 100ms
+    }, 100);
 }
