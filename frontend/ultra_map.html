@@ -12,8 +12,6 @@
     <link rel="stylesheet" href="alanai_chatbot/chat-widget.css" />
     <link rel="icon" href="ultra_favicon.ico" type="image/x-icon" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-plugins/layer/vector/Encoded.js"></script> <!-- ✅ Correct plugin -->
     <script src="auth_utils.js" defer></script>
 </head>
 
@@ -124,9 +122,10 @@
         </div>
     </div>
 
-    <!-- ✅ Script order matters here -->
+    <!-- ✅ Script Order Matters -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-plugins/layer/vector/Encoded.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mapbox/polyline@1.1.1/src/polyline.min.js"></script>
+    <!-- ✅ Correct plugin -->
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script src="alanai_chatbot/alan.js"></script>
     <script src="forum/inject_account_dropdown.js"></script>

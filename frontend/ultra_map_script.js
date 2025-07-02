@@ -283,16 +283,15 @@ function openUltraModal(race) {
     const descEl = document.getElementById("modal-description");
     const photoContainer = document.getElementById("modal-photos");
     const notesBox = document.getElementById("user-notes");
-    const mapContainer = document.getElementById("modal-map");
     const polylineMap = document.getElementById("polyline-map");
     polylineMap.innerHTML = "";
 
     if (race.map && race.map.summary_polyline) {
         try {
-            const decoded = L.Polyline.fromEncoded(race.map.summary_polyline).getLatLngs();
+            const decoded = polyline.decode(race.map.summary_polyline);
 
             const modalMap = L.map("polyline-map", {
-                scrollWheelZoom: true,
+                scrollWheelZoom: false,
                 dragging: true,
                 zoomControl: true,
                 attributionControl: false
@@ -317,9 +316,7 @@ function openUltraModal(race) {
         polylineMap.innerHTML = `<p style="text-align:center; color:#999;">Map unavailable for this activity.</p>`;
     }
 
-    const savedNotesContainer = document.getElementById("saved-notes");
-
-    // Fill modal content
+    // Fill content
     titleEl.textContent = race.name || "Untitled Ultra";
     dateEl.textContent = `📅 ${new Date(race.start_date).toLocaleDateString()}`;
     distEl.textContent = `📏 ${(race.distance / 1609.34).toFixed(2)} miles`;
@@ -339,8 +336,9 @@ function openUltraModal(race) {
         });
     }
 
-    // Load and display saved notes
+    // Notes
     const notesKey = `ultra-notes-${race.id}`;
+    const savedNotesContainer = document.getElementById("saved-notes");
     let savedNotesRaw = localStorage.getItem(notesKey);
     let savedNotes = [];
 
@@ -352,11 +350,8 @@ function openUltraModal(race) {
     }
 
     renderSavedNotes(savedNotes, savedNotesContainer);
-
-    // Clear input box
     notesBox.value = "";
 
-    // Save new note
     document.getElementById("save-notes-btn").onclick = () => {
         const newNote = notesBox.value.trim();
         if (!newNote) return;
