@@ -459,7 +459,8 @@ async function downloadUltraResume() {
     if (typeof ultraActivities !== "undefined" && ultraActivities.length > 0) {
         ultraActivities.forEach(activity => {
             const div = document.createElement("div");
-            div.style.marginBottom = "12px";
+            div.style.marginBottom = "18px";
+            div.style.pageBreakInside = "avoid";
 
             const title = activity.name || "Untitled Race";
             const date = new Date(activity.start_date).toLocaleDateString();
@@ -469,8 +470,9 @@ async function downloadUltraResume() {
 
             div.innerHTML = `
                 <strong>${title}</strong> (${date})<br/>
-                <em>${desc}</em><br/>
-                <ul style="margin-top: 5px; padding-left: 20px;">
+                <em>${desc}</em><br/><br/>
+                <strong>Alan’s Suggestions:</strong>
+                <ul style="margin-top: 6px; padding-left: 18px;">
                     ${tips.map(t => `<li>${t}</li>`).join("")}
                 </ul>
             `;
@@ -484,15 +486,12 @@ async function downloadUltraResume() {
     element.style.display = "block";
 
     setTimeout(() => {
-        window.scrollTo(0, 0); // Ensure content is top-aligned in viewport
-
         html2pdf().from(element).set({
-            margin: 0, // Top alignment
+            margin: 0.5,
             filename: 'ultra_resume.pdf',
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, scrollY: 0 },
-            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
-            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
         }).save().then(() => {
             element.style.display = "none";
         });
