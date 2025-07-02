@@ -291,7 +291,7 @@ function openUltraModal(race) {
             if (L.DomUtil.get("polyline-map")._leaflet_id) {
                 L.DomUtil.get("polyline-map")._leaflet_id = null;
             }
-            
+
             const decoded = polyline.decode(race.map.summary_polyline);
 
             const modalMap = L.map("polyline-map", {
@@ -310,8 +310,11 @@ function openUltraModal(race) {
                 weight: 4
             }).addTo(modalMap);
 
-            modalMap.fitBounds(path.getBounds());
-            setTimeout(() => modalMap.invalidateSize(), 200);
+            // 🛠 Fix zoom/render timing
+            setTimeout(() => {
+                modalMap.invalidateSize();
+                modalMap.fitBounds(path.getBounds());
+            }, 300);
         } catch (err) {
             console.error("❌ Error decoding polyline:", err);
             polylineMap.innerHTML = `<p style="text-align:center; color:#999;">Map failed to render.</p>`;
