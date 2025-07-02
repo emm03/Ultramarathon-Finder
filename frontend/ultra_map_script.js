@@ -509,19 +509,21 @@ async function downloadUltraResume() {
         const statesList = Array.from(visitedStatesSet).sort();
         const milestones = [];
 
+        // Only push milestone-style achievements
         if (ultraActivities.length >= 1) {
             const first = ultraActivities[0];
             const name = first.name || "Unnamed Ultra";
+            const distance = (first.distance / 1609.34).toFixed(2);
+            const location = first.location_city || "Unknown Location";
             const date = new Date(first.start_date).toLocaleDateString();
-            milestones.push(`🥇 First Ultra Completed: ${name} (${date})`);
+            milestones.push(`🥇 First Ultra Completed: ${name} - ${distance} mi in ${location} (${date})`);
         }
 
-        const distanceMilestones = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
-        distanceMilestones.forEach(m => {
-            if (totalDistance >= m) milestones.push(`🏃 ${m} Miles Total`);
-        });
+        for (let mi = 100; mi <= totalDistance; mi += 100) {
+            milestones.push(`🏃 ${mi} Miles Total`);
+        }
 
-        for (let ft = 10000; ft <= totalElevation; ft += 10000) {
+        for (let ft = 1000; ft <= totalElevation; ft += 1000) {
             milestones.push(`⛰️ ${ft.toLocaleString()} ft Climbed`);
         }
 
@@ -603,10 +605,10 @@ function renderMilestoneWall(activities) {
 
     // Fill elevation stat
     if (elevationSpan) {
-        elevationSpan.textContent = stats.totalElevation.toLocaleString(undefined, { maximumFractionDigits: 0 }) + " ft";
+        elevationSpan.textContent = stats.totalElevation.toLocaleString() + " ft";
     }
 
-    // Detect visited states
+    // Determine visited states
     activities.forEach(act => {
         const coords = act.start_latlng;
         if (!coords || coords.length !== 2) return;
@@ -616,10 +618,7 @@ function renderMilestoneWall(activities) {
             window.stateGeoData.features.forEach(feature => {
                 const polygon = feature.geometry;
                 if (isPointInPolygon([lng, lat], polygon)) {
-                    stats.visitedStates.add(
-                        feature.properties.name.toLowerCase()
-                            .replace(/\b\w/g, c => c.toUpperCase())  // Title Case
-                    );
+                    stats.visitedStates.add(feature.properties.name);
                 }
             });
         }
@@ -627,30 +626,31 @@ function renderMilestoneWall(activities) {
 
     const milestones = [];
 
-    // 🥇 First ultra
-    if (stats.totalRuns > 0) {
-        const first = activities.reduce((a, b) => new Date(a.start_date) < new Date(b.start_date) ? a : b);
-        milestones.push(`🥇 First Ultra Completed: ${first.name}`);
+    // First Ultra Completed
+    if (activities.length > 0) {
+        const first = activities[0];
+        const name = first.name || "Unnamed Ultra";
+        const location = first.location_country || "Unknown";
+        const dist = (first.distance / 1609.34).toFixed(2) + " mi";
+        milestones.push(`🥇 First Ultra Completed: ${name} (${dist}, ${location})`);
     }
 
-    // 💯 Distance milestones
-    const roundedMiles = Math.floor(stats.totalDistance);
-    if (roundedMiles >= 100) {
-        for (let m = 100; m <= roundedMiles; m += (m < 1000 ? 100 : 1000)) {
-            milestones.push(`💯 ${m.toLocaleString()} Miles Total`);
-        }
+    // Distance milestones
+    const totalMiles = stats.totalDistance;
+    for (let m = 100; m <= totalMiles; m += 100) {
+        milestones.push(`💯 ${m} Miles Total`);
     }
 
-    // ⛰️ Elevation milestones (every 10,000 ft)
-    const roundedElev = Math.floor(stats.totalElevation / 10000) * 10000;
-    for (let e = 10000; e <= roundedElev; e += 10000) {
-        milestones.push(`⛰️ ${e.toLocaleString()} ft Climbed`);
+    // Elevation milestones
+    const elevation = stats.totalElevation;
+    for (let ft = 1000; ft <= elevation; ft += 1000) {
+        milestones.push(`⛰️ ${ft.toLocaleString()} ft Climbed`);
     }
 
-    // 📍 States visited
-    if (stats.visitedStates.size > 0) {
-        const stateList = Array.from(stats.visitedStates).sort().join(", ");
-        milestones.push(`📍 States Visited (${stats.visitedStates.size}): ${stateList}`);
+    // Visited states
+    const states = Array.from(stats.visitedStates).sort();
+    if (states.length > 0) {
+        milestones.push(`📍 States Visited (${states.length}): ${states.join(', ')}`);
     }
 
     // Render

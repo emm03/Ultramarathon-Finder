@@ -119,7 +119,7 @@ function logoutSilently() {
 
 // -------------------- Inactivity Timer --------------------
 function trackInactivityLogout() {
-    const INACTIVITY_LIMIT = 15 * 60 * 1000; // 15 minutes
+    const INACTIVITY_LIMIT = 4 * 60 * 60 * 1000; 
     let timer;
 
     const resetTimer = () => {

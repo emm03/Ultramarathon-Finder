@@ -46,8 +46,8 @@
                 <h1>📍 My Ultra Map</h1>
                 <p>Every run over 26.2 miles — visualized across the globe.</p>
             </div>
-            <div class="ultra-stats-row" style="display: flex; flex-wrap: wrap; gap: 20px;">
-                <div class="ultra-stats-card milestone-box">
+            <div class="ultra-stats-row" style="display: flex; flex-wrap: wrap; gap: 20px; align-items: stretch;">
+                <div class="ultra-stats-card">
                     <p><strong>Total Ultra Runs:</strong> <span id="ultra-count">0</span></p>
                     <p><strong>Total Distance:</strong> <span id="ultra-distance">0 mi</span></p>
                     <p><strong>Longest Run:</strong> <span id="longest-run">0 mi</span></p>
@@ -55,7 +55,7 @@
                     <p><strong>Total Elevation:</strong> <span id="total-elevation">0 ft</span></p>
                 </div>
 
-                <div id="milestone-wall" class="milestone-box">
+                <div class="ultra-stats-card" id="milestone-wall">
                     <h3 style="margin-bottom: 10px;">🏆 Milestone Wall</h3>
                     <ul id="milestone-list" style="padding-left: 20px; margin: 0;"></ul>
                 </div>
@@ -82,43 +82,44 @@
             <h2 class="chart-title">🖼️ My Ultra Photo Timeline</h2>
             <div id="photo-scroll-container" class="photo-scroll"></div>
         </section>
+    </main>
 
-        <!-- 📝 Hidden Résumé Content (Updated: No Photo, Pushed to Top) -->
-        <div id="ultra-resume-content"
-            style="display: none; padding: 20px 40px 20px 40px; font-family: Arial, sans-serif; max-width: 700px;">
-            <h1 style="text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 20px;">Ultramarathon
-                Résumé</h1>
+    <!-- 📝 Hidden Résumé Content (Updated: No Photo, Pushed to Top) -->
+    <div id="ultra-resume-content"
+        style="display: none; padding: 20px 40px 20px 40px; font-family: Arial, sans-serif; max-width: 700px;">
+        <h1 style="text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 20px;">Ultramarathon
+            Résumé</h1>
 
-            <section style="margin-bottom: 20px;">
-                <h2 style="font-size: 18px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">📊 Summary</h2>
-                <p><strong>Total Ultra Runs:</strong> <span id="resume-ultra-count"></span></p>
-                <p><strong>Total Distance:</strong> <span id="resume-ultra-distance"></span></p>
-                <p><strong>Longest Run:</strong> <span id="resume-longest-run"></span></p>
-                <p><strong>Unique Locations:</strong> <span id="resume-unique-locations"></span></p>
-                <p><strong>States Completed:</strong> <span id="resume-states-count"></span></p>
-            </section>
+        <section style="margin-bottom: 20px;">
+            <h2 style="font-size: 18px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">📊 Summary</h2>
+            <p><strong>Total Ultra Runs:</strong> <span id="resume-ultra-count"></span></p>
+            <p><strong>Total Distance:</strong> <span id="resume-ultra-distance"></span></p>
+            <p><strong>Longest Run:</strong> <span id="resume-longest-run"></span></p>
+            <p><strong>Unique Locations:</strong> <span id="resume-unique-locations"></span></p>
+            <p><strong>States Completed:</strong> <span id="resume-states-count"></span></p>
+        </section>
 
-            <section style="margin-bottom: 20px;">
-                <h2 style="font-size: 18px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">🏆 Milestone Wall</h2>
-                <ul id="resume-milestone-list" style="padding-left: 20px; margin: 0;"></ul>
-            </section>
+        <section style="margin-bottom: 20px;">
+            <h2 style="font-size: 18px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">🏆 Milestone Wall</h2>
+            <ul id="resume-milestone-list" style="padding-left: 20px; margin: 0;"></ul>
+        </section>
 
-            <section style="margin-bottom: 20px;">
-                <h2 style="font-size: 18px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">🧠 Alan's Recommended
-                    Next Challenge</h2>
+        <section style="margin-bottom: 20px;">
+            <h2 style="font-size: 18px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">🧠 Alan's Recommended
+                Next Challenge</h2>
 
-                <ul style="padding-left: 20px;">
-                    <li>🏔️ Try a 100K or 100-mile mountain ultra</li>
-                    <li>🌍 Explore a race in Europe or Asia</li>
-                    <li>🔥 Build toward multi-day stage races</li>
-                </ul>
-            </section>
+            <ul style="padding-left: 20px;">
+                <li>🏔️ Try a 100K or 100-mile mountain ultra</li>
+                <li>🌍 Explore a race in Europe or Asia</li>
+                <li>🔥 Build toward multi-day stage races</li>
+            </ul>
+        </section>
 
-            <section style="margin-bottom: 20px;">
-                <h2 style="font-size: 18px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">📝 Race Highlights</h2>
-                <div id="resume-race-list"></div>
-            </section>
-        </div>
+        <section style="margin-bottom: 20px;">
+            <h2 style="font-size: 18px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">📝 Race Highlights</h2>
+            <div id="resume-race-list"></div>
+        </section>
+    </div>
     </main>
 
     <div id="alan-bubble">💬</div>

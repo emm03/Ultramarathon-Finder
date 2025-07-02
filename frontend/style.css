@@ -3235,6 +3235,14 @@ main.article-content {
     font-size: 1.1rem;
 }
 
+.ultra-stats-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: stretch;
+    /* Ensures equal height */
+}
+
 /* ==== Ultra Detail Modal ==== */
 
 .ultra-modal {
@@ -3355,6 +3363,9 @@ main.article-content {
     border: 1px solid #ddd;
     flex: 1;
     min-width: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .milestone-box h3 {
@@ -3379,6 +3390,12 @@ main.article-content {
 .milestone-box li::before {
     content: "";
     margin-right: 0;
+}
+
+#milestone-list li {
+    margin-bottom: 10px;
+    line-height: 1.5;
+    font-size: 15px;
 }
 
 /* ==== Saved Notes Styling ==== */
