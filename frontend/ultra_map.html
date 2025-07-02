@@ -76,22 +76,39 @@
         </section>
 
         <!-- 📝 Hidden Résumé Content -->
-        <div id="ultra-resume-content" style="display:none; padding: 20px; font-family: sans-serif; max-width: 600px;">
-            <h2>Ultramarathon Résumé</h2>
-            <p><strong>Total Ultra Runs:</strong> <span id="resume-ultra-count"></span></p>
-            <p><strong>Total Distance:</strong> <span id="resume-ultra-distance"></span></p>
-            <p><strong>Longest Run:</strong> <span id="resume-longest-run"></span></p>
-            <p><strong>Unique Locations:</strong> <span id="resume-unique-locations"></span></p>
-            <p><strong>States Completed:</strong> <span id="resume-states-count"></span></p>
+        <div id="ultra-resume-content"
+            style="display: none; padding: 40px; font-family: Arial, sans-serif; max-width: 700px;">
+            <h1 style="text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 20px;">Ultramarathon
+                Résumé</h1>
 
-            <h3>Alan's Recommended Next Challenge</h3>
-            <ul>
-                <li>🏔️ Try a 100K or 100-mile mountain ultra</li>
-                <li>🌍 Explore a race in Europe or Asia</li>
-                <li>🔥 Build toward multi-day stage races</li>
-            </ul>
+            <section style="margin-bottom: 20px;">
+                <h2 style="font-size: 18px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">📊 Summary</h2>
+                <p><strong>Total Ultra Runs:</strong> <span id="resume-ultra-count"></span></p>
+                <p><strong>Total Distance:</strong> <span id="resume-ultra-distance"></span></p>
+                <p><strong>Longest Run:</strong> <span id="resume-longest-run"></span></p>
+                <p><strong>Unique Locations:</strong> <span id="resume-unique-locations"></span></p>
+                <p><strong>States Completed:</strong> <span id="resume-states-count"></span></p>
+            </section>
 
-            <div id="resume-photo" style="margin-top: 20px;"></div>
+            <section style="margin-bottom: 20px;">
+                <h2 style="font-size: 18px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">🧠 Alan's Recommended
+                    Next Challenge</h2>
+                <ul style="padding-left: 20px;">
+                    <li>🏔️ Try a 100K or 100-mile mountain ultra</li>
+                    <li>🌍 Explore a race in Europe or Asia</li>
+                    <li>🔥 Build toward multi-day stage races</li>
+                </ul>
+            </section>
+
+            <section style="margin-bottom: 20px;">
+                <h2 style="font-size: 18px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">📝 Race Highlights</h2>
+                <div id="resume-race-list"></div>
+            </section>
+
+            <section>
+                <h2 style="font-size: 18px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">📸 Top Race Photo</h2>
+                <div id="resume-photo" style="margin-top: 10px;"></div>
+            </section>
         </div>
     </main>
 

@@ -426,14 +426,14 @@ function closeUltraModal() {
 }
 
 function downloadUltraResume() {
-    // Fill in the résumé stats
+    // Copy stat values
     document.getElementById("resume-ultra-count").textContent = document.getElementById("ultra-count").textContent;
     document.getElementById("resume-ultra-distance").textContent = document.getElementById("ultra-distance").textContent;
     document.getElementById("resume-longest-run").textContent = document.getElementById("longest-run").textContent;
     document.getElementById("resume-unique-locations").textContent = document.getElementById("unique-locations").textContent;
     document.getElementById("resume-states-count").textContent = document.getElementById("visited-states-count").textContent;
 
-    // Add photo
+    // Add top photo
     const topPhoto = document.querySelector("#photo-scroll-container img");
     const resumePhoto = document.getElementById("resume-photo");
     resumePhoto.innerHTML = "";
@@ -445,9 +445,24 @@ function downloadUltraResume() {
         resumePhoto.appendChild(img);
     }
 
-    const element = document.getElementById("ultra-resume-content");
+    // Optional: Generate race summaries from the timeline modal or existing runs
+    const raceListContainer = document.getElementById("resume-race-list");
+    raceListContainer.innerHTML = "";
+    const activities = window.ultraActivities || []; // Make sure this is populated in your app
 
-    // ✅ Temporarily show the résumé
+    activities.slice(0, 5).forEach((activity, i) => {
+        const raceEl = document.createElement("div");
+        raceEl.style.marginBottom = "10px";
+        raceEl.innerHTML = `
+            <strong>${i + 1}. ${activity.name}</strong><br/>
+            ${activity.date} — ${activity.distance} miles<br/>
+            <em>${activity.description || "No description provided."}</em>
+        `;
+        raceListContainer.appendChild(raceEl);
+    });
+
+    // Show content and generate PDF
+    const element = document.getElementById("ultra-resume-content");
     element.style.display = "block";
 
     const opt = {
@@ -458,7 +473,6 @@ function downloadUltraResume() {
         jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
 
-    // ✅ Wait briefly, then generate PDF and re-hide
     setTimeout(() => {
         html2pdf().from(element).set(opt).save().then(() => {
             element.style.display = "none";
