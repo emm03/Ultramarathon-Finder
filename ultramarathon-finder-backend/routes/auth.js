@@ -135,7 +135,7 @@ router.post('/login', async (req, res) => {
         const token = jwt.sign(
             { userId: user._id, username: user.username, profilePicture: user.profilePicture || '' },
             process.env.JWT_SECRET,
-            { expiresIn: '1h' }
+            { expiresIn: '4h' }
         );
 
         res.status(200).json({
@@ -195,7 +195,7 @@ router.post('/forgot-password', async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: 'No user found with that email.' });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '4h' });
     const resetLink = `${process.env.CLIENT_URL}/reset-password.html?token=${token}`;
 
     const transporter = nodemailer.createTransport({
