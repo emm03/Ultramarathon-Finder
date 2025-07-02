@@ -366,15 +366,20 @@ function openUltraModal(race) {
 
     try {
         const parsed = JSON.parse(savedNotesRaw);
-        savedNotes = Array.isArray(parsed) ? parsed.filter(n => typeof n === "string" && n.trim() !== "") : [];
+        savedNotes = Array.isArray(parsed) ? parsed.filter(n => n !== null) : [parsed];
     } catch {
-        savedNotes = [];
+        if (savedNotesRaw) savedNotes = [savedNotesRaw];
     }
 
     renderSavedNotes(savedNotes, savedNotesContainer, race.id);
     notesBox.value = "";
 
-    document.getElementById("save-notes-btn").onclick = () => {
+    // ✅ Remove old listener and rebind only once
+    const saveBtn = document.getElementById("save-notes-btn");
+    const newSaveBtn = saveBtn.cloneNode(true); // replace with clean clone
+    saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
+
+    newSaveBtn.onclick = () => {
         const newNote = notesBox.value.trim();
         if (!newNote) return;
         const updatedNotes = [...savedNotes, newNote];
@@ -400,29 +405,18 @@ function renderSavedNotes(notes, container, raceId) {
 
         const noteEl = document.createElement("div");
         noteEl.className = "saved-note";
-        noteEl.style.position = "relative";
         noteEl.innerHTML = `
             <strong>Note ${i + 1}:</strong><br>${note.split('\n').join('<br>')}
+            <button class="delete-note-btn" title="Delete note" style="float:right; background:none; border:none; cursor:pointer;">🗑️</button>
         `;
 
-        const deleteBtn = document.createElement("button");
-        deleteBtn.textContent = "🗑️";
-        deleteBtn.title = "Delete note";
-        deleteBtn.style.position = "absolute";
-        deleteBtn.style.top = "8px";
-        deleteBtn.style.right = "12px";
-        deleteBtn.style.background = "none";
-        deleteBtn.style.border = "none";
-        deleteBtn.style.cursor = "pointer";
-        deleteBtn.style.fontSize = "1.1rem";
-
+        const deleteBtn = noteEl.querySelector(".delete-note-btn");
         deleteBtn.onclick = () => {
             const updated = notes.filter((_, idx) => idx !== i);
             localStorage.setItem(`ultra-notes-${raceId}`, JSON.stringify(updated));
             renderSavedNotes(updated, container, raceId);
         };
 
-        noteEl.appendChild(deleteBtn);
         container.appendChild(noteEl);
     });
 }
