@@ -576,6 +576,7 @@ async function downloadUltraResume() {
             });
         }, 100);
     }
+}
 
     // 🧠 Alan's Deep Insight Generator
     function generateAlanTipsFromDescription(desc) {
@@ -688,4 +689,3 @@ async function downloadUltraResume() {
             });
         }
     }
-}
