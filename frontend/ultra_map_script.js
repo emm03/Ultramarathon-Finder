@@ -474,13 +474,12 @@ async function downloadUltraResume() {
             const div = document.createElement("div");
             div.style.marginBottom = "18px";
             div.style.pageBreakInside = "avoid";
-            div.style.breakInside = "avoid"; // For better browser compatibility
+            div.style.breakInside = "avoid";
             div.style.paddingBottom = "8px";
 
             const title = activity.name || "Untitled Race";
             const date = new Date(activity.start_date).toLocaleDateString();
             const desc = activity.description || "";
-
             const tips = generateAlanTipsFromDescription(desc);
 
             div.innerHTML = `
@@ -523,37 +522,47 @@ async function downloadUltraResume() {
         const statesList = Array.from(visitedStatesSet).sort();
         const milestones = [];
 
-        // Only push milestone-style achievements
         if (ultraActivities.length >= 1) {
-            const first = ultraActivities[0];
-            const name = first.name || "Unnamed Ultra";
-            const distance = (first.distance / 1609.34).toFixed(2);
-            const location = first.location_city || "Unknown";
-            const date = new Date(first.start_date).toLocaleDateString();
-            milestones.push(`🥇 First Ultra Completed: ${name} - ${distance} mi in ${location} (${date})`);
+            const oldest = ultraActivities.reduce((earliest, act) => {
+                return new Date(act.start_date) < new Date(earliest.start_date) ? act : earliest;
+            }, ultraActivities[0]);
+
+            const name = oldest.name || "Unnamed Ultra";
+            const distance = (oldest.distance / 1609.34).toFixed(2);
+            let stateName = "Location Unknown";
+            const coords = oldest.start_latlng;
+
+            if (coords && coords.length === 2 && window.stateGeoData) {
+                const [lat, lng] = coords;
+                for (const feature of window.stateGeoData.features) {
+                    const polygon = feature.geometry;
+                    if (isPointInPolygon([lng, lat], polygon)) {
+                        stateName = feature.properties.name;
+                        break;
+                    }
+                }
+            }
+
+            const date = new Date(oldest.start_date).toLocaleDateString();
+            milestones.push(`🥇 First Ultra Completed: ${name} - ${distance} mi in ${stateName} (${date})`);
         }
 
-        // Distance milestones: every 100 mi
         for (let mi = 100; mi <= totalDistance; mi += 100) {
             milestones.push(`🏃 ${mi} Miles Total`);
         }
 
-        // Highest elevation badge only
         const topElevationMilestone = Math.floor(totalElevation / 1000) * 1000;
         if (topElevationMilestone >= 1000) {
             milestones.push(`⛰️ ${topElevationMilestone.toLocaleString()} ft Climbed`);
         }
 
-        // States visited list
         if (statesList.length > 0) {
             milestones.push(`📍 States Visited (${statesList.length}): ${statesList.join(', ')}`);
         }
 
-        // Display result
         if (milestones.length === 0) {
             milestoneList.innerHTML = `<li>🔜 Run more ultras to unlock milestones!</li>`;
         } else {
-            milestoneList.innerHTML = "";
             milestones.forEach(m => {
                 const li = document.createElement("li");
                 li.textContent = m;
@@ -561,10 +570,10 @@ async function downloadUltraResume() {
             });
         }
 
-        // Temporarily show element for rendering
+        // Force title to stay at top of first page
         element.style.display = "block";
-
         setTimeout(() => {
+            window.scrollTo(0, 0); // ensure render from top
             html2pdf().from(element).set({
                 margin: 0.5,
                 filename: 'ultra_resume.pdf',
@@ -574,7 +583,7 @@ async function downloadUltraResume() {
             }).save().then(() => {
                 element.style.display = "none";
             });
-        }, 100);
+        }, 200);
     }
 }
 
@@ -647,35 +656,24 @@ function renderMilestoneWall(activities) {
     const milestones = [];
 
     // First Ultra Completed
-    if (activities.length > 0 && window.stateGeoData) {
+    if (activities.length > 0) {
         const oldest = activities.reduce((earliest, act) => {
             return new Date(act.start_date) < new Date(earliest.start_date) ? act : earliest;
         }, activities[0]);
 
         const name = oldest.name || "Unnamed Ultra";
         const dist = (oldest.distance / 1609.34).toFixed(2) + " mi";
-        const coords = oldest.start_latlng;
 
         let stateName = "Location Unknown";
+        const coords = oldest.start_latlng;
 
         if (coords && coords.length === 2 && window.stateGeoData) {
             const [lat, lng] = coords;
-
             for (const feature of window.stateGeoData.features) {
-                const geometry = feature.geometry;
-
-                if (geometry.type === "Polygon") {
-                    if (isPointInPolygon([lng, lat], geometry)) {
-                        stateName = feature.properties.name;
-                        break;
-                    }
-                } else if (geometry.type === "MultiPolygon") {
-                    for (const polygon of geometry.coordinates) {
-                        if (isPointInPolygon([lng, lat], { type: "Polygon", coordinates: polygon })) {
-                            stateName = feature.properties.name;
-                            break;
-                        }
-                    }
+                const polygon = feature.geometry;
+                if (isPointInPolygon([lng, lat], polygon)) {
+                    stateName = feature.properties.name;
+                    break;
                 }
             }
         }
