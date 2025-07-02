@@ -440,10 +440,9 @@ async function downloadUltraResume() {
     const resumeLongest = document.getElementById("resume-longest-run");
     const resumeLocations = document.getElementById("resume-unique-locations");
     const resumeStates = document.getElementById("resume-states-count");
-    const resumePhoto = document.getElementById("resume-photo");
     const raceList = document.getElementById("resume-race-list");
 
-    if (!element || !resumeCount || !resumeDistance || !resumeLongest || !resumeLocations || !resumeStates || !resumePhoto || !raceList) {
+    if (!element || !resumeCount || !resumeDistance || !resumeLongest || !resumeLocations || !resumeStates || !raceList) {
         console.error("❌ Résumé fields missing!");
         return;
     }
@@ -471,7 +470,7 @@ async function downloadUltraResume() {
             div.innerHTML = `
                 <strong>${title}</strong> (${date})<br/>
                 <em>${desc}</em><br/>
-                <ul style="margin-top: 5px;">
+                <ul style="margin-top: 5px; padding-left: 20px;">
                     ${tips.map(t => `<li>${t}</li>`).join("")}
                 </ul>
             `;
@@ -481,33 +480,19 @@ async function downloadUltraResume() {
         raceList.textContent = "No race data available.";
     }
 
-    // Select Top Race Photo
-    resumePhoto.innerHTML = "";
-    for (const activity of ultraActivities || []) {
-        const photos = activity.photos?.primary || activity.photos?.[0];
-        const photoUrl = photos?.url || photos?.urls?.["600"] || photos?.urls?.["100"] || null;
-
-        if (photoUrl) {
-            const img = document.createElement("img");
-            img.src = photoUrl;
-            img.style.maxWidth = "100%";
-            img.style.borderRadius = "8px";
-            resumePhoto.appendChild(img);
-            break;
-        }
-    }
-
     // Temporarily show element for rendering
     element.style.display = "block";
 
-    // Wait briefly then convert
     setTimeout(() => {
+        window.scrollTo(0, 0); // Ensure content is top-aligned in viewport
+
         html2pdf().from(element).set({
-            margin: 0.5,
+            margin: 0, // Top alignment
             filename: 'ultra_resume.pdf',
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            html2canvas: { scale: 2, scrollY: 0 },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' },
+            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
         }).save().then(() => {
             element.style.display = "none";
         });
