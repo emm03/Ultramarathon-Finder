@@ -1,11 +1,26 @@
+// -------------------- Token Expiration Check --------------------
+function isTokenValid(token) {
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const expiry = payload.exp;
+        const now = Math.floor(Date.now() / 1000);
+        return expiry > now;
+    } catch (err) {
+        console.warn("Invalid token format:", err);
+        return false;
+    }
+}
+
 // -------------------- Auth Utility --------------------
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem("token")?.trim();
 
-    if (token) {
+    if (token && isTokenValid(token)) {
         injectAuthenticatedDropdown(token);
         trackInactivityLogout(); // Start inactivity logout timer
     } else {
+        localStorage.removeItem("token");
+        localStorage.removeItem("profilePicture");
         showLoginButton();
     }
 });
