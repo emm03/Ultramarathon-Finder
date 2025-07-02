@@ -3363,9 +3363,10 @@ main.article-content {
     border: 1px solid #ddd;
     flex: 1;
     min-width: 300px;
+    min-height: 220px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
 }
 
 .milestone-box h3 {
@@ -3396,6 +3397,12 @@ main.article-content {
     margin-bottom: 10px;
     line-height: 1.5;
     font-size: 15px;
+}
+
+#milestone-list {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
 }
 
 /* ==== Saved Notes Styling ==== */
