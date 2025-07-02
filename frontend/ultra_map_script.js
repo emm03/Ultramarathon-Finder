@@ -393,12 +393,13 @@ function renderSavedNotes(notes, container) {
     }
 
     container.innerHTML = "";
-    if (notes.length === 0) return;
+    if (!Array.isArray(notes) || notes.length === 0) return;
 
     notes.forEach((note, i) => {
+        const safeNote = typeof note === "string" ? note : String(note);
         const noteEl = document.createElement("div");
         noteEl.className = "saved-note";
-        noteEl.innerHTML = `<strong>Note ${i + 1}:</strong><br>${note.split('\n').join('<br>')}`;
+        noteEl.innerHTML = `<strong>Note ${i + 1}:</strong><br>${safeNote.split('\n').join('<br>')}`;
         container.appendChild(noteEl);
     });
 }
