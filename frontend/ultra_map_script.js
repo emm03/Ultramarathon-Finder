@@ -111,6 +111,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         drawUltraTimelineChart(data);
         drawVisitedStatesOverlay(map, data);
+        renderMilestoneWall(data);
 
         document.querySelector(".ultra-modal-close").addEventListener("click", closeUltraModal);
 
@@ -529,4 +530,50 @@ function generateAlanTipsFromDescription(desc) {
         tips.push("✅ Solid performance. Keep showing up and building consistency.");
 
     return tips;
+}
+
+function renderMilestoneWall(activities) {
+    const milestoneList = document.getElementById("milestone-list");
+    if (!milestoneList) return;
+
+    const stats = {
+        totalRuns: activities.length,
+        totalDistance: activities.reduce((sum, act) => sum + act.distance / 1609.34, 0),
+        totalElevation: activities.reduce((sum, act) => sum + (act.total_elevation_gain || 0), 0),
+        visitedStates: new Set()
+    };
+
+    activities.forEach(act => {
+        const coords = act.start_latlng;
+        if (!coords || coords.length !== 2) return;
+        const [lat, lng] = coords;
+
+        // Match with geoJSON to determine state
+        if (window.stateGeoData) {
+            window.stateGeoData.features.forEach(feature => {
+                const polygon = feature.geometry;
+                if (isPointInPolygon([lng, lat], polygon)) {
+                    stats.visitedStates.add(feature.properties.name.toLowerCase());
+                }
+            });
+        }
+    });
+
+    const milestones = [];
+
+    if (stats.totalRuns >= 1) milestones.push("🥇 First Ultra Completed");
+    if (stats.totalDistance >= 100) milestones.push("💯 100 Miles Total");
+    if (stats.totalElevation >= 100000) milestones.push("⛰️ 100,000 ft Climbed");
+    if (stats.visitedStates.size >= 10) milestones.push("📍 10 States Visited");
+
+    if (milestones.length === 0) {
+        milestoneList.innerHTML = `<li>🔜 Keep running ultras to unlock milestones!</li>`;
+    } else {
+        milestoneList.innerHTML = "";
+        milestones.forEach(m => {
+            const li = document.createElement("li");
+            li.textContent = m;
+            milestoneList.appendChild(li);
+        });
+    }
 }
