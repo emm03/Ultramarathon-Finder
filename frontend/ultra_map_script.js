@@ -289,14 +289,14 @@ function openUltraModal(race) {
 
     if (race.map && race.map.summary_polyline) {
         try {
-            const decoded = polyline.decode(race.map.summary_polyline);
+            const decoded = L.Polyline.fromEncoded(race.map.summary_polyline).getLatLngs();
 
             const modalMap = L.map("polyline-map", {
                 scrollWheelZoom: true,
                 dragging: true,
                 zoomControl: true,
                 attributionControl: false
-            });
+            }).setView(decoded[0], 13);
 
             L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
                 maxZoom: 18
@@ -307,7 +307,7 @@ function openUltraModal(race) {
                 weight: 4
             }).addTo(modalMap);
 
-            modalMap.fitBounds(path.getBounds()); // ✅ center + zoom automatically
+            modalMap.fitBounds(path.getBounds());
             setTimeout(() => modalMap.invalidateSize(), 200);
 
         } catch (err) {
