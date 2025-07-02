@@ -3305,13 +3305,6 @@ main.article-content {
     pointer-events: auto;
 }
 
-#polyline-map {
-    width: 100%;
-    height: 300px;
-    border-radius: 8px;
-    margin-top: 1.5rem;
-}
-
 /* ==== Saved Notes Styling ==== */
 
 #saved-notes {
