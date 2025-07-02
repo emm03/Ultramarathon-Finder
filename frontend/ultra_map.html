@@ -13,12 +13,9 @@
     <link rel="icon" href="ultra_favicon.ico" type="image/x-icon" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-encoded-polyline/Polyline.encoded.js"></script> <!-- ✅ Add this -->
-
-    <!-- 🔐 Load global login/session logic -->
+    <script src="https://unpkg.com/leaflet-plugins/layer/vector/Encoded.js"></script> <!-- ✅ Correct plugin -->
     <script src="auth_utils.js" defer></script>
 </head>
-
 
 <body class="forum-page">
     <header class="sticky-header dual-row-header">
@@ -46,7 +43,6 @@
     </header>
 
     <main style="padding-top: 140px;">
-        <!-- 🧭 Hero Header Section -->
         <section class="ultra-map-hero">
             <div class="hero-content">
                 <h1>📍 My Ultra Map</h1>
@@ -58,20 +54,16 @@
                 <p><strong>Longest Run:</strong> <span id="longest-run">0 mi</span></p>
                 <p><strong>Unique Locations:</strong> <span id="unique-locations">0</span></p>
             </div>
-            <!-- 🔮 Alan AI Suggestion Button -->
             <button onclick="askAlanBasedOnMap()" class="orange-btn">Ask Alan for Race Suggestions</button>
         </section>
 
-        <!-- 🗺️ Ultra Map Display (now also shows visited states) -->
         <div id="ultra-map" style="height: 500px;"></div>
 
-        <!-- 🌎 Visited States Count -->
         <section id="visited-regions" style="margin: 40px 20px;">
             <h2 class="chart-title">🌎 States Where You've Completed Ultras</h2>
             <p><strong>States Completed:</strong> <span id="visited-states-count">0</span></p>
         </section>
 
-        <!-- 🕰️ Ultra Completion Timeline -->
         <section id="ultra-timeline-section" style="margin: 40px 20px;">
             <h2 class="chart-title">📈 Ultra Completion Timeline</h2>
             <div style="position: relative; z-index: 10;">
@@ -79,14 +71,12 @@
             </div>
         </section>
 
-        <!-- 🖼️ Strava Photo Timeline -->
         <section id="strava-photo-timeline" style="margin: 40px 20px;">
             <h2 class="chart-title">🖼️ My Ultra Photo Timeline</h2>
             <div id="photo-scroll-container" class="photo-scroll"></div>
         </section>
     </main>
 
-    <!-- Alan Chat Widget -->
     <div id="alan-bubble">💬</div>
     <div id="alan-window">
         <div id="alan-messages"></div>
@@ -96,7 +86,6 @@
         </form>
     </div>
 
-    <!-- Footer -->
     <footer class="site-footer">
         <div class="footer-links">
             <a href="contact.html">Contact Us</a> |
@@ -107,14 +96,12 @@
         <p class="footer-copy">&copy; 2025 Ultramarathon Connect. All rights reserved.</p>
     </footer>
 
-    <!-- 🔍 Lightbox Modal for Enlarged Ultra Photos -->
     <div id="photo-lightbox"
         style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; z-index:1000;">
         <img id="lightbox-image"
             style="max-width:90%; max-height:90%; border-radius:10px; box-shadow:0 0 20px rgba(255,255,255,0.3);" />
     </div>
 
-    <!-- 📍 Ultra Detail Modal -->
     <div id="ultra-detail-modal" class="ultra-modal" style="display: none;">
         <div class="ultra-modal-content">
             <span class="ultra-modal-close">&times;</span>
@@ -122,12 +109,8 @@
             <p id="modal-date">Date</p>
             <p id="modal-distance">Distance</p>
             <p id="modal-description">Description</p>
-
-            <!-- Polyline Map Canvas -->
             <div id="polyline-map" style="width: 100%; height: 300px; margin-top: 1.5rem; border-radius: 8px;"></div>
-
             <div id="modal-photos" class="photo-carousel"></div>
-
             <div id="notes-section" style="margin-top: 2rem;">
                 <h3 style="margin-bottom: 0.5rem;">📝 Add a Note</h3>
                 <textarea id="user-notes" rows="3" placeholder="Write your thoughts..."
@@ -136,29 +119,18 @@
                     style="margin-top: 0.5rem; padding: 8px 16px; background-color: #28a745; color: white; border: none; border-radius: 5px; cursor: pointer;">
                     Save Note
                 </button>
-
-                <div id="saved-notes" style="margin-top: 1.5rem;">
-                    <!-- Saved notes will appear here -->
-                </div>
+                <div id="saved-notes" style="margin-top: 1.5rem;"></div>
             </div>
         </div>
     </div>
 
-    <!-- Load Leaflet core first -->
+    <!-- ✅ Script order matters here -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-    <!-- Load Leaflet Encoded Polyline Plugin right after Leaflet -->
-    <script src="https://cdn.jsdelivr.net/npm/@mapbox/polyline@1.1.1/src/polyline.min.js"></script>
-
-    <!-- Then MarkerCluster (optional plugin) -->
+    <script src="https://unpkg.com/leaflet-plugins/layer/vector/Encoded.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
-
-    <!-- Then your custom scripts -->
     <script src="alanai_chatbot/alan.js"></script>
     <script src="forum/inject_account_dropdown.js"></script>
     <script src="ultra_map_script.js"></script>
-
-
 </body>
 
 </html>
