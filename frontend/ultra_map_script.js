@@ -483,6 +483,63 @@ async function downloadUltraResume() {
         raceList.textContent = "No race data available.";
     }
 
+    // 📌 Populate Milestone Wall for PDF
+    const milestoneList = document.getElementById("resume-milestone-list");
+    if (milestoneList) {
+        milestoneList.innerHTML = "";
+
+        const totalDistance = parseFloat(resumeDistance.textContent) || 0;
+        const totalElevation = ultraActivities.reduce((sum, act) => sum + (act.total_elevation_gain || 0), 0);
+        const visitedStatesSet = new Set();
+
+        ultraActivities.forEach(act => {
+            const coords = act.start_latlng;
+            if (!coords || coords.length !== 2) return;
+
+            if (window.stateGeoData) {
+                window.stateGeoData.features.forEach(feature => {
+                    const polygon = feature.geometry;
+                    if (isPointInPolygon([coords[1], coords[0]], polygon)) {
+                        visitedStatesSet.add(feature.properties.name);
+                    }
+                });
+            }
+        });
+
+        const statesList = Array.from(visitedStatesSet).sort();
+        const milestones = [];
+
+        if (ultraActivities.length >= 1) {
+            const first = ultraActivities[0];
+            const name = first.name || "Unnamed Ultra";
+            const date = new Date(first.start_date).toLocaleDateString();
+            milestones.push(`🥇 First Ultra Completed: ${name} (${date})`);
+        }
+
+        const distanceMilestones = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
+        distanceMilestones.forEach(m => {
+            if (totalDistance >= m) milestones.push(`🏃 ${m} Miles Total`);
+        });
+
+        for (let ft = 10000; ft <= totalElevation; ft += 10000) {
+            milestones.push(`⛰️ ${ft.toLocaleString()} ft Climbed`);
+        }
+
+        if (statesList.length > 0) {
+            milestones.push(`📍 States Visited (${statesList.length}): ${statesList.join(', ')}`);
+        }
+
+        if (milestones.length === 0) {
+            milestoneList.innerHTML = `<li>🔜 Run more ultras to unlock milestones!</li>`;
+        } else {
+            milestones.forEach(m => {
+                const li = document.createElement("li");
+                li.textContent = m;
+                milestoneList.appendChild(li);
+            });
+        }
+    }
+
     // Temporarily show element for rendering
     element.style.display = "block";
 
@@ -534,6 +591,7 @@ function generateAlanTipsFromDescription(desc) {
 
 function renderMilestoneWall(activities) {
     const milestoneList = document.getElementById("milestone-list");
+    const elevationSpan = document.getElementById("total-elevation");
     if (!milestoneList) return;
 
     const stats = {
@@ -543,17 +601,25 @@ function renderMilestoneWall(activities) {
         visitedStates: new Set()
     };
 
+    // Fill elevation stat
+    if (elevationSpan) {
+        elevationSpan.textContent = stats.totalElevation.toLocaleString(undefined, { maximumFractionDigits: 0 }) + " ft";
+    }
+
+    // Detect visited states
     activities.forEach(act => {
         const coords = act.start_latlng;
         if (!coords || coords.length !== 2) return;
         const [lat, lng] = coords;
 
-        // Match with geoJSON to determine state
         if (window.stateGeoData) {
             window.stateGeoData.features.forEach(feature => {
                 const polygon = feature.geometry;
                 if (isPointInPolygon([lng, lat], polygon)) {
-                    stats.visitedStates.add(feature.properties.name.toLowerCase());
+                    stats.visitedStates.add(
+                        feature.properties.name.toLowerCase()
+                            .replace(/\b\w/g, c => c.toUpperCase())  // Title Case
+                    );
                 }
             });
         }
@@ -561,15 +627,37 @@ function renderMilestoneWall(activities) {
 
     const milestones = [];
 
-    if (stats.totalRuns >= 1) milestones.push("🥇 First Ultra Completed");
-    if (stats.totalDistance >= 100) milestones.push("💯 100 Miles Total");
-    if (stats.totalElevation >= 100000) milestones.push("⛰️ 100,000 ft Climbed");
-    if (stats.visitedStates.size >= 10) milestones.push("📍 10 States Visited");
+    // 🥇 First ultra
+    if (stats.totalRuns > 0) {
+        const first = activities.reduce((a, b) => new Date(a.start_date) < new Date(b.start_date) ? a : b);
+        milestones.push(`🥇 First Ultra Completed: ${first.name}`);
+    }
 
+    // 💯 Distance milestones
+    const roundedMiles = Math.floor(stats.totalDistance);
+    if (roundedMiles >= 100) {
+        for (let m = 100; m <= roundedMiles; m += (m < 1000 ? 100 : 1000)) {
+            milestones.push(`💯 ${m.toLocaleString()} Miles Total`);
+        }
+    }
+
+    // ⛰️ Elevation milestones (every 10,000 ft)
+    const roundedElev = Math.floor(stats.totalElevation / 10000) * 10000;
+    for (let e = 10000; e <= roundedElev; e += 10000) {
+        milestones.push(`⛰️ ${e.toLocaleString()} ft Climbed`);
+    }
+
+    // 📍 States visited
+    if (stats.visitedStates.size > 0) {
+        const stateList = Array.from(stats.visitedStates).sort().join(", ");
+        milestones.push(`📍 States Visited (${stats.visitedStates.size}): ${stateList}`);
+    }
+
+    // Render
+    milestoneList.innerHTML = "";
     if (milestones.length === 0) {
         milestoneList.innerHTML = `<li>🔜 Keep running ultras to unlock milestones!</li>`;
     } else {
-        milestoneList.innerHTML = "";
         milestones.forEach(m => {
             const li = document.createElement("li");
             li.textContent = m;
