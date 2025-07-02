@@ -647,31 +647,29 @@ function renderMilestoneWall(activities) {
     const milestones = [];
 
     // First Ultra Completed
-    if (activities.length > 0) {
+    if (activities.length > 0 && window.stateGeoData) {
         const oldest = activities.reduce((earliest, act) => {
             return new Date(act.start_date) < new Date(earliest.start_date) ? act : earliest;
         }, activities[0]);
 
         const name = oldest.name || "Unnamed Ultra";
         const dist = (oldest.distance / 1609.34).toFixed(2) + " mi";
+        const coords = oldest.start_latlng;
 
-        // Try city first, fallback to state via lat/lng
-        let location = oldest.location_city || "";
+        let stateName = "Location Unknown";
 
-        if (!location && oldest.start_latlng && oldest.start_latlng.length === 2 && window.stateGeoData) {
-            const [lat, lng] = oldest.start_latlng;
+        if (coords && coords.length === 2) {
+            const [lat, lng] = coords;
             for (const feature of window.stateGeoData.features) {
                 const polygon = feature.geometry;
                 if (isPointInPolygon([lng, lat], polygon)) {
-                    location = feature.properties.name;
+                    stateName = feature.properties.name;
                     break;
                 }
             }
         }
 
-        if (!location) location = "Location Unknown";
-
-        milestones.push(`🥇 First Ultra Completed: ${name} (${dist}, ${location})`);
+        milestones.push(`🥇 First Ultra Completed: ${name} (${dist}, ${stateName})`);
     }
 
     // Distance milestones
