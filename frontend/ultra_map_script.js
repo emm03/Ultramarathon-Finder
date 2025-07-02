@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const data = await res.json();
+        window.ultraActivities = data;
 
         // ✅ Render photo timeline with clickable thumbnails
         const activitiesWithPhotos = data.filter(act => Array.isArray(act.photos) && act.photos.length > 0);
