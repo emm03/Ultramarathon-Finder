@@ -366,9 +366,9 @@ function openUltraModal(race) {
 
     try {
         const parsed = JSON.parse(savedNotesRaw);
-        savedNotes = Array.isArray(parsed) ? parsed.filter(n => n !== null) : [parsed];
+        savedNotes = Array.isArray(parsed) ? parsed.filter(n => typeof n === "string" && n.trim() !== "") : [];
     } catch {
-        if (savedNotesRaw) savedNotes = [savedNotesRaw];
+        savedNotes = [];
     }
 
     renderSavedNotes(savedNotes, savedNotesContainer, race.id);
@@ -400,19 +400,29 @@ function renderSavedNotes(notes, container, raceId) {
 
         const noteEl = document.createElement("div");
         noteEl.className = "saved-note";
+        noteEl.style.position = "relative";
         noteEl.innerHTML = `
             <strong>Note ${i + 1}:</strong><br>${note.split('\n').join('<br>')}
-            <button style="margin-top:8px; background:red; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">
-                Delete
-            </button>
         `;
 
-        noteEl.querySelector("button").onclick = () => {
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "🗑️";
+        deleteBtn.title = "Delete note";
+        deleteBtn.style.position = "absolute";
+        deleteBtn.style.top = "8px";
+        deleteBtn.style.right = "12px";
+        deleteBtn.style.background = "none";
+        deleteBtn.style.border = "none";
+        deleteBtn.style.cursor = "pointer";
+        deleteBtn.style.fontSize = "1.1rem";
+
+        deleteBtn.onclick = () => {
             const updated = notes.filter((_, idx) => idx !== i);
             localStorage.setItem(`ultra-notes-${raceId}`, JSON.stringify(updated));
             renderSavedNotes(updated, container, raceId);
         };
 
+        noteEl.appendChild(deleteBtn);
         container.appendChild(noteEl);
     });
 }
