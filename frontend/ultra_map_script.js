@@ -658,13 +658,24 @@ function renderMilestoneWall(activities) {
 
         let stateName = "Location Unknown";
 
-        if (coords && coords.length === 2) {
+        if (coords && coords.length === 2 && window.stateGeoData) {
             const [lat, lng] = coords;
+
             for (const feature of window.stateGeoData.features) {
-                const polygon = feature.geometry;
-                if (isPointInPolygon([lng, lat], polygon)) {
-                    stateName = feature.properties.name;
-                    break;
+                const geometry = feature.geometry;
+
+                if (geometry.type === "Polygon") {
+                    if (isPointInPolygon([lng, lat], geometry)) {
+                        stateName = feature.properties.name;
+                        break;
+                    }
+                } else if (geometry.type === "MultiPolygon") {
+                    for (const polygon of geometry.coordinates) {
+                        if (isPointInPolygon([lng, lat], { type: "Polygon", coordinates: polygon })) {
+                            stateName = feature.properties.name;
+                            break;
+                        }
+                    }
                 }
             }
         }
