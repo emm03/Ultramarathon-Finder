@@ -3305,6 +3305,48 @@ main.article-content {
     pointer-events: auto;
 }
 
+/* 📝 Ultra Résumé Styles */
+#ultra-resume-content {
+    font-family: Arial, sans-serif;
+    max-width: 700px;
+    margin: 0 auto;
+    color: #111;
+}
+
+#ultra-resume-content h1 {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+#ultra-resume-content section {
+    margin-bottom: 30px;
+}
+
+#ultra-resume-content h2 {
+    font-size: 18px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+#ultra-resume-content p,
+#ultra-resume-content li {
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+#ultra-resume-content ul {
+    padding-left: 20px;
+}
+
+#ultra-resume-content img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
 /* ==== Saved Notes Styling ==== */
 
 #saved-notes {
