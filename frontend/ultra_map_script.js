@@ -578,114 +578,117 @@ async function downloadUltraResume() {
     }
 }
 
-    // 🧠 Alan's Deep Insight Generator
-    function generateAlanTipsFromDescription(desc) {
-        const tips = [];
+// 🧠 Alan's Deep Insight Generator
+function generateAlanTipsFromDescription(desc) {
+    const tips = [];
 
-        const lower = desc.toLowerCase();
+    const lower = desc.toLowerCase();
 
-        if (lower.includes("hill") || lower.includes("elevation"))
-            tips.push("🏔️ Strong climbing effort — keep up the hill work and consider trekking poles.");
-        if (lower.includes("hot") || lower.includes("heat"))
-            tips.push("🔥 Handled tough heat — hydrate well and train with salt tabs or electrolytes.");
-        if (lower.includes("cold") || lower.includes("snow"))
-            tips.push("❄️ Cold-weather resilience — dress in layers and warm up properly.");
-        if (lower.includes("mud") || lower.includes("trail"))
-            tips.push("🌲 Great trail technique — use stable foot placement and consider grip-enhancing shoes.");
-        if (lower.includes("back pain") || lower.includes("hip"))
-            tips.push("🦴 Body awareness matters — try strength training or form drills to support your hips/back.");
-        if (lower.includes("first ultra"))
-            tips.push("🎉 First ultra done! Welcome to the long-distance tribe.");
-        if (lower.includes("fail") || lower.includes("dnf") || lower.includes("quit"))
-            tips.push("💪 You showed up — and that's the hardest part. There's always a next one.");
-        if (lower.includes("vomit") || lower.includes("throw up") || lower.includes("gels"))
-            tips.push("🥤 Experiment with nutrition — try different fuel sources and pacing for better digestion.");
-        if (lower.includes("friends") || lower.includes("volunteer") || lower.includes("community"))
-            tips.push("🫂 You're finding your ultra community — keep connecting on the trails.");
-        if (lower.includes("win") || lower.includes("podium") || lower.includes("pr"))
-            tips.push("🏅 Incredible performance — you're on a strong upward path. Trust your training.");
+    if (lower.includes("hill") || lower.includes("elevation"))
+        tips.push("🏔️ Strong climbing effort — keep up the hill work and consider trekking poles.");
+    if (lower.includes("hot") || lower.includes("heat"))
+        tips.push("🔥 Handled tough heat — hydrate well and train with salt tabs or electrolytes.");
+    if (lower.includes("cold") || lower.includes("snow"))
+        tips.push("❄️ Cold-weather resilience — dress in layers and warm up properly.");
+    if (lower.includes("mud") || lower.includes("trail"))
+        tips.push("🌲 Great trail technique — use stable foot placement and consider grip-enhancing shoes.");
+    if (lower.includes("back pain") || lower.includes("hip"))
+        tips.push("🦴 Body awareness matters — try strength training or form drills to support your hips/back.");
+    if (lower.includes("first ultra"))
+        tips.push("🎉 First ultra done! Welcome to the long-distance tribe.");
+    if (lower.includes("fail") || lower.includes("dnf") || lower.includes("quit"))
+        tips.push("💪 You showed up — and that's the hardest part. There's always a next one.");
+    if (lower.includes("vomit") || lower.includes("throw up") || lower.includes("gels"))
+        tips.push("🥤 Experiment with nutrition — try different fuel sources and pacing for better digestion.");
+    if (lower.includes("friends") || lower.includes("volunteer") || lower.includes("community"))
+        tips.push("🫂 You're finding your ultra community — keep connecting on the trails.");
+    if (lower.includes("win") || lower.includes("podium") || lower.includes("pr"))
+        tips.push("🏅 Incredible performance — you're on a strong upward path. Trust your training.");
 
-        if (tips.length === 0)
-            tips.push("✅ Solid performance. Keep showing up and building consistency.");
+    if (tips.length === 0)
+        tips.push("✅ Solid performance. Keep showing up and building consistency.");
 
-        return tips;
+    return tips;
+}
+
+function renderMilestoneWall(activities) {
+    const milestoneList = document.getElementById("milestone-list");
+    const elevationSpan = document.getElementById("total-elevation");
+    if (!milestoneList) return;
+
+    const stats = {
+        totalRuns: activities.length,
+        totalDistance: activities.reduce((sum, act) => sum + act.distance / 1609.34, 0),
+        totalElevation: activities.reduce((sum, act) => sum + (act.total_elevation_gain || 0), 0),
+        visitedStates: new Set()
+    };
+
+    // Fill elevation stat
+    if (elevationSpan) {
+        elevationSpan.textContent = stats.totalElevation.toLocaleString() + " ft";
     }
 
-    function renderMilestoneWall(activities) {
-        const milestoneList = document.getElementById("milestone-list");
-        const elevationSpan = document.getElementById("total-elevation");
-        if (!milestoneList) return;
+    // Determine visited states
+    activities.forEach(act => {
+        const coords = act.start_latlng;
+        if (!coords || coords.length !== 2) return;
+        const [lat, lng] = coords;
 
-        const stats = {
-            totalRuns: activities.length,
-            totalDistance: activities.reduce((sum, act) => sum + act.distance / 1609.34, 0),
-            totalElevation: activities.reduce((sum, act) => sum + (act.total_elevation_gain || 0), 0),
-            visitedStates: new Set()
-        };
-
-        // Fill elevation stat
-        if (elevationSpan) {
-            elevationSpan.textContent = stats.totalElevation.toLocaleString() + " ft";
-        }
-
-        // Determine visited states
-        activities.forEach(act => {
-            const coords = act.start_latlng;
-            if (!coords || coords.length !== 2) return;
-            const [lat, lng] = coords;
-
-            if (window.stateGeoData) {
-                window.stateGeoData.features.forEach(feature => {
-                    const polygon = feature.geometry;
-                    if (isPointInPolygon([lng, lat], polygon)) {
-                        stats.visitedStates.add(feature.properties.name);
-                    }
-                });
-            }
-        });
-
-        const milestones = [];
-
-        // First Ultra Completed
-        if (activities.length > 0) {
-            const oldest = activities.reduce((earliest, act) => {
-                return new Date(act.start_date) < new Date(earliest.start_date) ? act : earliest;
-            }, activities[0]);
-
-            const name = oldest.name || "Unnamed Ultra";
-            const dist = (oldest.distance / 1609.34).toFixed(2) + " mi";
-            const location = oldest.location_city || oldest.location_country || "Location Unknown";
-
-            milestones.push(`🥇 First Ultra Completed: ${name} (${dist}, ${location})`);
-        }
-
-        // Distance milestones
-        const totalMiles = stats.totalDistance;
-        for (let m = 100; m <= totalMiles; m += 100) {
-            milestones.push(`💯 ${m} Miles Total`);
-        }
-
-        // Elevation milestones
-        const elevation = stats.totalElevation;
-        for (let ft = 1000; ft <= elevation; ft += 1000) {
-            milestones.push(`⛰️ ${ft.toLocaleString()} ft Climbed`);
-        }
-
-        // Visited states
-        const states = Array.from(stats.visitedStates).sort();
-        if (states.length > 0) {
-            milestones.push(`📍 States Visited (${states.length}): ${states.join(', ')}`);
-        }
-
-        // Render
-        milestoneList.innerHTML = "";
-        if (milestones.length === 0) {
-            milestoneList.innerHTML = `<li>🔜 Keep running ultras to unlock milestones!</li>`;
-        } else {
-            milestones.forEach(m => {
-                const li = document.createElement("li");
-                li.textContent = m;
-                milestoneList.appendChild(li);
+        if (window.stateGeoData) {
+            window.stateGeoData.features.forEach(feature => {
+                const polygon = feature.geometry;
+                if (isPointInPolygon([lng, lat], polygon)) {
+                    stats.visitedStates.add(feature.properties.name);
+                }
             });
         }
+    });
+
+    const milestones = [];
+
+    // First Ultra Completed
+    if (activities.length > 0) {
+        const oldest = activities.reduce((earliest, act) => {
+            return new Date(act.start_date) < new Date(earliest.start_date) ? act : earliest;
+        }, activities[0]);
+
+        const name = oldest.name || "Unnamed Ultra";
+        const dist = (oldest.distance / 1609.34).toFixed(2) + " mi";
+        const location = oldest.location_city && oldest.location_country
+            ? `${oldest.location_city}, ${oldest.location_country}`
+            : oldest.location_city || oldest.location_country || "Location Unknown";
+
+        milestones.push(`🥇 First Ultra Completed: ${name} (${dist}, ${location})`);
     }
+
+    // Distance milestones
+    const totalMiles = stats.totalDistance;
+    for (let m = 100; m <= totalMiles; m += 100) {
+        milestones.push(`💯 ${m} Miles Total`);
+    }
+
+    // Elevation milestones
+    const elevation = stats.totalElevation;
+    const topElevationMilestone = Math.floor(elevation / 1000) * 1000;
+    if (topElevationMilestone >= 1000) {
+        milestones.push(`⛰️ ${topElevationMilestone.toLocaleString()} ft Climbed`);
+    }
+
+    // Visited states
+    const states = Array.from(stats.visitedStates).sort();
+    if (states.length > 0) {
+        milestones.push(`📍 States Visited (${states.length}): ${states.join(', ')}`);
+    }
+
+    // Render
+    milestoneList.innerHTML = "";
+    if (milestones.length === 0) {
+        milestoneList.innerHTML = `<li>🔜 Keep running ultras to unlock milestones!</li>`;
+    } else {
+        milestones.forEach(m => {
+            const li = document.createElement("li");
+            li.textContent = m;
+            milestoneList.appendChild(li);
+        });
+    }
+}
