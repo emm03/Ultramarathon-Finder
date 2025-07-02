@@ -366,9 +366,11 @@ function openUltraModal(race) {
 
     try {
         const parsed = JSON.parse(savedNotesRaw);
-        savedNotes = Array.isArray(parsed) ? parsed : [parsed];
+        savedNotes = Array.isArray(parsed)
+            ? parsed.filter(n => typeof n === "string" && n.trim() !== "")
+            : [];
     } catch {
-        if (savedNotesRaw) savedNotes = [savedNotesRaw];
+        savedNotes = [];
     }
 
     renderSavedNotes(savedNotes, savedNotesContainer);
@@ -396,10 +398,21 @@ function renderSavedNotes(notes, container) {
     if (!Array.isArray(notes) || notes.length === 0) return;
 
     notes.forEach((note, i) => {
-        const safeNote = typeof note === "string" ? note : String(note);
+        if (typeof note !== "string" || note.trim() === "") return;
+
         const noteEl = document.createElement("div");
         noteEl.className = "saved-note";
-        noteEl.innerHTML = `<strong>Note ${i + 1}:</strong><br>${safeNote.split('\n').join('<br>')}`;
+        noteEl.innerHTML = `
+            <strong>Note ${i + 1}:</strong><br>${note.split('\n').join('<br>')}
+            <button class="delete-note" style="float: right; background: none; border: none; color: red; font-weight: bold; cursor: pointer;" title="Delete Note">🗑️</button>
+        `;
+
+        noteEl.querySelector(".delete-note").onclick = () => {
+            const updated = notes.filter((_, idx) => idx !== i);
+            localStorage.setItem(`ultra-notes-${race.id}`, JSON.stringify(updated));
+            renderSavedNotes(updated, container);
+        };
+
         container.appendChild(noteEl);
     });
 }
