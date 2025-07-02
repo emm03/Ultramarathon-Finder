@@ -523,28 +523,38 @@ async function downloadUltraResume() {
         const milestones = [];
 
         if (ultraActivities.length >= 1) {
-            const oldest = ultraActivities.reduce((earliest, act) => {
-                return new Date(act.start_date) < new Date(earliest.start_date) ? act : earliest;
-            }, ultraActivities[0]);
-
-            const name = oldest.name || "Unnamed Ultra";
-            const distance = (oldest.distance / 1609.34).toFixed(2);
-            let stateName = "Location Unknown";
-            const coords = oldest.start_latlng;
-
-            if (coords && coords.length === 2 && window.stateGeoData) {
-                const [lat, lng] = coords;
-                for (const feature of window.stateGeoData.features) {
-                    const polygon = feature.geometry;
-                    if (isPointInPolygon([lng, lat], polygon)) {
-                        stateName = feature.properties.name;
-                        break;
+            // Find the oldest ultra that has valid coordinates
+            let oldest = null;
+            for (const act of ultraActivities) {
+                if (act.start_latlng && act.start_latlng.length === 2) {
+                    if (!oldest || new Date(act.start_date) < new Date(oldest.start_date)) {
+                        oldest = act;
                     }
                 }
             }
 
-            const date = new Date(oldest.start_date).toLocaleDateString();
-            milestones.push(`🥇 First Ultra Completed: ${name} - ${distance} mi in ${stateName} (${date})`);
+            if (oldest) {
+                const name = oldest.name || "Unnamed Ultra";
+                const distance = (oldest.distance / 1609.34).toFixed(2);
+                const date = new Date(oldest.start_date).toLocaleDateString();
+
+                let stateName = "Location Unknown";
+                const [lat, lng] = oldest.start_latlng;
+
+                if (window.stateGeoData) {
+                    for (const feature of window.stateGeoData.features) {
+                        const polygon = feature.geometry;
+                        if (isPointInPolygon([lng, lat], polygon)) {
+                            stateName = feature.properties.name;
+                            break;
+                        }
+                    }
+                }
+
+                milestones.push(`🥇 First Ultra Completed: ${name} - ${distance} mi in ${stateName} (${date})`);
+            } else {
+                milestones.push("🥇 First Ultra Completed: Data unavailable");
+            }
         }
 
         for (let mi = 100; mi <= totalDistance; mi += 100) {
