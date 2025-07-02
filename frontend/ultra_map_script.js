@@ -288,25 +288,32 @@ function openUltraModal(race) {
     polylineMap.innerHTML = "";
 
     if (race.map && race.map.summary_polyline) {
-        const decoded = polyline.decode(race.map.summary_polyline);
+        try {
+            const decoded = polyline.decode(race.map.summary_polyline);
 
-        const modalMap = L.map("polyline-map", {
-            scrollWheelZoom: true,         // ✅ enable scroll zoom
-            dragging: true,                // ✅ allow panning
-            zoomControl: true,             // ✅ show zoom buttons
-            attributionControl: false
-        }).fitBounds(decoded);             // ✅ center based on path
+            const modalMap = L.map("polyline-map", {
+                scrollWheelZoom: true,
+                dragging: true,
+                zoomControl: true,
+                attributionControl: false
+            });
 
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-            maxZoom: 18
-        }).addTo(modalMap);
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                maxZoom: 18
+            }).addTo(modalMap);
 
-        L.polyline(decoded, {
-            color: "#007BFF",
-            weight: 4
-        }).addTo(modalMap);
+            const path = L.polyline(decoded, {
+                color: "#007BFF",
+                weight: 4
+            }).addTo(modalMap);
 
-        setTimeout(() => modalMap.invalidateSize(), 200);
+            modalMap.fitBounds(path.getBounds()); // ✅ center + zoom automatically
+            setTimeout(() => modalMap.invalidateSize(), 200);
+
+        } catch (err) {
+            console.error("❌ Error decoding polyline:", err);
+            polylineMap.innerHTML = `<p style="text-align:center; color:#999;">Map failed to render.</p>`;
+        }
     } else {
         polylineMap.innerHTML = `<p style="text-align:center; color:#999;">Map unavailable for this activity.</p>`;
     }
