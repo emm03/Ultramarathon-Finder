@@ -426,17 +426,17 @@ function closeUltraModal() {
 }
 
 function downloadUltraResume() {
-    // Copy stats from visible elements into the résumé section
+    // Fill in the résumé stats
     document.getElementById("resume-ultra-count").textContent = document.getElementById("ultra-count").textContent;
     document.getElementById("resume-ultra-distance").textContent = document.getElementById("ultra-distance").textContent;
     document.getElementById("resume-longest-run").textContent = document.getElementById("longest-run").textContent;
     document.getElementById("resume-unique-locations").textContent = document.getElementById("unique-locations").textContent;
     document.getElementById("resume-states-count").textContent = document.getElementById("visited-states-count").textContent;
 
-    // Add top photo if one exists
+    // Add photo
     const topPhoto = document.querySelector("#photo-scroll-container img");
     const resumePhoto = document.getElementById("resume-photo");
-    resumePhoto.innerHTML = ""; // Clear previous image
+    resumePhoto.innerHTML = "";
     if (topPhoto) {
         const img = document.createElement("img");
         img.src = topPhoto.src;
@@ -446,6 +446,10 @@ function downloadUltraResume() {
     }
 
     const element = document.getElementById("ultra-resume-content");
+
+    // ✅ Temporarily show the résumé
+    element.style.display = "block";
+
     const opt = {
         margin: 0.5,
         filename: 'ultra_resume.pdf',
@@ -454,8 +458,10 @@ function downloadUltraResume() {
         jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
 
-    // ✅ Delay to allow DOM updates
+    // ✅ Wait briefly, then generate PDF and re-hide
     setTimeout(() => {
-        html2pdf().from(element).set(opt).save();
+        html2pdf().from(element).set(opt).save().then(() => {
+            element.style.display = "none";
+        });
     }, 100);
 }
