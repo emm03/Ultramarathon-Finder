@@ -149,11 +149,20 @@ function drawUltraTimelineChart(activities) {
                 fill: false,
                 borderColor: "green",
                 tension: 0.3,
-                pointRadius: 5
+                pointRadius: 5,
+                hitRadius: 12 // 👈 Makes dots easier to click
             }]
         },
         options: {
             responsive: true,
+            layout: {
+                padding: {
+                    left: 20,
+                    right: 20,
+                    top: 10,
+                    bottom: 30
+                }
+            },
             plugins: {
                 tooltip: {
                     callbacks: {
@@ -173,6 +182,12 @@ function drawUltraTimelineChart(activities) {
                     const pointIndex = activeEls[0].index;
                     const race = ultras[pointIndex];
                     openUltraModal(race);
+                }
+            },
+            elements: {
+                point: {
+                    radius: 5,
+                    hitRadius: 12 // 👈 Again for extra click buffer
                 }
             },
             scales: {
