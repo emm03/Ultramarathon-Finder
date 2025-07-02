@@ -514,23 +514,35 @@ async function downloadUltraResume() {
     }, 100);
 }
 
-// 🧠 Alan's Tips Generator
+// 🧠 Alan's Deep Insight Generator
 function generateAlanTipsFromDescription(desc) {
     const tips = [];
 
-    if (desc.toLowerCase().includes("hill") || desc.toLowerCase().includes("elevation"))
-        tips.push("Great climbing effort — consider more hill repeats in training.");
-    if (desc.toLowerCase().includes("hot") || desc.toLowerCase().includes("heat"))
-        tips.push("Excellent heat management. Stay hydrated and train with electrolytes.");
-    if (desc.toLowerCase().includes("tough") || desc.toLowerCase().includes("hard"))
-        tips.push("Impressive grit. You’re building mental endurance.");
-    if (desc.toLowerCase().includes("first ultra"))
-        tips.push("Congratulations on your first ultra finish! The journey has begun.");
-    if (desc.toLowerCase().includes("mud") || desc.toLowerCase().includes("trail"))
-        tips.push("Great trail effort — watch foot placement and use poles if needed.");
+    const lower = desc.toLowerCase();
+
+    if (lower.includes("hill") || lower.includes("elevation"))
+        tips.push("🏔️ Strong climbing effort — keep up the hill work and consider trekking poles.");
+    if (lower.includes("hot") || lower.includes("heat"))
+        tips.push("🔥 Handled tough heat — hydrate well and train with salt tabs or electrolytes.");
+    if (lower.includes("cold") || lower.includes("snow"))
+        tips.push("❄️ Cold-weather resilience — dress in layers and warm up properly.");
+    if (lower.includes("mud") || lower.includes("trail"))
+        tips.push("🌲 Great trail technique — use stable foot placement and consider grip-enhancing shoes.");
+    if (lower.includes("back pain") || lower.includes("hip"))
+        tips.push("🦴 Body awareness matters — try strength training or form drills to support your hips/back.");
+    if (lower.includes("first ultra"))
+        tips.push("🎉 First ultra done! Welcome to the long-distance tribe.");
+    if (lower.includes("fail") || lower.includes("dnf") || lower.includes("quit"))
+        tips.push("💪 You showed up — and that's the hardest part. There's always a next one.");
+    if (lower.includes("vomit") || lower.includes("throw up") || lower.includes("gels"))
+        tips.push("🥤 Experiment with nutrition — try different fuel sources and pacing for better digestion.");
+    if (lower.includes("friends") || lower.includes("volunteer") || lower.includes("community"))
+        tips.push("🫂 You're finding your ultra community — keep connecting on the trails.");
+    if (lower.includes("win") || lower.includes("podium") || lower.includes("pr"))
+        tips.push("🏅 Incredible performance — you're on a strong upward path. Trust your training.");
 
     if (tips.length === 0)
-        tips.push("Solid performance! Keep building on your strengths.");
+        tips.push("✅ Solid performance. Keep showing up and building consistency.");
 
     return tips;
 }
