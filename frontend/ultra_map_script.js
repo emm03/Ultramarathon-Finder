@@ -426,14 +426,18 @@ function closeUltraModal() {
 }
 
 function downloadUltraResume() {
-    // Copy stat values
+    // Show hidden résumé section
+    const resumeSection = document.getElementById("ultra-resume-content");
+    resumeSection.style.display = "block";
+
+    // Copy values
     document.getElementById("resume-ultra-count").textContent = document.getElementById("ultra-count").textContent;
     document.getElementById("resume-ultra-distance").textContent = document.getElementById("ultra-distance").textContent;
     document.getElementById("resume-longest-run").textContent = document.getElementById("longest-run").textContent;
     document.getElementById("resume-unique-locations").textContent = document.getElementById("unique-locations").textContent;
     document.getElementById("resume-states-count").textContent = document.getElementById("visited-states-count").textContent;
 
-    // Add top photo
+    // Add top photo if available
     const topPhoto = document.querySelector("#photo-scroll-container img");
     const resumePhoto = document.getElementById("resume-photo");
     resumePhoto.innerHTML = "";
@@ -445,26 +449,23 @@ function downloadUltraResume() {
         resumePhoto.appendChild(img);
     }
 
-    // Optional: Generate race summaries from the timeline modal or existing runs
-    const raceListContainer = document.getElementById("resume-race-list");
-    raceListContainer.innerHTML = "";
-    const activities = window.ultraActivities || []; // Make sure this is populated in your app
-
-    activities.slice(0, 5).forEach((activity, i) => {
-        const raceEl = document.createElement("div");
-        raceEl.style.marginBottom = "10px";
-        raceEl.innerHTML = `
-            <strong>${i + 1}. ${activity.name}</strong><br/>
-            ${activity.date} — ${activity.distance} miles<br/>
-            <em>${activity.description || "No description provided."}</em>
-        `;
-        raceListContainer.appendChild(raceEl);
+    // Add race highlights from timeline if available
+    const highlightContainer = document.getElementById("resume-highlights");
+    highlightContainer.innerHTML = "";
+    const descriptions = document.querySelectorAll(".timeline-description");
+    let count = 0;
+    descriptions.forEach(desc => {
+        if (count >= 3) return;
+        const text = desc.textContent.trim();
+        if (text) {
+            const p = document.createElement("p");
+            p.textContent = `• ${text}`;
+            highlightContainer.appendChild(p);
+            count++;
+        }
     });
 
-    // Show content and generate PDF
     const element = document.getElementById("ultra-resume-content");
-    element.style.display = "block";
-
     const opt = {
         margin: 0.5,
         filename: 'ultra_resume.pdf',
@@ -473,9 +474,10 @@ function downloadUltraResume() {
         jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
 
+    // Add brief timeout to ensure DOM is rendered, then hide content again
     setTimeout(() => {
         html2pdf().from(element).set(opt).save().then(() => {
-            element.style.display = "none";
+            resumeSection.style.display = "none";
         });
     }, 100);
 }
