@@ -366,14 +366,12 @@ function openUltraModal(race) {
 
     try {
         const parsed = JSON.parse(savedNotesRaw);
-        savedNotes = Array.isArray(parsed)
-            ? parsed.filter(n => typeof n === "string" && n.trim() !== "")
-            : [];
+        savedNotes = Array.isArray(parsed) ? parsed.filter(n => n !== null) : [parsed];
     } catch {
-        savedNotes = [];
+        if (savedNotesRaw) savedNotes = [savedNotesRaw];
     }
 
-    renderSavedNotes(savedNotes, savedNotesContainer);
+    renderSavedNotes(savedNotes, savedNotesContainer, race.id);
     notesBox.value = "";
 
     document.getElementById("save-notes-btn").onclick = () => {
@@ -381,14 +379,14 @@ function openUltraModal(race) {
         if (!newNote) return;
         const updatedNotes = [...savedNotes, newNote];
         localStorage.setItem(notesKey, JSON.stringify(updatedNotes));
-        renderSavedNotes(updatedNotes, savedNotesContainer);
+        renderSavedNotes(updatedNotes, savedNotesContainer, race.id);
         notesBox.value = "";
     };
 
     modal.style.display = "flex";
 }
 
-function renderSavedNotes(notes, container) {
+function renderSavedNotes(notes, container, raceId) {
     if (!container) {
         console.warn("⚠️ Missing saved notes container in modal.");
         return;
@@ -398,19 +396,21 @@ function renderSavedNotes(notes, container) {
     if (!Array.isArray(notes) || notes.length === 0) return;
 
     notes.forEach((note, i) => {
-        if (typeof note !== "string" || note.trim() === "") return;
+        if (!note || typeof note !== "string") return;
 
         const noteEl = document.createElement("div");
         noteEl.className = "saved-note";
         noteEl.innerHTML = `
             <strong>Note ${i + 1}:</strong><br>${note.split('\n').join('<br>')}
-            <button class="delete-note" style="float: right; background: none; border: none; color: red; font-weight: bold; cursor: pointer;" title="Delete Note">🗑️</button>
+            <button style="margin-top:8px; background:red; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">
+                Delete
+            </button>
         `;
 
-        noteEl.querySelector(".delete-note").onclick = () => {
+        noteEl.querySelector("button").onclick = () => {
             const updated = notes.filter((_, idx) => idx !== i);
-            localStorage.setItem(`ultra-notes-${race.id}`, JSON.stringify(updated));
-            renderSavedNotes(updated, container);
+            localStorage.setItem(`ultra-notes-${raceId}`, JSON.stringify(updated));
+            renderSavedNotes(updated, container, raceId);
         };
 
         container.appendChild(noteEl);
