@@ -541,14 +541,22 @@ async function downloadUltraResume() {
                 let stateName = "Location Unknown";
                 const [lat, lng] = oldest.start_latlng;
 
-                if (window.stateGeoData) {
-                    for (const feature of window.stateGeoData.features) {
+                try {
+                    let geoData = window.stateGeoData;
+                    if (!geoData) {
+                        const response = await fetch("https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json");
+                        geoData = await response.json();
+                    }
+
+                    for (const feature of geoData.features) {
                         const polygon = feature.geometry;
                         if (isPointInPolygon([lng, lat], polygon)) {
                             stateName = feature.properties.name;
                             break;
                         }
                     }
+                } catch (err) {
+                    console.error("🌎 Could not load geo data for résumé state name:", err);
                 }
 
                 milestones.push(`🥇 First Ultra Completed: ${name} - ${distance} mi in ${stateName} (${date})`);
@@ -630,7 +638,7 @@ function generateAlanTipsFromDescription(desc) {
     return tips;
 }
 
-function renderMilestoneWall(activities) {
+async function renderMilestoneWall(activities) {
     const milestoneList = document.getElementById("milestone-list");
     const elevationSpan = document.getElementById("total-elevation");
     if (!milestoneList) return;
@@ -665,7 +673,7 @@ function renderMilestoneWall(activities) {
 
     const milestones = [];
 
-    // First Ultra Completed
+    // 🥇 First Ultra Completed
     if (activities.length > 0) {
         const oldest = activities.reduce((earliest, act) => {
             return new Date(act.start_date) < new Date(earliest.start_date) ? act : earliest;
@@ -677,40 +685,47 @@ function renderMilestoneWall(activities) {
         let stateName = "Location Unknown";
         const coords = oldest.start_latlng;
 
-        if (coords && coords.length === 2 && window.stateGeoData) {
-            const [lat, lng] = coords;
-            for (const feature of window.stateGeoData.features) {
-                const polygon = feature.geometry;
-                if (isPointInPolygon([lng, lat], polygon)) {
-                    stateName = feature.properties.name;
-                    break;
+        if (coords && coords.length === 2) {
+            try {
+                const geoResponse = await fetch("https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json");
+                const geoData = await geoResponse.json();
+
+                const [lat, lng] = coords;
+                for (const feature of geoData.features) {
+                    const polygon = feature.geometry;
+                    if (isPointInPolygon([lng, lat], polygon)) {
+                        stateName = feature.properties.name;
+                        break;
+                    }
                 }
+            } catch (err) {
+                console.error("🌎 Could not load geo data for state lookup", err);
             }
         }
 
         milestones.push(`🥇 First Ultra Completed: ${name} (${dist}, ${stateName})`);
     }
 
-    // Distance milestones
+    // 💯 Distance milestones
     const totalMiles = stats.totalDistance;
     for (let m = 100; m <= totalMiles; m += 100) {
         milestones.push(`💯 ${m} Miles Total`);
     }
 
-    // Elevation milestones
+    // ⛰️ Top elevation badge only
     const elevation = stats.totalElevation;
     const topElevationMilestone = Math.floor(elevation / 1000) * 1000;
     if (topElevationMilestone >= 1000) {
         milestones.push(`⛰️ ${topElevationMilestone.toLocaleString()} ft Climbed`);
     }
 
-    // Visited states
+    // 📍 States visited
     const states = Array.from(stats.visitedStates).sort();
     if (states.length > 0) {
         milestones.push(`📍 States Visited (${states.length}): ${states.join(', ')}`);
     }
 
-    // Render
+    // Final rendering
     milestoneList.innerHTML = "";
     if (milestones.length === 0) {
         milestoneList.innerHTML = `<li>🔜 Keep running ultras to unlock milestones!</li>`;
