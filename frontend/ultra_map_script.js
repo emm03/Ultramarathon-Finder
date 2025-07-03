@@ -694,7 +694,7 @@ async function renderMilestoneWall(activities) {
 
     const milestones = [];
 
-    // 🥇 First Ultra Completed
+    // First Ultra Completed
     if (activities.length > 0) {
         const oldest = activities.reduce((earliest, act) => {
             return new Date(act.start_date) < new Date(earliest.start_date) ? act : earliest;
@@ -706,21 +706,20 @@ async function renderMilestoneWall(activities) {
         let stateName = "Location Unknown";
         const coords = oldest.start_latlng;
 
-        if (coords && coords.length === 2) {
-            try {
-                const geoResponse = await fetch("https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json");
-                const geoData = await geoResponse.json();
+        if (coords && coords.length === 2 && window.stateGeoData) {
+            const [lat, lng] = coords;
 
-                const [lat, lng] = coords;
-                for (const feature of geoData.features) {
-                    const polygon = feature.geometry;
-                    if (isPointInPolygon([lng, lat], polygon)) {
-                        stateName = feature.properties.name;
-                        break;
-                    }
+            for (const feature of window.stateGeoData.features) {
+                const polygon = feature.geometry;
+                if (isPointInPolygon([lng, lat], polygon)) {
+                    stateName = feature.properties.name;
+                    break;
                 }
-            } catch (err) {
-                console.error("🌎 Could not load geo data for state lookup", err);
+            }
+
+            // ✅ Extra fallback: if still unknown, see if visitedStates has only one
+            if (stateName === "Location Unknown" && stats.visitedStates.size === 1) {
+                stateName = [...stats.visitedStates][0];
             }
         }
 
