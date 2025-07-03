@@ -447,6 +447,8 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 async function downloadUltraResume() {
+    await loadGeoDataIfNeeded();
+
     const element = document.getElementById("ultra-resume-content");
     const resumeCount = document.getElementById("resume-ultra-count");
     const resumeDistance = document.getElementById("resume-ultra-distance");
@@ -638,7 +640,26 @@ function generateAlanTipsFromDescription(desc) {
     return tips;
 }
 
+// 🌍 Preload US states GeoJSON for milestone rendering
+window.stateGeoData = null;
+
+function loadGeoDataIfNeeded() {
+    if (!window.stateGeoData) {
+        return fetch("https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json")
+            .then(res => res.json())
+            .then(data => {
+                window.stateGeoData = data;
+            })
+            .catch(err => {
+                console.error("❌ Failed to load state geo data:", err);
+            });
+    }
+    return Promise.resolve();
+}
+
 async function renderMilestoneWall(activities) {
+    await loadGeoDataIfNeeded();
+
     const milestoneList = document.getElementById("milestone-list");
     const elevationSpan = document.getElementById("total-elevation");
     if (!milestoneList) return;
