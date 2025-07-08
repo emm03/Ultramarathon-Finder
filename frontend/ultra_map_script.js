@@ -12,9 +12,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
+    const mapContainer = document.getElementById("ultra-map-container");
+    const message = document.getElementById("connection-check-message");
+
     if (!token) {
-        console.warn("⚠️ No token found. User not authenticated.");
+        console.warn("⚠️ No token found — user may not be logged in");
+        if (message) message.style.display = "block";
         return;
     }
 
