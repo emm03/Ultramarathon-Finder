@@ -41,6 +41,15 @@
     </header>
 
     <main style="padding-top: 100px;">
+
+        <div id="strava-connect-message"
+            style="display: none; padding: 40px; font-size: 1.2em; text-align: center; color: darkred;">
+            To view your Ultra Map, please
+            <a href="training_log.html" style="color: orange; text-decoration: underline;">connect your Strava
+                account</a>
+            on the Training Log page.
+        </div>
+
         <section class="ultra-map-hero">
             <div class="hero-content">
                 <h1>📍 My Ultra Map</h1>
@@ -180,6 +189,24 @@
     <script src="forum/inject_account_dropdown.js"></script>
     <script src="ultra_map_script.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const token = localStorage.getItem("token");
+            const stravaConnected = localStorage.getItem("stravaConnected");
+
+            const message = document.getElementById("strava-connect-message");
+            const mainContent = document.querySelector("main");
+
+            if (!token || stravaConnected !== "true") {
+                // Hide everything else, show message
+                Array.from(mainContent.children).forEach(child => {
+                    if (child.id !== "strava-connect-message") child.style.display = "none";
+                });
+                message.style.display = "block";
+            }
+        });
+    </script>
 
 </body>
 
