@@ -3,36 +3,46 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gear Recommendations | Ultramarathon Connect</title>
     <link rel="stylesheet" href="style.css" />
+    <script src="auth_utils.js" defer></script>
 </head>
 
 <body class="forum-page">
-    <!-- Header -->
-    <header class="site-header">
-        <div class="logo-title">
-            <a href="index.html"><img src="ultra_favicon.ico" alt="Logo" class="header-logo" /></a>
-            <a href="index.html" class="site-title">Ultramarathon Connect</a>
+    <!-- HEADER -->
+    <header class="sticky-header dual-row-header">
+        <div class="header-top-row">
+            <div class="mobile-header-container">
+                <a href="index.html" class="header-left" style="text-decoration: none; color: inherit;">
+                    <img src="ultra.png" alt="Ultramarathon Connect Logo" class="logo" />
+                    <span class="site-title">UltramarathonConnect</span>
+                </a>
+                <button class="menu-toggle">☰</button>
+            </div>
+            <div id="account-tab" class="auth-tab mobile-account-tab"></div>
         </div>
-        <nav class="nav-tabs">
-            <a href="index.html">Home</a>
-            <a href="race_directory.html">Race Directory</a>
-            <a href="training_log.html">Training Log</a>
-            <a href="forum.html">Runner Community</a>
-            <a href="gear.html" class="active">Gear</a>
-            <a href="account.html" id="account-tab">My Account</a>
-        </nav>
+
+        <div class="header-bottom-row">
+            <nav class="header-right">
+                <ul class="menu">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="race_directory.html">Race Directory</a></li>
+                    <li><a href="forum.html">Runner Community</a></li>
+                    <li><a href="articles.html">Articles</a></li>
+                    <li><a href="gear.html" class="active">Gear</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
 
-    <!-- Page Title -->
-    <main class="centered-content">
-        <h1>🏃‍♂️ Gear Recommendations</h1>
-        <p>These are our favorite ultrarunning essentials. Some links are affiliate links — they help support the site
-            at no extra cost to you.</p>
+    <!-- MAIN -->
+    <main style="padding: 60px 20px; max-width: 800px; margin: auto;">
+        <h1 style="text-align: center;">🏃‍♀️ Gear Recommendations</h1>
+        <p style="text-align: center;">These are Emmi’s favorite ultrarunning essentials. Some links are affiliate links
+            — they help support the site at no extra cost to you.</p>
 
-        <!-- Trail Running Shoes -->
-        <section class="gear-section">
+        <!-- Section -->
+        <section>
             <h2>👟 Trail Running Shoes</h2>
             <ul>
                 <li><strong>Altra Lone Peak 8</strong> – Great for long distances, wide toe box.
@@ -46,8 +56,7 @@
             </ul>
         </section>
 
-        <!-- Hydration -->
-        <section class="gear-section">
+        <section>
             <h2>💧 Hydration Packs & Bottles</h2>
             <ul>
                 <li><strong>Salomon ADV Skin 5</strong> – Lightweight and snug fit.
@@ -61,8 +70,7 @@
             </ul>
         </section>
 
-        <!-- Headlamps -->
-        <section class="gear-section">
+        <section>
             <h2>🔦 Headlamps & Night Gear</h2>
             <ul>
                 <li><strong>Petzl Actik Core</strong> – Rechargeable with long battery life.
@@ -76,30 +84,28 @@
             </ul>
         </section>
 
-        <!-- Nutrition -->
-        <section class="gear-section">
+        <section>
             <h2>🍬 Nutrition & Electrolytes</h2>
             <ul>
-                <li><strong>Tailwind Endurance Fuel</strong> – All-in-one electrolyte and carb source.
+                <li><strong>Tailwind Endurance Fuel</strong> – All-in-one fuel and electrolyte.
                     <a href="https://www.amazon.com/dp/B00G3XNG78?tag=ultramarath04-20" target="_blank">View on
                         Amazon</a>
                 </li>
-                <li><strong>Honey Stinger Waffles</strong> – Great snack between aid stations.
+                <li><strong>Honey Stinger Waffles</strong> – Easy carbs between aid stations.
                     <a href="https://www.amazon.com/dp/B002IGFH4C?tag=ultramarath04-20" target="_blank">View on
                         Amazon</a>
                 </li>
             </ul>
         </section>
 
-        <!-- Race Day Extras -->
-        <section class="gear-section">
-            <h2>🎒 Must-Have Race Day Gear</h2>
+        <section>
+            <h2>🎒 Race Day Essentials</h2>
             <ul>
                 <li><strong>Body Glide Anti-Chafe Balm</strong> – Prevents blisters & hot spots.
                     <a href="https://www.amazon.com/dp/B000HZR4UA?tag=ultramarath04-20" target="_blank">View on
                         Amazon</a>
                 </li>
-                <li><strong>KT Tape</strong> – For support and pain relief.
+                <li><strong>KT Tape</strong> – Extra support for race day strain.
                     <a href="https://www.amazon.com/dp/B004D7B6HM?tag=ultramarath04-20" target="_blank">View on
                         Amazon</a>
                 </li>
@@ -107,7 +113,18 @@
         </section>
     </main>
 
-    <script src="forum/inject_account_dropdown.js"></script>
+    <!-- FOOTER -->
+    <footer class="site-footer">
+        <div class="footer-links">
+            <a href="contact.html">Contact Us</a> |
+            <a href="privacy.html">Privacy Policy</a> |
+            <a href="termsofservice.html">Terms of Service</a> |
+            <a href="faq.html">FAQ</a>
+        </div>
+        <p class="footer-copy">&copy; 2025 Ultramarathon Connect. All rights reserved.</p>
+    </footer>
+
+    <script src="index_script.js"></script>
 </body>
 
 </html>
