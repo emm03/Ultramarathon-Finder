@@ -193,19 +193,27 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const token = localStorage.getItem("token");
-            const stravaConnected = localStorage.getItem("stravaConnected");
+        const token = localStorage.getItem("token");
+        const mapContainer = document.getElementById("ultra-map-container");
+        const message = document.getElementById("connection-check-message");
 
-            const mapContainer = document.getElementById("ultra-map-container");
-            const message = document.getElementById("connection-check-message");
+        if (token) {
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const isConnected = payload.stravaConnected;
 
-            if (token && stravaConnected === "true") {
-                mapContainer.style.display = "block";
-            } else {
+                if (isConnected) {
+                    mapContainer.style.display = "block";
+                } else {
+                    message.style.display = "block";
+                }
+            } catch (err) {
+                console.error("❌ Invalid token", err);
                 message.style.display = "block";
             }
-        });
+        } else {
+            message.style.display = "block";
+        }
     </script>
 
     <script>
