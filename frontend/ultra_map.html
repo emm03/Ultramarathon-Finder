@@ -193,30 +193,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <script>
-        const token = localStorage.getItem("token");
-        const mapContainer = document.getElementById("ultra-map-container");
-        const message = document.getElementById("connection-check-message");
-
-        if (token) {
-            try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
-                const isConnected = payload.stravaConnected;
-
-                if (isConnected) {
-                    mapContainer.style.display = "block";
-                } else {
-                    message.style.display = "block";
-                }
-            } catch (err) {
-                console.error("❌ Invalid token", err);
-                message.style.display = "block";
-            }
-        } else {
-            message.style.display = "block";
-        }
-    </script>
-
-    <script>
         document.getElementById("copy-share-link").addEventListener("click", () => {
             const username = localStorage.getItem("username") || "me";
             const shareURL = `${window.location.origin}${window.location.pathname}?user=${encodeURIComponent(username)}`;
