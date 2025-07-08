@@ -14,31 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.classList.toggle('menu-open');
         });
     }
-
-    // 🌐 Ultra Map display logic based on token + stravaConnected
-    if (window.location.pathname.includes("ultra_map.html")) {
-        const token = localStorage.getItem("token");
-        const mapContainer = document.getElementById("ultra-map-container");
-        const message = document.getElementById("connection-check-message");
-
-        if (token) {
-            try {
-                const payload = JSON.parse(atob(token.split('.')[1]));
-                const isConnected = payload.stravaConnected;
-
-                if (isConnected) {
-                    mapContainer.style.display = "block";
-                } else {
-                    message.style.display = "block";
-                }
-            } catch (err) {
-                console.error("❌ Invalid token", err);
-                message.style.display = "block";
-            }
-        } else {
-            message.style.display = "block";
-        }
-    }
 });
 
 function initializeCarousel() {

@@ -35,8 +35,6 @@ fetch('https://ultramarathon-finder-backend.onrender.com/api/auth/status', {
                 </div>`;
 
             if (data.user.stravaAccessToken) {
-                localStorage.setItem("stravaConnected", "true");
-
                 document.getElementById('connect-strava').style.display = 'none';
                 document.getElementById('refresh-strava').style.display = 'inline-block';
                 document.getElementById('disconnect-strava').style.display = 'inline-block';

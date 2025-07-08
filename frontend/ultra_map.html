@@ -71,8 +71,6 @@
                 </div>
                 <button onclick="askAlanBasedOnMap()" class="orange-btn">Ask Alan for Race Suggestions</button>
                 <button class="green-btn">📄 Download Résumé (PDF)</button>
-                <button id="copy-share-link" class="orange-btn">🔗 Share My Ultra Map</button>
-                <span id="share-status" style="margin-left: 10px; color: green; display: none;">Copied!</span>
             </section>
 
             <div id="ultra-map" style="height: 500px;"></div>
@@ -191,19 +189,6 @@
     <script src="forum/inject_account_dropdown.js"></script>
     <script src="ultra_map_script.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-    <script>
-        document.getElementById("copy-share-link").addEventListener("click", () => {
-            const username = localStorage.getItem("username") || "me";
-            const shareURL = `${window.location.origin}${window.location.pathname}?user=${encodeURIComponent(username)}`;
-
-            navigator.clipboard.writeText(shareURL).then(() => {
-                const status = document.getElementById("share-status");
-                status.style.display = "inline";
-                setTimeout(() => status.style.display = "none", 2000);
-            });
-        });
-    </script>
 
 </body>
 
