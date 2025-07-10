@@ -4,49 +4,55 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Shared Ultra Map</title>
+    <title>Public Ultra Map - Ultramarathon Connect</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="alanai_chatbot/chat-widget.css" />
     <link rel="icon" href="ultra_favicon.ico" type="image/x-icon" />
 </head>
 
-<body>
-    <main class="ultra-map-page clean-centered-layout">
-        <!-- 🧭 Header -->
-        <section class="ultra-map-hero">
+<body class="ultra-map-page clean-centered-layout">
+    <main class="ultra-map-hero">
+        <div class="hero-content">
             <h1>📍 Ultra Map for <span id="shared-username">...</span></h1>
             <p>Every ultra-distance run visualized across the globe.</p>
-        </section>
-
-        <!-- 🗺️ Map -->
-        <div id="ultra-map" style="height: 500px; margin-bottom: 30px;"></div>
-
-        <!-- 📊 Stats Grid -->
-        <section class="ultra-summary-grid">
-            <div>
-                <strong>Total Ultra Runs:</strong> <span id="ultra-count">0</span><br />
-                <strong>Total Distance:</strong> <span id="ultra-distance">0 mi</span><br />
-                <strong>Longest Run:</strong> <span id="longest-run">0 mi</span><br />
-                <strong>Total Elevation:</strong> <span id="total-elevation">0 ft</span>
-            </div>
-            <div>
-                <strong>Unique Locations:</strong> <span id="unique-locations">0</span><br />
-                <strong>Visited States:</strong> <span id="visited-states-count">0</span><br />
-                <ul id="visited-states-list" class="state-list"></ul>
-            </div>
-        </section>
-
-        <!-- 🏆 Milestone Wall -->
-        <h2>🏆 Milestone Wall</h2>
-        <ul id="milestone-list" class="milestone-list"></ul>
-
-        <!-- 📸 Photo Timeline -->
-        <h2>📸 Photo Timeline</h2>
-        <div id="photo-scroll-container" class="photo-scroll"></div>
+        </div>
     </main>
 
+    <main>
+        <div id="ultra-map" style="height: 500px;"></div>
+
+        <div class="ultra-stats-row"
+            style="display: flex; flex-wrap: wrap; gap: 20px; align-items: stretch; margin: 40px 0;">
+            <div class="ultra-stats-card">
+                <p><strong>Total Ultra Runs:</strong> <span id="ultra-count">0</span></p>
+                <p><strong>Total Distance:</strong> <span id="ultra-distance">0 mi</span></p>
+                <p><strong>Longest Run:</strong> <span id="longest-run">0 mi</span></p>
+                <p><strong>Unique Locations:</strong> <span id="unique-locations">0</span></p>
+                <p><strong>Total Elevation:</strong> <span id="total-elevation">0 ft</span></p>
+            </div>
+
+            <div class="ultra-stats-card" id="milestone-wall">
+                <h3 style="margin-bottom: 10px;">🏆 Milestone Wall</h3>
+                <ul id="milestone-list" style="padding-left: 20px; margin: 0;"></ul>
+            </div>
+        </div>
+
+        <section id="visited-regions" style="margin: 40px 20px;">
+            <h2 class="chart-title">🌎 States Where They've Completed Ultras</h2>
+            <p><strong>States Completed:</strong> <span id="visited-states-count">0</span></p>
+            <ul id="visited-states-list" style="margin-top: 8px; padding-left: 18px;"></ul>
+        </section>
+
+        <section id="photo-timeline" style="margin: 40px 20px;">
+            <h2 class="chart-title">📸 Ultra Photo Timeline</h2>
+            <div id="photo-scroll-container" class="photo-scroll"></div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script src="public_ultra_map_script.js"></script>
