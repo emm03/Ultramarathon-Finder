@@ -10,7 +10,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             message.innerHTML = `
                 <div class="map-warning-box">
                     🔒 You must be <a href="login.html">signed in</a> and connected to Strava to view your Ultra Map.<br />
-                    Don’t have an account? <a href="register.html">Create one here</a>.
+                    Don’t have an account? <a href="register.html">Create one here</a>.<br /><br />
+                    After signing in, make sure to <a href="training_log.html">connect your Strava account</a>.
                 </div>`;
             message.style.display = "block";
         }

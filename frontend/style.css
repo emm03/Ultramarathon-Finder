@@ -3473,3 +3473,36 @@ main.article-content {
     font-weight: bold;
     text-decoration: underline;
 }
+
+#connection-check-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50vh;
+    margin-top: 60px;
+}
+
+/* Ensure main fills full height for centered messages */
+html,
+body {
+    height: 100%;
+}
+
+body.forum-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Footer stays at bottom if not enough content */
+.site-footer {
+    margin-top: auto;
+}
