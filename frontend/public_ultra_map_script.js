@@ -118,13 +118,19 @@ function renderSharedUltraMap(data) {
     });
 
     renderSharedMilestones(data, totalDistance, totalElevation, visitedStates);
-    renderTimelineChart(yearCounts);
+    renderTimelineChart(data);
 
-    const websiteLink = document.createElement("p");
-    websiteLink.innerHTML = `Want to build your own Ultra Map? <a href="https://ultramarathonconnect.com/" target="_blank">Join Ultramarathon Connect</a>.`;
-    websiteLink.style.textAlign = "center";
-    websiteLink.style.marginTop = "60px";
-    document.body.appendChild(websiteLink);
+    const joinMsg = document.createElement("p");
+    joinMsg.style.textAlign = "center";
+    joinMsg.style.marginTop = "60px";
+    joinMsg.style.fontSize = "1.1rem";
+    joinMsg.innerHTML = `
+    Want your own Ultra Map? 
+    <a href="https://ultramarathonconnect.com" style="color:#0077cc; font-weight: bold;" target="_blank">
+        Join Ultramarathon Connect
+    </a> to connect your Strava and start tracking.
+`;
+    document.body.appendChild(joinMsg);
 }
 
 // GeoJSON state data
@@ -191,32 +197,60 @@ function renderSharedMilestones(activities, totalMiles, elevation, visitedStates
     }
 }
 
-function renderTimelineChart(yearCounts) {
-    const canvas = document.getElementById("ultraTimelineChart");
-    if (!canvas) {
-        console.warn("⚠️ Timeline chart element not found.");
-        return;
-    }
+function renderTimelineChart(activities) {
+    const ultras = activities
+        .filter(act => act.distance / 1609.34 >= 26.2)
+        .sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
 
-    const ctx = canvas.getContext("2d");
-    const labels = Object.keys(yearCounts).sort();
-    const values = labels.map(y => yearCounts[y]);
+    const labels = ultras.map(act => new Date(act.start_date).toLocaleDateString());
+    const data = ultras.map(act => parseFloat((act.distance / 1609.34).toFixed(2)));
+    const titles = ultras.map(act => act.name || "Untitled Run");
+
+    const ctx = document.getElementById("ultraTimelineChart").getContext("2d");
 
     new Chart(ctx, {
-        type: "bar",
+        type: "line",
         data: {
-            labels,
+            labels: labels,
             datasets: [{
-                label: "Ultras Completed",
-                data: values,
-                backgroundColor: "#4caf50"
+                label: "Ultra Distance (miles)",
+                data: data,
+                fill: false,
+                borderColor: "green",
+                tension: 0.3,
+                pointRadius: 5,
+                hitRadius: 12
             }]
         },
         options: {
+            responsive: true,
+            layout: {
+                padding: { left: 20, right: 20, top: 10, bottom: 30 }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            const index = context.dataIndex;
+                            return [
+                                `${titles[index]}`,
+                                `${labels[index]} — ${data[index].toFixed(2)} miles`
+                            ];
+                        }
+                    }
+                },
+                legend: { display: true, position: 'top' }
+            },
+            elements: {
+                point: { radius: 5, hitRadius: 12 }
+            },
             scales: {
                 y: {
-                    beginAtZero: true,
-                    ticks: { stepSize: 1 }
+                    beginAtZero: false,
+                    title: { display: true, text: "Distance (miles)" }
+                },
+                x: {
+                    title: { display: true, text: "Date" }
                 }
             }
         }
