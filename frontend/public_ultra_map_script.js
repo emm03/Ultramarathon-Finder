@@ -192,7 +192,13 @@ function renderSharedMilestones(activities, totalMiles, elevation, visitedStates
 }
 
 function renderTimelineChart(yearCounts) {
-    const ctx = document.getElementById("timeline-chart").getContext("2d");
+    const canvas = document.getElementById("ultraTimelineChart");
+    if (!canvas) {
+        console.warn("⚠️ Timeline chart element not found.");
+        return;
+    }
+
+    const ctx = canvas.getContext("2d");
     const labels = Object.keys(yearCounts).sort();
     const values = labels.map(y => yearCounts[y]);
 
