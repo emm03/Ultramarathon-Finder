@@ -72,12 +72,22 @@
         </section>
     </main>
 
+    <!-- 🔒 Redirect if not logged in -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                window.location.href = "login.html";
+            }
+        });
+    </script>
+
     <script src="index_script.js"></script>
     <script src="training_log_script.js"></script>
     <script src="forum/inject_account_dropdown.js"></script>
 
     <script>
-        // Show Ultra Map button only if user is logged in + connected to Strava
+        // ✅ Show Ultra Map button only if user is logged in + connected to Strava
         async function checkStravaConnection() {
             try {
                 const res = await fetch('/api/account', {
@@ -97,6 +107,7 @@
 
         checkStravaConnection();
     </script>
+
 </body>
 
 </html>

@@ -195,38 +195,26 @@
             const main = document.querySelector("main");
 
             if (!token) {
+                // 🔴 Not signed in
                 message.innerHTML = `
-                    <div class="map-warning-box">
-                        <p>🔒 You must be <a href="login.html">signed in</a> and connected to Strava to view your Ultra Map.<br />
-                        Don't have an account? <a href="register.html">Create one here</a>.</p>
-                    </div>`;
+              <div class="map-warning-box">
+                🔒 You must be <a href="login.html">signed in</a> and connected to Strava to view your Ultra Map.<br />
+                Don’t have an account? <a href="register.html">Create one here</a>.
+              </div>`;
                 message.style.display = "block";
                 main.style.display = "none";
                 return;
             }
 
             if (stravaConnected !== "true") {
+                // 🟡 Signed in, not connected
                 message.innerHTML = `
-                    <div class="map-warning-box">
-                        <p>🚴‍♂️ To view your Ultra Map, please <a href="training_log.html">connect your Strava account</a>.</p>
-                    </div>`;
+              <div class="map-warning-box">
+                🚴‍♂️ To view your Ultra Map, please <a href="training_log.html">connect your Strava account</a>.
+              </div>`;
                 message.style.display = "block";
                 main.style.display = "none";
             }
-        });
-    </script>
-
-    <script>
-        document.getElementById("copy-share-link")?.addEventListener("click", () => {
-            const username = localStorage.getItem("username") || "me";
-            const baseUrl = `${window.location.origin}${window.location.pathname}`;
-            const shareURL = `${baseUrl}?user=${encodeURIComponent(username)}`;
-
-            navigator.clipboard.writeText(shareURL).then(() => {
-                const status = document.getElementById("share-status");
-                status.style.display = "inline";
-                setTimeout(() => (status.style.display = "none"), 2000);
-            });
         });
     </script>
 
