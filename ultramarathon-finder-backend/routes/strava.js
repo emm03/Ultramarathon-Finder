@@ -272,4 +272,97 @@ router.get('/api/strava/ultras', requireUser, async (req, res) => {
     }
 });
 
+// -------------------- Public Ultra Map Access by Username --------------------
+router.get('/api/public-ultras/:username', async (req, res) => {
+    const { username } = req.params;
+
+    try {
+        const user = await User.findOne({ username });
+        if (!user || !user.stravaAccessToken) {
+            return res.status(404).json({ error: 'User not found or not connected to Strava' });
+        }
+
+        const accessToken = await getValidAccessToken(user);
+
+        let page = 1;
+        const allActivities = [];
+
+        while (true) {
+            const response = await axios.get('https://www.strava.com/api/v3/athlete/activities', {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+                params: {
+                    per_page: 200,
+                    page,
+                },
+            });
+
+            const pageActivities = response.data;
+            if (pageActivities.length === 0) break;
+            allActivities.push(...pageActivities);
+            page++;
+        }
+
+        const ultraRuns = allActivities.filter(
+            (activity) =>
+                activity.type === 'Run' && activity.distance > 42195
+        );
+
+        const enrichedUltras = await Promise.all(
+            ultraRuns.map(async (activity) => {
+                try {
+                    const fullRes = await axios.get(`https://www.strava.com/api/v3/activities/${activity.id}`, {
+                        headers: { Authorization: `Bearer ${accessToken}` }
+                    });
+
+                    const full = fullRes.data;
+
+                    let extraPhotos = [];
+
+                    try {
+                        const photosRes = await axios.get(`https://www.strava.com/api/v3/activities/${activity.id}/photos`, {
+                            headers: { Authorization: `Bearer ${accessToken}` },
+                            params: { size: 2048 }
+                        });
+
+                        extraPhotos = (photosRes.data || [])
+                            .map(photo => photo.urls?.['2048'] || photo.urls?.['1000'] || photo.urls?.['600'])
+                            .filter(Boolean);
+                    } catch { }
+
+                    const primaryUrls = full.photos?.primary?.urls || {};
+                    const highResPrimary = primaryUrls['1200'] || primaryUrls['600'] || primaryUrls['100'];
+                    const primary = (typeof highResPrimary === 'string' && !highResPrimary.includes('placeholder'))
+                        ? highResPrimary.split('?')[0]
+                        : null;
+
+                    return {
+                        ...activity,
+                        description: full.description || '',
+                        photos: extraPhotos.length ? extraPhotos : (primary ? [primary] : []),
+                        map: full.map || null,
+                        profile_picture: user.profilePicture || null,
+                        username: user.username
+                    };
+                } catch (err) {
+                    return {
+                        ...activity,
+                        description: '',
+                        photos: [],
+                        map: null,
+                        profile_picture: user.profilePicture || null,
+                        username: user.username
+                    };
+                }
+            })
+        );
+
+        res.json(enrichedUltras);
+    } catch (err) {
+        console.error("❌ Public ultra map error:", err.message);
+        res.status(500).json({ error: "Failed to load public ultra map" });
+    }
+});
+
 export default router;
