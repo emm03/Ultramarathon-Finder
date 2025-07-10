@@ -77,24 +77,6 @@ async function startUltraMap() {
     const urlParams = new URLSearchParams(window.location.search);
     const sharedUsername = urlParams.get("user");
 
-    // If shared username exists and it's NOT your own, override token check
-    if (sharedUsername) {
-        try {
-            const res = await fetch(`/api/public-ultras/${sharedUsername}`);
-            if (!res.ok) throw new Error("Shared map not available");
-
-            const data = await res.json();
-            renderSharedUltraMap(data); // 🔧 You’ll define this next
-            return; // ✅ Done — exit the function
-        } catch (err) {
-            console.error("❌ Failed to load shared map:", err);
-            document.getElementById("connection-check-message").innerHTML = `
-            <div class="map-warning-box">
-                ❌ Could not load the shared Ultra Map for <strong>${sharedUsername}</strong>.
-            </div>`;
-            return;
-        }
-    }
     if (!token) {
         console.warn("⚠️ No token found. User not authenticated.");
         return;

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shared Ultra Map</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <link rel="icon" href="ultra_favicon.ico" type="image/x-icon" />
+</head>
+
+<body>
+    <main class="shared-ultra-map">
+        <h1>📍 Ultra Map for <span id="shared-username">...</span></h1>
+        <p>Every ultra-distance run visualized across the globe.</p>
+
+        <div id="ultra-map" style="height: 500px; margin-bottom: 40px;"></div>
+
+        <section class="ultra-summary-grid">
+            <div>
+                <strong>Total Ultra Runs:</strong> <span id="ultra-count">0</span><br />
+                <strong>Total Distance:</strong> <span id="ultra-distance">0 mi</span><br />
+                <strong>Longest Run:</strong> <span id="longest-run">0 mi</span><br />
+                <strong>Total Elevation:</strong> <span id="total-elevation">0 ft</span>
+            </div>
+            <div>
+                <strong>Unique Locations:</strong> <span id="unique-locations">0</span><br />
+                <strong>Visited States:</strong> <span id="visited-states-count">0</span><br />
+                <ul id="visited-states-list" class="state-list"></ul>
+            </div>
+        </section>
+
+        <h2>🏆 Milestone Wall</h2>
+        <ul id="milestone-list" class="milestone-list"></ul>
+
+        <h2>📸 Photo Timeline</h2>
+        <div id="photo-scroll-container" class="photo-scroll"></div>
+    </main>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script src="public_ultra_map_script.js"></script>
+</body>
+
+</html>
