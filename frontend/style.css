@@ -3506,3 +3506,24 @@ main {
 .site-footer {
     margin-top: auto;
 }
+
+#ultra-loading {
+    font-size: 1.2rem;
+    color: #555;
+    margin-top: 40px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}

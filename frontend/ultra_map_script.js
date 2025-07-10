@@ -57,7 +57,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function startUltraMap() {
     const main = document.querySelector("main");
-    if (main) main.style.display = "block"; // ✅ reveal main content
+    const loadingSpinner = document.getElementById("ultra-loading");
+
+    if (main) main.style.display = "block";
+    if (loadingSpinner) loadingSpinner.style.display = "block"; // ⏳ Show spinner early
 
     const map = L.map('ultra-map').setView([37.8, -96], 4);
 
@@ -104,7 +107,6 @@ async function startUltraMap() {
                 img.alt = `Ultra ${index + 1} Photo ${i + 1}`;
                 img.classList.add("photo-thumb");
 
-                // Lightbox click
                 img.addEventListener("click", () => {
                     openLightbox(url);
                 });
@@ -161,6 +163,8 @@ async function startUltraMap() {
         document.getElementById('longest-run').textContent = longestRun.toFixed(2) + ' mi';
         document.getElementById('unique-locations').textContent = locations.size;
 
+        if (loadingSpinner) loadingSpinner.style.display = "none"; // ✅ Hide spinner after load
+
         window.alanUltraData = {
             count: data.length,
             distance: totalDistance.toFixed(2),
@@ -171,7 +175,6 @@ async function startUltraMap() {
         drawVisitedStatesOverlay(map, data);
         renderMilestoneWall(data);
 
-        // 🧭 Share My Ultra Map
         document.getElementById("copy-share-link")?.addEventListener("click", () => {
             navigator.clipboard.writeText(window.location.href);
             const status = document.getElementById("share-status");
@@ -185,6 +188,7 @@ async function startUltraMap() {
 
     } catch (err) {
         console.error('❌ Failed to load ultra data:', err.message || err);
+        if (loadingSpinner) loadingSpinner.style.display = "none"; // hide on error too
     }
 }
 
