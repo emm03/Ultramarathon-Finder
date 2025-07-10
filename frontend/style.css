@@ -3482,10 +3482,12 @@ main.article-content {
     margin-top: 60px;
 }
 
-/* Ensure main fills full height for centered messages */
+/* Layout baseline */
 html,
 body {
     height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 body.forum-page {
@@ -3496,10 +3498,8 @@ body.forum-page {
 
 main {
     flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    display: block;
+    width: 100%;
 }
 
 /* Footer stays at bottom if not enough content */
