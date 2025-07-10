@@ -191,7 +191,7 @@ async function startUltraMap() {
                 const data = await res.json();
                 if (!data.user || !data.user.username) throw new Error("No username");
 
-                const shareURL = `${window.location.origin}/ultra_map.html?user=${encodeURIComponent(data.user.username)}`;
+                const shareURL = `${window.location.origin}/public_ultra_map.html?user=${encodeURIComponent(data.user.username)}`;
                 await navigator.clipboard.writeText(shareURL);
 
                 const status = document.getElementById("share-status");
