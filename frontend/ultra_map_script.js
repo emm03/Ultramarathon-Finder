@@ -1,6 +1,60 @@
 // ultra_map_script.js
 
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener("DOMContentLoaded", async () => {
+    const token = localStorage.getItem("token");
+    const message = document.getElementById("connection-check-message");
+    const main = document.querySelector("main");
+
+    if (!token) {
+        if (message) {
+            message.innerHTML = `
+                <div class="map-warning-box">
+                    🔒 You must be <a href="login.html">signed in</a> and connected to Strava to view your Ultra Map.<br />
+                    Don’t have an account? <a href="register.html">Create one here</a>.
+                </div>`;
+            message.style.display = "block";
+        }
+        if (main) main.style.display = "none";
+        return;
+    }
+
+    try {
+        const res = await fetch('/api/account', {
+            headers: {
+                Authorization: 'Bearer ' + token,
+            },
+        });
+        const data = await res.json();
+
+        if (!res.ok || !data.user || !data.user.stravaAccessToken) {
+            if (message) {
+                message.innerHTML = `
+                    <div class="map-warning-box">
+                        🚴‍♂️ To view your Ultra Map, please <a href="training_log.html">connect your Strava account</a>.
+                    </div>`;
+                message.style.display = "block";
+            }
+            if (main) main.style.display = "none";
+            return;
+        }
+
+        // ✅ If logged in and Strava connected — continue loading full map page
+        startUltraMap();
+
+    } catch (err) {
+        console.error("❌ Error checking Strava connection:", err);
+        if (message) {
+            message.innerHTML = `
+                <div class="map-warning-box">
+                    ❌ An error occurred. Please try refreshing the page or visiting your <a href="training_log.html">Training Log</a>.
+                </div>`;
+            message.style.display = "block";
+        }
+        if (main) main.style.display = "none";
+    }
+});
+
+async function startUltraMap() {
     const map = L.map('ultra-map').setView([37.8, -96], 4);
 
     map.scrollWheelZoom.disable();
@@ -113,12 +167,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         drawVisitedStatesOverlay(map, data);
         renderMilestoneWall(data);
 
+        // 🧭 Share My Ultra Map
+        document.getElementById("copy-share-link")?.addEventListener("click", () => {
+            navigator.clipboard.writeText(window.location.href);
+            const status = document.getElementById("share-status");
+            if (status) {
+                status.style.display = "inline";
+                setTimeout(() => (status.style.display = "none"), 2000);
+            }
+        });
+
         document.querySelector(".ultra-modal-close").addEventListener("click", closeUltraModal);
 
     } catch (err) {
         console.error('❌ Failed to load ultra data:', err.message || err);
     }
-});
+}
 
 // Ask Alan suggestion trigger
 function askAlanBasedOnMap() {

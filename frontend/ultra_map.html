@@ -13,34 +13,6 @@
     <link rel="icon" href="ultra_favicon.ico" type="image/x-icon" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script defer src="auth_utils.js"></script>
-    <script defer>
-        document.addEventListener("DOMContentLoaded", () => {
-            const token = localStorage.getItem("token");
-            const stravaConnected = localStorage.getItem("stravaConnected");
-            const message = document.getElementById("connection-check-message");
-            const main = document.querySelector("main");
-
-            if (!token) {
-                message.innerHTML = `
-        <div class="map-warning-box">
-          🔒 You must be <a href="login.html">signed in</a> and connected to Strava to view your Ultra Map.<br />
-          Don’t have an account? <a href="register.html">Create one here</a>.
-        </div>`;
-                message.style.display = "block";
-                if (main) main.style.display = "none";
-                return;
-            }
-
-            if (stravaConnected !== "true") {
-                message.innerHTML = `
-        <div class="map-warning-box">
-          🚴‍♂️ To view your Ultra Map, please <a href="training_log.html">connect your Strava account</a>.
-        </div>`;
-                message.style.display = "block";
-                if (main) main.style.display = "none";
-            }
-        });
-    </script>
 </head>
 
 <body class="forum-page">
@@ -156,7 +128,6 @@
             <div id="resume-race-list"></div>
         </section>
     </div>
-    </main>
 
     <div id="alan-bubble">💬</div>
     <div id="alan-window">
