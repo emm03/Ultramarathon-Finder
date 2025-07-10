@@ -55,6 +55,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 async function startUltraMap() {
+    const main = document.querySelector("main");
+    if (main) main.style.display = "block"; // ✅ reveal main content
+
     const map = L.map('ultra-map').setView([37.8, -96], 4);
 
     map.scrollWheelZoom.disable();

@@ -3456,18 +3456,20 @@ main.article-content {
 }
 
 .map-warning-box {
-    max-width: 600px;
-    margin: 60px auto;
-    padding: 20px;
-    background-color: #fff3cd;
-    border: 1px solid #ffeeba;
+    background-color: #fff8e1;
+    border: 1px solid #ffcc80;
     border-radius: 8px;
+    padding: 16px;
+    margin: 20px auto;
+    max-width: 600px;
     font-size: 1.1rem;
-    color: #856404;
-    line-height: 1.6;
+    color: #333;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
 .map-warning-box a {
-    color: #e67e22;
+    color: #007bff;
+    font-weight: bold;
     text-decoration: underline;
 }
