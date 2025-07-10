@@ -13,12 +13,17 @@
 </head>
 
 <body>
-    <main class="shared-ultra-map">
-        <h1>📍 Ultra Map for <span id="shared-username">...</span></h1>
-        <p>Every ultra-distance run visualized across the globe.</p>
+    <main class="ultra-map-page clean-centered-layout">
+        <!-- 🧭 Header -->
+        <section class="ultra-map-hero">
+            <h1>📍 Ultra Map for <span id="shared-username">...</span></h1>
+            <p>Every ultra-distance run visualized across the globe.</p>
+        </section>
 
-        <div id="ultra-map" style="height: 500px; margin-bottom: 40px;"></div>
+        <!-- 🗺️ Map -->
+        <div id="ultra-map" style="height: 500px; margin-bottom: 30px;"></div>
 
+        <!-- 📊 Stats Grid -->
         <section class="ultra-summary-grid">
             <div>
                 <strong>Total Ultra Runs:</strong> <span id="ultra-count">0</span><br />
@@ -33,9 +38,11 @@
             </div>
         </section>
 
+        <!-- 🏆 Milestone Wall -->
         <h2>🏆 Milestone Wall</h2>
         <ul id="milestone-list" class="milestone-list"></ul>
 
+        <!-- 📸 Photo Timeline -->
         <h2>📸 Photo Timeline</h2>
         <div id="photo-scroll-container" class="photo-scroll"></div>
     </main>

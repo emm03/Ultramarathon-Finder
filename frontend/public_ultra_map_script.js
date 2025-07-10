@@ -1,3 +1,9 @@
+// 🚀 Show loading message right away
+const loadingMessage = document.createElement("div");
+loadingMessage.id = "loading-status";
+loadingMessage.innerHTML = `<p style="text-align:center; padding: 40px;">⏳ Loading Ultra Map...</p>`;
+document.body.prepend(loadingMessage);
+
 document.addEventListener("DOMContentLoaded", async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const username = urlParams.get("user");
@@ -15,6 +21,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const activities = await res.json();
         renderSharedUltraMap(activities);
+
+        // ✅ Remove loading message after render
+        const loadingStatus = document.getElementById("loading-status");
+        if (loadingStatus) loadingStatus.remove();
     } catch (err) {
         console.error("❌ Failed to load shared map:", err);
         document.body.innerHTML = `
@@ -35,7 +45,6 @@ function renderSharedUltraMap(data) {
     let totalElevation = 0;
     const locations = new Set();
     const visitedStates = new Set();
-
     const photoContainer = document.getElementById("photo-scroll-container");
 
     data.forEach((activity, index) => {
@@ -55,12 +64,10 @@ function renderSharedUltraMap(data) {
         longestRun = Math.max(longestRun, parseFloat(miles));
         totalElevation += total_elevation_gain || 0;
 
-        if (start_latlng && start_latlng.length === 2) {
+        if (start_latlng?.length === 2) {
             const [lat, lng] = start_latlng;
-            const rounded = `${lat.toFixed(2)},${lng.toFixed(2)}`;
-            locations.add(rounded);
+            locations.add(`${lat.toFixed(2)},${lng.toFixed(2)}`);
 
-            // Determine visited states (if geo data available)
             if (window.stateGeoData) {
                 window.stateGeoData.features.forEach(feature => {
                     const polygon = feature.geometry;
@@ -69,23 +76,17 @@ function renderSharedUltraMap(data) {
                     }
                 });
             }
+
+            const marker = L.marker([lat, lng]).addTo(map);
+            marker.bindPopup(`
+                <strong>${name}</strong><br/>
+                📏 ${miles} mi<br/>
+                🕒 ${(moving_time / 3600).toFixed(2)} hrs<br/>
+                ⛰️ ${total_elevation_gain || 0} m<br/>
+                📅 ${new Date(start_date).toLocaleDateString()}
+            `);
         }
 
-        // Add marker
-        const marker = L.marker([
-            start_latlng?.[0] || 37.773972,
-            start_latlng?.[1] || -122.431297
-        ]).addTo(map);
-
-        marker.bindPopup(`
-            <strong>${name}</strong><br/>
-            📏 ${miles} mi<br/>
-            🕒 ${(moving_time / 3600).toFixed(2)} hrs<br/>
-            ⛰️ ${total_elevation_gain || 0} m<br/>
-            📅 ${new Date(start_date).toLocaleDateString()}
-        `);
-
-        // Add photos
         if (Array.isArray(photos)) {
             photos.forEach((url, i) => {
                 const img = document.createElement("img");
@@ -105,19 +106,17 @@ function renderSharedUltraMap(data) {
     document.getElementById("visited-states-count").textContent = visitedStates.size;
 
     const visitedStatesListEl = document.getElementById("visited-states-list");
-    if (visitedStatesListEl) {
-        visitedStatesListEl.innerHTML = "";
-        Array.from(visitedStates).sort().forEach(state => {
-            const li = document.createElement("li");
-            li.textContent = state;
-            visitedStatesListEl.appendChild(li);
-        });
-    }
+    visitedStatesListEl.innerHTML = "";
+    Array.from(visitedStates).sort().forEach(state => {
+        const li = document.createElement("li");
+        li.textContent = state;
+        visitedStatesListEl.appendChild(li);
+    });
 
     renderSharedMilestones(data, totalDistance, totalElevation, visitedStates);
 }
 
-// Load geoJSON state data
+// GeoJSON state data
 window.stateGeoData = null;
 fetch("https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json")
     .then(res => res.json())
@@ -126,23 +125,19 @@ fetch("https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geo
     });
 
 function isPointInPolygon(point, geometry) {
-    if (geometry.type === "Polygon") {
-        return inside(point, geometry.coordinates[0]);
-    } else if (geometry.type === "MultiPolygon") {
-        return geometry.coordinates.some(polygon => inside(point, polygon[0]));
-    }
+    if (geometry.type === "Polygon") return inside(point, geometry.coordinates[0]);
+    if (geometry.type === "MultiPolygon") return geometry.coordinates.some(p => inside(point, p[0]));
     return false;
 }
 
 function inside(point, vs) {
-    const x = point[0], y = point[1];
+    const [x, y] = point;
     let inside = false;
     for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
-        const xi = vs[i][0], yi = vs[i][1];
-        const xj = vs[j][0], yj = vs[j][1];
-
+        const [xi, yi] = vs[i];
+        const [xj, yj] = vs[j];
         const intersect = ((yi > y) !== (yj > y)) &&
-            (x < ((xj - xi) * (y - yi)) / (yj - yi) + xi);
+            (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
         if (intersect) inside = !inside;
     }
     return inside;
@@ -152,32 +147,25 @@ function renderSharedMilestones(activities, totalMiles, elevation, visitedStates
     const milestoneList = document.getElementById("milestone-list");
     const milestones = [];
 
-    // First ultra
     if (activities.length > 0) {
-        const oldest = activities.reduce((earliest, act) => {
-            return new Date(act.start_date) < new Date(earliest.start_date) ? act : earliest;
-        }, activities[0]);
-
-        const name = oldest.name || "Unnamed Ultra";
+        const oldest = activities.reduce((earliest, act) =>
+            new Date(act.start_date) < new Date(earliest.start_date) ? act : earliest, activities[0]);
         const dist = (oldest.distance / 1609.34).toFixed(2) + " mi";
-        milestones.push(`🥇 First Ultra Completed: ${name} (${dist})`);
+        milestones.push(`🥇 First Ultra Completed: ${oldest.name || "Unnamed Ultra"} (${dist})`);
     }
 
-    // Distance milestones
     for (let m = 100; m <= totalMiles; m += 100) {
         milestones.push(`💯 ${m} Miles Total`);
     }
 
-    // Elevation milestone
     const topElevationMilestone = Math.floor(elevation / 1000) * 1000;
     if (topElevationMilestone >= 1000) {
         milestones.push(`⛰️ ${topElevationMilestone.toLocaleString()} ft Climbed`);
     }
 
-    // State count
-    const states = Array.from(visitedStates).sort();
-    if (states.length > 0) {
-        milestones.push(`📍 States Visited (${states.length}): ${states.join(", ")}`);
+    if (visitedStates.size > 0) {
+        const states = Array.from(visitedStates).sort().join(", ");
+        milestones.push(`📍 States Visited (${visitedStates.size}): ${states}`);
     }
 
     milestoneList.innerHTML = "";
