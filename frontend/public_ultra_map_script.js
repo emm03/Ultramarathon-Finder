@@ -22,7 +22,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         const activities = await res.json();
         renderSharedUltraMap(activities);
 
-        // ✅ Remove loading message after render
         const loadingStatus = document.getElementById("loading-status");
         if (loadingStatus) loadingStatus.remove();
     } catch (err) {
@@ -35,7 +34,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 function renderSharedUltraMap(data) {
-    const map = L.map("ultra-map").setView([37.8, -96], 4);
+    const map = L.map("ultra-map", { scrollWheelZoom: false }).setView([37.8, -96], 4);
+    map.scrollWheelZoom.disable();
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "&copy; OpenStreetMap contributors",
     }).addTo(map);
@@ -47,13 +47,14 @@ function renderSharedUltraMap(data) {
     const visitedStates = new Set();
     const photoContainer = document.getElementById("photo-scroll-container");
 
+    const yearCounts = {};
+
     data.forEach((activity, index) => {
         const {
             name,
             distance,
             moving_time,
             start_date,
-            id,
             total_elevation_gain,
             start_latlng,
             photos
@@ -63,6 +64,9 @@ function renderSharedUltraMap(data) {
         totalDistance += parseFloat(miles);
         longestRun = Math.max(longestRun, parseFloat(miles));
         totalElevation += total_elevation_gain || 0;
+
+        const year = new Date(start_date).getFullYear();
+        yearCounts[year] = (yearCounts[year] || 0) + 1;
 
         if (start_latlng?.length === 2) {
             const [lat, lng] = start_latlng;
@@ -114,6 +118,13 @@ function renderSharedUltraMap(data) {
     });
 
     renderSharedMilestones(data, totalDistance, totalElevation, visitedStates);
+    renderTimelineChart(yearCounts);
+
+    const websiteLink = document.createElement("p");
+    websiteLink.innerHTML = `Want to build your own Ultra Map? <a href="https://ultramarathonconnect.com/" target="_blank">Join Ultramarathon Connect</a>.`;
+    websiteLink.style.textAlign = "center";
+    websiteLink.style.marginTop = "60px";
+    document.body.appendChild(websiteLink);
 }
 
 // GeoJSON state data
@@ -178,4 +189,30 @@ function renderSharedMilestones(activities, totalMiles, elevation, visitedStates
             milestoneList.appendChild(li);
         });
     }
+}
+
+function renderTimelineChart(yearCounts) {
+    const ctx = document.getElementById("timeline-chart").getContext("2d");
+    const labels = Object.keys(yearCounts).sort();
+    const values = labels.map(y => yearCounts[y]);
+
+    new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels,
+            datasets: [{
+                label: "Ultras Completed",
+                data: values,
+                backgroundColor: "#4caf50"
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                }
+            }
+        }
+    });
 }
